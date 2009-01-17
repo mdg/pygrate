@@ -30,15 +30,3 @@ class Pygration:
         """Rollback any items that were hidden in the db"""
         pass
 
-    def pre_up( self, step ):
-        pass
-
-    def pre_down( self, step ):
-        pass
-
-    def post_up( self, step ):
-        pass
-
-    def post_down( self, step ):
-        pass
-
