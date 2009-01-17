@@ -4,7 +4,7 @@ Deploy DB changes separated by pre- and post- application deployment
 * separately deploy new application code
 * migrate schema drops
 
-Rollback DB changes
+Rollback DB changes, including items that were dropped
 
 Segregate DB changes by "release", to limit how far a rollback can go
 
