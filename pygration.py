@@ -1,29 +1,24 @@
 
 
 class Pygration:
-    """A single change to the database.
+    """A collection of steps to change the database.
+    
+    The pygration includes steps to make the change prior to and
+    subsequent to the application deployment.
     """
 
     def __init__( self ):
         pass
 
-    def pre_up( self ):
+    def pre_up( self, step ):
         pass
 
-    def pre_down( self ):
+    def pre_down( self, step ):
         pass
 
-    def post_up( self ):
+    def post_up( self, step ):
         pass
 
-    def post_down( self ):
-        pass
-
-
-class Pygrant(Pygration):
-    """A database grant that will be run for each release.
-    """
-
-    def __init__( self ):
+    def post_down( self, step ):
         pass
 
