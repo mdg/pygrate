@@ -14,8 +14,8 @@ class CreateEmployeeTable(Pygration):
 
 
 class CreateJobTable(Pygration):
-    def pre_up( self, step ):
-        step.execute_sql( \
+    def add( self, db ):
+        db.execute_sql( \
                 """
                 CREATE TABLE job
                 ( id number
@@ -23,8 +23,8 @@ class CreateJobTable(Pygration):
                 );
                 """ )
 
-    def pre_down( self, step ):
-        step.execute_sql( "DROP TABLE job;" );
+    def rollback_add( self, db ):
+        db.execute_sql( "DROP TABLE job;" );
 
     def execute_sql( self, sql ):
         print "executed on the db:\n%s\n" % ( sql )
@@ -57,8 +57,4 @@ class CreateOfficeTable(Pygration):
     def rollback_hide( self, db ):
         pass
 
-
-m = CreateJobTable()
-
-m.pre_up()
 
