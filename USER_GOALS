@@ -1,0 +1,15 @@
+== USER GOALS ==
+Deploy DB changes separated by pre- and post- application deployment
+* migrate schema adds
+* separately deploy new application code
+* migrate schema drops
+
+Rollback DB changes
+
+Segregate DB changes by "release", to limit how far a rollback can go
+
+Support various types of migrations:
+* grants
+* stored procedures
+* views
+
