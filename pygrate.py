@@ -13,21 +13,21 @@ class PygrationDB:
         self._sql_file = sql_file
 
 class AddPygrationDB(PygrationDB):
-    """An operator class for adding elements to the DB.
+    """Adds elements to the DB.
     """
 
     def add_column( self, table, column ):
         pass
 
 class HidePygrationDB(PygrationDB):
-    """An operator class for hiding elements in the DB.
+    """Hides elements in the DB.
     """
 
     def hide_column( self, table_column ):
         pass
 
 class DropPygrationDB(PygrationDB):
-    """An operator class for dropping elements from the DB.
+    """Drops elements from the DB.
     """
 
     def drop_column( self, table_column ):
