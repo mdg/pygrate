@@ -1,3 +1,6 @@
+import optparse
+import os.path
+import sys
 
 
 class PygrationDB:
@@ -31,11 +34,97 @@ class DropPygrationDB(PygrationDB):
     def drop_column( self, table_column ):
         pass
 
+class RollbackHidePygrationDB(PygrationDB):
+    pass
+
+class RollbackDropPygrationDB(PygrationDB):
+    pass
+
 
 class Pygrator:
     """The operator for running a set of pygrations.
     """
 
-    def __init__( self ):
+    def __init__( self, path, migration ):
+        self._path = path
+        self._migration = migration
+        self._modules = []
+
+    def migrate( self, stage ):
+        self._import_migrations()
+        self._create_db( stage )
+        # find migration files
+        # import modules
+        # iterate through each module
+        # create each migration
+        # execute the given stage of each migration
         pass
+
+    def _create_db( self, stage ):
+        """Create the PygrationDB for the given stage"""
+        if stage == 'add':
+            self._db = AddPygrationDB()
+        elif stage == 'hide':
+            self._db = HidePygrationDB()
+        elif stage == 'drop':
+            self._db = DropPygrationDB()
+
+    def _import_migrations( self ):
+        migrations = self._list_migrations()
+        modules = []
+        sys.path.insert( 0, os.path.abspath( self._path ) )
+        for m in migrations:
+            print "__import__( "+ str(os.path.join( self._migration, m ) ) +")"
+            print sys.path
+            mod = __import__( os.path.join( self._migration, m ) )
+            modules.append( mod )
+        self._modules = modules
+
+        # mod_name = os.path.join( self._path, self._migration )
+        # print "mod_name = "+ str(mod_name)
+        # mod = __import__( mod_name )
+        # print str(dir(mod))
+
+    def _list_migrations( self ):
+        migration_path = os.path.join( self._path, self._migration )
+        print "migration_path = "+ str(migration_path)
+        files = os.listdir( migration_path )
+        migrations = []
+        for f in files:
+            if f.endswith( '.py' ):
+                migrations.append( f.replace( ".py", "" ) )
+        print str(migrations)
+        return migrations
+
+
+def run_main():
+    usage = "usage: %prog [options] stage migration"
+    parser = optparse.OptionParser( usage=usage )
+    parser.add_option( "-p", "--path" )
+
+    opts, args = parser.parse_args()
+    print opts
+    print args
+
+    if len(args) == 0:
+        parser.error("A stage must be specified")
+    if len(args) == 1:
+        parser.error("A migration set must be specified")
+    if len(args) > 2:
+        parser.error("Too many arguments")
+
+    stage = args[0]
+    migration = args[1]
+
+    path = '.'
+    if opts.path:
+        print "opts.path="+ opts.path
+        path = opts.path
+
+    p = Pygrator( path, migration )
+    p.migrate( stage )
+
+
+if ( __name__ == "__main__" ):
+    run_main()
 
