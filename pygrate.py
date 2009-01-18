@@ -1,6 +1,4 @@
 
-import pygration
-
 
 class PygrationDB:
     """A single step for a migration.
@@ -20,7 +18,7 @@ class AddPygrationDB(PygrationDB):
         pass
 
 class HidePygrationDB(PygrationDB):
-    """Hides elements in the DB.
+    """Hides elements in the DB prior to being dropped.
     """
 
     def hide_column( self, table_column ):

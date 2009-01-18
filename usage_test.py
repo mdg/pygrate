@@ -37,7 +37,7 @@ class CreateOfficeTable(Pygration):
                 , String( "city" )
                 ] )
         db.table( "employee" ).add_column( Number( "office" ) )
-        db.add_column( "employee", Number( "office" ) )
+        db.add_column( "employee", pygration.Number( "office" ) )
 
     def hide( self, db ):
         db.table( "employee" ).column( "office" ).drop()
