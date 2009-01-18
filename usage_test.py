@@ -58,3 +58,13 @@ class CreateOfficeTable(Pygration):
         pass
 
 
+class DropOldColumn(Pygration):
+    def hide( self, db ):
+        db.hide_column( "employee.old_column" )
+
+    def drop( self, db ):
+        db.drop_column( "employee.old_column" )
+
+    def rollback_hide( self, db ):
+        db.unhide_column( "employee.old_column" )
+
