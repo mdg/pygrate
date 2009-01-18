@@ -1,6 +1,9 @@
+import pygration
 import optparse
 import os.path
 import sys
+import inspect
+import types
 
 
 class PygrationDB:
@@ -58,7 +61,23 @@ class Pygrator:
         # iterate through each module
         # create each migration
         # execute the given stage of each migration
-        pass
+
+    def _create_migrations( self ):
+        migs = []
+        for mod in self._modules:
+            print "module: "+ str(mod) + "\n"
+            for mig in mod.__dict__.values():
+                # print "migration: "+ str(mig)
+                # print "\tdir: "+ str(dir(mig))
+                # if isinstance(mig, pygration.Pygration):
+                if self._pygration_subclass(mig):
+                    # print "was instance"
+                    print "mig: "+ str(mig.__name__)
+                    mig_inst = mig.__init__()
+                    print type(mig_inst)
+                    migs.append(mig.__init__())
+                    print type(
+        return migs
 
     def _create_db( self, stage ):
         """Create the PygrationDB for the given stage"""
@@ -94,6 +113,12 @@ class Pygrator:
                 migrations.append( f.replace( ".py", "" ) )
         # print str(migrations)
         return migrations
+
+    def _pygration_subclass( self, obj ):
+        if type(obj) is not types.ClassType:
+            return False
+        return issubclass(obj, pygration.Pygration) \
+                and not obj == pygration.Pygration
 
 
 def run_main():
