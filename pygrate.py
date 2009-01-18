@@ -75,7 +75,6 @@ class Pygrator:
         sys.path.insert( 0, os.path.abspath( self._path ) )
         for m in migrations:
             print "__import__( "+ str(os.path.join( self._migration, m ) ) +")"
-            print sys.path
             mod = __import__( os.path.join( self._migration, m ) )
             modules.append( mod )
         self._modules = modules
@@ -93,7 +92,7 @@ class Pygrator:
         for f in files:
             if f.endswith( '.py' ):
                 migrations.append( f.replace( ".py", "" ) )
-        print str(migrations)
+        # print str(migrations)
         return migrations
 
 
@@ -103,8 +102,8 @@ def run_main():
     parser.add_option( "-p", "--path" )
 
     opts, args = parser.parse_args()
-    print opts
-    print args
+    # print opts
+    # print args
 
     if len(args) == 0:
         parser.error("A stage must be specified")
