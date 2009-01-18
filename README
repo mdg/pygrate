@@ -1,3 +1,2 @@
-A program to migrate a database in a manner that
-supports zero down time deployments.
+A DB migration program focused on supporting zero down time deployments.
 
