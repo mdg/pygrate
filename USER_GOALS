@@ -9,7 +9,11 @@ Rollback DB changes, including items that were dropped
 Segregate DB changes by "release", to limit how far a rollback can go
 
 Support various types of migrations:
-* grants
-* stored procedures
-* views
+* add/drop table
+* add/drop column
+* add/drop stored procedure
+* add/drop view
+* add/drop index
+* add/drop constraint
+* grant/revoke
 
