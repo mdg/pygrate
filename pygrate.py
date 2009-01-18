@@ -10,43 +10,44 @@ class PygrationDB:
     """A single step for a migration.
     """
 
+    def __init__( self, db ):
+        self._db
+
+    def create_table( self, table_name, columns )
+        pass
+
+    def hide_table( self, table_name )
+        pass
+
+    def drop_table( self, table_name )
+        pass
+
+    def add_column( self, table, column_obj )
+        pass
+
+    def hide_column( self, table_column_name )
+        pass
+
+    def drop_column( self, table_column_name )
+        pass
+
     def execute_sql( self, sql ):
-        self._sql = sql
+        self._db.execute_sql( sql )
 
     def execute_sql_file( self, sql_file ):
-        self._sql_file = sql_file
-
-class AddPygrationDB(PygrationDB):
-    """Adds elements to the DB.
-    """
-
-    def add_column( self, table, column ):
-        pass
-
-class HidePygrationDB(PygrationDB):
-    """Hides elements in the DB prior to being dropped.
-    """
-
-    def hide_column( self, table_column ):
-        pass
-
-class DropPygrationDB(PygrationDB):
-    """Drops elements from the DB.
-    """
-
-    def drop_column( self, table_column ):
-        pass
-
-class RollbackHidePygrationDB(PygrationDB):
-    pass
-
-class RollbackDropPygrationDB(PygrationDB):
-    pass
+        self._db.execute_sql_file( sql_file )
 
 
 class Pygrator:
     """The operator for running a set of pygrations.
     """
+    DB_MAP = { 'add': AddPygrationDB
+            , 'hide': HidePygrationDB
+            , 'drop': DropPygrationDB
+            , 'rollback_add': RollbackAddPygrationDB
+            , 'rollback_hide': RollbackHidePygrationDB
+            }
+    # MIGRATOR_MAP = { 'add': 
 
     def __init__( self, path, migration ):
         self._path = path
@@ -67,12 +68,19 @@ class Pygrator:
         for mod in self._modules:
             print "module: "+ str(mod) + "\n"
             for mig in mod.__dict__.values():
-                # if isinstance(mig, pygration.Pygration):
                 if self._pygration_subclass(mig):
                     # print "was instance"
                     print "mig: "+ str(mig.__name__)
                     migs.append(mig())
         return migs
+
+    def _migrate( self, stage, db )
+        for m in self._migrations:
+            if stage == 'add':
+                m.add( db )
+            elif stage == 'hide':
+                m.hide( db )
+
 
     def _create_db( self, stage ):
         """Create the PygrationDB for the given stage"""
