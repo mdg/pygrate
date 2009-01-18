@@ -1,7 +1,7 @@
-# import pygration
+from pygration import Pygration
 
 
-class CreateEmployeeTable(): # Pygration ):
+class CreateEmployeeTable(Pygration):
     def __init__( self ):
         self._sql = \
                 """
@@ -11,7 +11,7 @@ class CreateEmployeeTable(): # Pygration ):
                 );
                 """
 
-class CreateJobTable:
+class CreateJobTable(Pygration):
     def pre_up( self, step ):
         step.execute_sql( \
                 """
@@ -27,10 +27,4 @@ class CreateJobTable:
     def execute_sql( self, sql ):
         print "executed on the db:\n%s\n" % ( sql )
 
-
-# m = CreateJobTable()
-
-# m.pre_up()
-
-print( "hello world!" )
 

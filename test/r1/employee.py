@@ -1,4 +1,4 @@
-from pygrate.pygration import Pygration
+from pygration import Pygration
 
 
 class EmployeeTable(Pygration):
