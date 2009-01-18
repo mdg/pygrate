@@ -30,3 +30,17 @@ class Pygration:
         """Rollback any items that were hidden in the db"""
         pass
 
+
+class Column:
+    def __init__( self, type, name ):
+        self._type = type
+        self._name = name
+
+class String(Column):
+    def __init__( self, name ):
+        Column.__init__( self, "string", name )
+
+class Number(Column):
+    def __init__( self, name ):
+        Column.__init__( self, "number", name )
+
