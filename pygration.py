@@ -36,6 +36,12 @@ class Column:
         self._type = type
         self._name = name
 
+    def type( self ):
+        return self._type
+
+    def name( self ):
+        return self._name
+
 class String(Column):
     def __init__( self, name ):
         Column.__init__( self, "string", name )

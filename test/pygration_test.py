@@ -1,7 +1,11 @@
 import pygration
+import unittest
 
 
-class TestPygration(pygration.Pygration):
-    def dog():
-        pass
+class PygrationColumnTestCase(unittest.TestCase):
+    def testString( self ):
+        s = pygration.String( "dog" )
+
+        self.assertEqual( "dog", s.name() )
+        self.assertEqual( "string", s.type() )
 
