@@ -55,11 +55,10 @@ class Pygrator:
 
     def migrate( self, stage ):
         self._import_migrations()
-        self._create_db( stage )
-        # find migration files
-        # import modules
         # iterate through each module
         # create each migration
+        self._create_migrations()
+        db = self._create_db( stage )
         # execute the given stage of each migration
 
     def _create_migrations( self ):
@@ -81,12 +80,20 @@ class Pygrator:
 
     def _create_db( self, stage ):
         """Create the PygrationDB for the given stage"""
+        db = None
         if stage == 'add':
-            self._db = AddPygrationDB()
+            db = AddPygrationDB()
         elif stage == 'hide':
-            self._db = HidePygrationDB()
+            db = HidePygrationDB()
         elif stage == 'drop':
-            self._db = DropPygrationDB()
+            db = DropPygrationDB()
+        elif stage == 'rollback_add':
+            db = RollbackAddPygrationDB()
+        elif stage == 'rollback_hide':
+            db = RollbackDropPygrationDB()
+        else:
+            pass # throw an exception here
+        return db
 
     def _import_migrations( self ):
         migrations = self._list_migrations()
