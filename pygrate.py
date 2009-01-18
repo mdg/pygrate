@@ -52,30 +52,26 @@ class Pygrator:
         self._path = path
         self._migration = migration
         self._modules = []
-
-    def migrate( self, stage ):
         self._import_migrations()
         # iterate through each module
         # create each migration
-        self._create_migrations()
+        self._migrations = self._create_migrations()
+
+    def migrate( self, stage ):
         db = self._create_db( stage )
         # execute the given stage of each migration
+        # self._migrate( stage, db, migrations )
 
     def _create_migrations( self ):
         migs = []
         for mod in self._modules:
             print "module: "+ str(mod) + "\n"
             for mig in mod.__dict__.values():
-                # print "migration: "+ str(mig)
-                # print "\tdir: "+ str(dir(mig))
                 # if isinstance(mig, pygration.Pygration):
                 if self._pygration_subclass(mig):
                     # print "was instance"
                     print "mig: "+ str(mig.__name__)
-                    mig_inst = mig.__init__()
-                    print type(mig_inst)
-                    migs.append(mig.__init__())
-                    print type(
+                    migs.append(mig())
         return migs
 
     def _create_db( self, stage ):
