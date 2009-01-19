@@ -1,9 +1,6 @@
-#! /usr/bin/python
-
 import pygration
 import pygration_db
 import database
-import optparse
 import os.path
 import sys
 import inspect
@@ -83,38 +80,4 @@ class Pygrator:
             return False
         return issubclass(obj, pygration.Pygration) \
                 and not obj == pygration.Pygration
-
-
-def run_main():
-    usage = "usage: %prog [options] stage migration"
-    parser = optparse.OptionParser( usage=usage )
-    parser.add_option( "-p", "--path" )
-
-    opts, args = parser.parse_args()
-    # print opts
-    # print args
-
-    if len(args) == 0:
-        parser.error("A stage must be specified")
-    if len(args) == 1:
-        parser.error("A migration set must be specified")
-    if len(args) > 2:
-        parser.error("Too many arguments")
-
-    stage = args[0]
-    migration = args[1]
-
-    path = '.'
-    if opts.path:
-        print "opts.path="+ opts.path
-        path = opts.path
-
-    db = database.open( path )
-    p = Pygrator( db, path, migration )
-    p.migrate( stage )
-    db.close()
-
-
-if ( __name__ == "__main__" ):
-    run_main()
 
