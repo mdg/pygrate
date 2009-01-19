@@ -1,10 +1,8 @@
 import pygrate.loader
 import pygrate.pygration
-import pygrate.oracle_syntax
-import mock_database
 import unittest
 import os.path
-import sys
+import types
 
 
 class TestPygration(pygrate.pygration.Pygration):
@@ -25,7 +23,9 @@ class PygrateTestCase(unittest.TestCase):
 
     def testImportModules( self ):
         self._loader._import_modules()
-        print dir(self._loader._modules)
+        m = self._loader._modules
+        self.assertEqual( 1, len(m) )
+        self.assertEqual( types.ModuleType, type(m[0]) )
 
     def testLoad( self ):
         pass
