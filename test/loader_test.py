@@ -39,7 +39,7 @@ class PygrateTestCase(unittest.TestCase):
         bp = pygrate.pygration.Pygration
         dict = {}
 
-        self.assertEqual( True, self._loader._pygration_subclass( tp ) )
-        self.assertEqual( False, self._loader._pygration_subclass( bp ) )
-        self.assertEqual( False, self._loader._pygration_subclass( dict ) )
+        self.assertTrue( self._loader._pygration_subclass( tp ) )
+        self.assertFalse( self._loader._pygration_subclass( bp ) )
+        self.assertFalse( self._loader._pygration_subclass( dict ) )
 
