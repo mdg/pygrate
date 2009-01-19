@@ -2,6 +2,8 @@
 
 import pygrate.loader
 import pygrate.database
+import pygrate.pygrator
+from pygrate.pygration_set import PygrationSet
 import optparse
 import os.path
 import sys
@@ -9,7 +11,7 @@ import types
 
 
 def run_main():
-    usage = "usage: %prog [options] stage migration"
+    usage = "usage: %prog [options] operation migration"
     parser = optparse.OptionParser( usage=usage )
     parser.add_option( "-p", "--path" )
 
@@ -22,7 +24,7 @@ def run_main():
     if len(args) > 2:
         parser.error("Too many arguments")
 
-    stage = args[0]
+    operation = args[0]
     migration = args[1]
 
     path = '.'
@@ -31,8 +33,14 @@ def run_main():
         path = opts.path
 
     db = pygrate.database.open( path )
-    p = pygrate.loader.PygrationLoader( path, migration )
-    p.load()
+
+    loader = pygrate.loader.PygrationLoader( path, migration )
+    loader.load()
+
+    set = PygrationSet( loader.pygrations() )
+    p = pygrate.pygrator.Pygrator( db )
+    set.migrate( p, operation )
+
     db.close()
 
 
