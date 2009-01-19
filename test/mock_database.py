@@ -1,11 +1,11 @@
-import database
+import pygrate.database
 
 
-class MockConnection(database.Connection):
+class MockConnection(pygrate.database.Connection):
     """An mocked version of an actual DB connection."""
 
     def __init__( self, syntax ):
-        database.Connection.__init__( self, syntax )
+        pygrate.database.Connection.__init__( self, syntax )
         self._last_sql = ""
 
     def close( self ):

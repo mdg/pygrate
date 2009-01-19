@@ -1,10 +1,10 @@
-import pygration
+import pygrate.pygration
 import unittest
 
 
 class PygrationColumnTestCase(unittest.TestCase):
     def testString( self ):
-        s = pygration.String( "dog", 20 )
+        s = pygrate.pygration.String( "dog", 20 )
 
         self.assertEqual( "dog", s.name() )
         self.assertEqual( "string", s.type() )
