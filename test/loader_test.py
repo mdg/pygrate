@@ -18,8 +18,8 @@ class PygrateTestCase(unittest.TestCase):
         self._loader = pygrate.loader.PygrationLoader( test_dir, 'r1' )
         syntax = pygrate.oracle_syntax.OracleSyntax()
 
-    def testListPygrationFiles( self ):
-        files = self._loader._list_pygration_files()
+    def testListModules( self ):
+        files = self._loader._list_modules()
 
         self.assertEqual( [ 'employee' ], files )
 

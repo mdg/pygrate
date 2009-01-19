@@ -25,14 +25,14 @@ class PygrationLoader:
         return self._pygrations
 
     def _import_modules( self ):
-        pygration_files = self._list_pygration_files()
+        module_names = self._list_modules()
         modules = []
         sys.path.insert( 0, os.path.abspath( self._path ) )
-        for f in pygration_files:
+        for n in module_names:
             # should filter these files somehow
-            filename = os.path.join( self._pygration_set, f )
-            print "__import__( "+ filename +")"
-            mod = __import__( filename )
+            import_path = os.path.join( self._pygration_set, n )
+            print "__import__( "+ import_path +")"
+            mod = __import__( import_path )
             modules.append( mod )
         self._modules.extend( modules )
 
@@ -51,7 +51,7 @@ class PygrationLoader:
                     pygs.append(pyg())
         self._pygrations.extend( pygs )
 
-    def _list_pygration_files( self ):
+    def _list_modules( self ):
         pygration_path = os.path.join( self._path, self._pygration_set )
         print "pygration_path = "+ str(pygration_path)
         files = os.listdir( pygration_path )
