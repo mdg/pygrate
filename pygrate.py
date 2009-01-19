@@ -37,7 +37,7 @@ class Pygrator:
                     migs.append(mig())
         return migs
 
-    def _migrate( self, stage, db )
+    def _migrate( self, stage, db ):
         for m in self._migrations:
             if stage == 'add':
                 m.add( db )

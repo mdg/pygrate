@@ -6,35 +6,47 @@ class PygrationDB:
     """
 
     def __init__( self, db ):
-        self._db
+        self._db = db
 
-    def create_table( self, table_name, columns )
-        self._db.create_table( table_name, columns )
+    def create_table( self, table_name, columns ):
+        sql = self._db.create_table_sql( table_name, columns )
+        self.execute_sql( sql )
 
-    def hide_table( self, table_name )
+    def hide_table( self, table_name ):
         """Hide a table before deleting it."""
-        self._db.rename_table( table_name, "_hidden_"+ str(table_name) )
+        sql = self._db.rename_table_sql( table_name, "_hidden_"
+                + str(table_name) )
+        self.execute_sql( sql )
 
-    def drop_table( self, table_name )
-        """Drop a hidden table."""
-        self._db.drop_table( "_hidden_"+ str(table_name) )
+    def drop_table( self, table_name ):
+        """Drop a table that was previously hidden."""
+        sql = self._db.drop_table_sql( "_hidden_"+ str(table_name) )
+        self.execute_sql( sql )
 
-    def add_column( self, table, column_obj )
-        self._db.add_column( table, column_obj )
+    def add_column( self, table, column_obj ):
+        """Add a column."""
+        sql = self._db.add_column_sql( table, column_obj )
+        self.execute_sql( sql )
 
-    def hide_column( self, table_column_name )
+    def hide_column( self, table_column_name ):
         table, column = self.split_table_column( table_column_name )
-        self._db.rename_column( table, column, "_hidden"+ column )
+        sql = self._db.rename_column_sql( table, column, "_hidden"+ column )
+        self.execute_sql( sql )
 
-    def drop_column( self, table_column_name )
+    def drop_column( self, table_column_name ):
         table, column = self.split_table_column( table_column_name )
-        self._db.drop_column( table, "_hidden_"+ column )
+        sql = self._db.drop_column_sql( table, "_hidden_"+ column )
+        self.execute_sql( sql )
 
     def execute_sql( self, sql ):
+        # write sql to the log
         self._db.execute_sql( sql )
 
-    def execute_sql_file( self, sql_file ):
-        self._db.execute_sql_file( sql_file )
+    def execute_sql_file( self, sql_file_name ):
+        sql_file = open( sql_file_name )
+        sql_file_string = sql_file.read()
+        self._db.execute_sql_file( sql_file_string )
+        sql_file.close()
 
     def _split_table_column( self, table_column_name ):
         """Split a table.column string into separate table & column strings
