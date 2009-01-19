@@ -1,5 +1,6 @@
 import pygration
 import pygration_db
+import database
 import optparse
 import os.path
 import sys
@@ -12,7 +13,8 @@ class Pygrator:
     """
     # MIGRATOR_MAP = { 'add': 
 
-    def __init__( self, path, migration ):
+    def __init__( self, db, path, migration ):
+        self._db = db
         self._path = path
         self._migration = migration
         self._modules = []
@@ -22,9 +24,8 @@ class Pygrator:
         self._migrations = self._create_migrations()
 
     def migrate( self, stage ):
-        db = self._create_db( stage )
-        # execute the given stage of each migration
-        # self._migrate( stage, db, migrations )
+        pygration_db = self._create_db( stage )
+        self._migrate( stage, pygration_db )
 
     def _create_migrations( self ):
         migs = []
@@ -37,30 +38,17 @@ class Pygrator:
                     migs.append(mig())
         return migs
 
-    def _migrate( self, stage, db ):
+    def _migrate( self, stage, pdb ):
         for m in self._migrations:
             if stage == 'add':
-                m.add( db )
+                m.add( pdb )
             elif stage == 'hide':
-                m.hide( db )
-
+                m.hide( pdb )
 
     def _create_db( self, stage ):
         """Create the PygrationDB for the given stage"""
-        db = None
-        if stage == 'add':
-            db = AddPygrationDB()
-        elif stage == 'hide':
-            db = HidePygrationDB()
-        elif stage == 'drop':
-            db = DropPygrationDB()
-        elif stage == 'rollback_add':
-            db = RollbackAddPygrationDB()
-        elif stage == 'rollback_hide':
-            db = RollbackDropPygrationDB()
-        else:
-            pass # throw an exception here
-        return db
+        pdb = pygration_db.PygrationDB( self._db )
+        return pdb
 
     def _import_migrations( self ):
         migrations = self._list_migrations()
@@ -119,8 +107,10 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
-    p = Pygrator( path, migration )
+    db = database.open( path )
+    p = Pygrator( db, path, migration )
     p.migrate( stage )
+    db.close()
 
 
 if ( __name__ == "__main__" ):

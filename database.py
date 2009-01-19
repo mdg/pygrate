@@ -4,6 +4,9 @@ class Database:
     """An actual database
     """
 
+    def close( self ):
+        pass
+
     def create_table_sql( self, table_name, columns ):
         pass
 
@@ -24,4 +27,8 @@ class Database:
 
     def execute_sql( self, sql ):
         pass
+
+def open( path ):
+    import test.mock_database
+    return test.mock_database.MockDatabase()
 

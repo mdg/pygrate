@@ -8,6 +8,9 @@ class MockDatabase(database.Database):
     def __init__( self ):
         self._last_sql = ""
 
+    def close( self ):
+        pass
+
     def last_sql( self ):
         return self._last_sql
 
