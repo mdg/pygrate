@@ -1,22 +1,22 @@
+import pygrate.pygrator
 import pygrate.pygration
-import pygrate.pygration_db
 import pygrate.oracle_syntax
 import mock_database
 import unittest
 
 
-class PygrationDBTestCase(unittest.TestCase):
+class PygratorTestCase(unittest.TestCase):
     def setUp( self ):
         syntax = pygrate.oracle_syntax.OracleSyntax()
         self._conn = mock_database.MockConnection( syntax )
-        self._pdb = pygrate.pygration_db.PygrationDB( self._conn )
+        self._pygrator = pygrate.pygrator.Pygrator( self._conn )
 
     def tearDown( self ):
         self._conn = None
-        self._pdb = None
+        self._pygrator = None
 
     def testCreateTable( self ):
-        self._pdb.create_table( "user", [ \
+        self._pygrator.create_table( "user", [ \
                 pygrate.pygration.Number( "id" ) ,
                 pygrate.pygration.String( "username", 20 ) ] )
         expected = "CREATE TABLE user\n\t( number id"

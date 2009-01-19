@@ -1,9 +1,7 @@
-import pygration
 
+class Pygrator:
+    """The user's interface to the DB from an implemented Pygration."""
 
-class PygrationDB:
-    """A single step for a migration.
-    """
 
     def __init__( self, db ):
         self._db = db

@@ -1,6 +1,4 @@
 import pygration
-import pygration_db
-import database
 import os.path
 import sys
 import inspect
