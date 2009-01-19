@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import pygration
 import pygration_db
 import database
