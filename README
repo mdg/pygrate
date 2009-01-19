@@ -1,3 +1,23 @@
 A DB migration program focused on safety
 and supporting zero down time deployments.
 
+== GOALS ==
+Deploy DB changes separated into phases:
+* add new schema elements
+* (not pygrate): deploy new application code
+* hide old schema elements to simulate dropping
+* permanently drop old schema elements
+
+Easily rollback added and hidden elements
+
+Segregate DB changes by "release", to limit how far a rollback can go
+
+Support various types of migrations:
+* add/drop table
+* add/drop column
+* add/drop stored procedure
+* add/drop view
+* add/drop index
+* add/drop constraint
+* grant/revoke
+
