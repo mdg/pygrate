@@ -16,3 +16,7 @@ class OracleDatabaseTestCase(unittest.TestCase):
         expected += "\t);"
         self.assertEqual( expected, sql )
 
+    def testRenameTableSql( self ):
+        sql = self._db.rename_table_sql( "user", "_hidden_user" )
+        self.assertEqual( "ALTER TABLE user RENAME TO _hidden_user;", sql )
+

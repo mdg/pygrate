@@ -24,7 +24,7 @@ class OracleDatabase(database.Database):
         return sql
 
     def rename_table_sql( self, old_table_name, new_table_name ):
-        sql = "ALTER TABLE %s RENAME TO %s" % \
+        sql = "ALTER TABLE %s RENAME TO %s;" % \
                 ( old_table_name, new_table_name )
         return sql
 
