@@ -11,7 +11,8 @@ class PygrationSet(pygration.Pygration):
     def __init__( self, pygrations ):
         self._pygrations = pygrations
         self._function = { "add": self.add, "hide": self.hide
-                , "drop": self.drop }
+                , "drop": self.drop, 'rollback_add': self.rollback_add
+                , 'rollback_hide': self.rollback_hide }
 
     def migrate( self, db, stage ):
         f = self._function[stage]
