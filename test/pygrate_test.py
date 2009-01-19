@@ -11,6 +11,9 @@ class TestPygration(pygrate.pygration.Pygration):
 
 
 class PygrateTestCase(unittest.TestCase):
+    def setUp( self ):
+        self._test_dir = os.path.dirname( __file__ )
+
     def testListMigrations( self ):
         path, file = os.path.split( __file__ )
         p = pygrate.pygrate.Pygrator( path, 'r1' )
@@ -25,7 +28,7 @@ class PygrateTestCase(unittest.TestCase):
         print dir(p._modules)
 
     def testPygrationSubclass( self ):
-        p = pygrate.pygrate.Pygrator( '.', 'r1' )
+        p = pygrate.pygrate.Pygrator( self._test_dir, 'r1' )
         tp = TestPygration
         bp = pygrate.pygration.Pygration
 
