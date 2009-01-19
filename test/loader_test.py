@@ -17,9 +17,9 @@ class PygrateTestCase(unittest.TestCase):
         syntax = pygrate.oracle_syntax.OracleSyntax()
 
     def testListModules( self ):
-        files = self._loader._list_modules()
+        modules = self._loader._list_modules()
 
-        self.assertEqual( [ 'employee' ], files )
+        self.assertEqual( [ 'employee' ], modules )
 
     def testImportModules( self ):
         self._loader._import_modules()
