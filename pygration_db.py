@@ -7,6 +7,7 @@ class PygrationDB:
 
     def __init__( self, db ):
         self._db = db
+        self._verbose = True
 
     def create_table( self, table_name, columns ):
         sql = self._db.create_table_sql( table_name, columns )
@@ -40,6 +41,8 @@ class PygrationDB:
 
     def execute_sql( self, sql ):
         # write sql to the log
+        if self._verbose:
+            print "Run SQL:\n%s" % (sql)
         self._db.execute_sql( sql )
 
     def execute_sql_file( self, sql_file_name ):
