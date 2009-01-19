@@ -4,7 +4,8 @@ import database
 class MockConnection(database.Connection):
     """An mocked version of an actual DB connection."""
 
-    def __init__( self ):
+    def __init__( self, syntax ):
+        database.Connection.__init__( self, syntax )
         self._last_sql = ""
 
     def close( self ):

@@ -1,5 +1,6 @@
 import pygrate.pygrate
 import pygrate.pygration
+import oracle_syntax
 import mock_database
 import unittest
 import os.path
@@ -14,7 +15,8 @@ class TestPygration(pygrate.pygration.Pygration):
 class PygrateTestCase(unittest.TestCase):
     def setUp( self ):
         self._test_dir = os.path.dirname( __file__ )
-        self._db = mock_database.MockDatabase()
+        syntax = oracle_syntax.OracleSyntax()
+        self._db = mock_database.MockConnection( syntax )
 
     def testListMigrations( self ):
         path, file = os.path.split( __file__ )

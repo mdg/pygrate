@@ -26,16 +26,19 @@ class Syntax:
 
 class Connection:
     """Base class for a connected DB."""
+    def __init__( self, syntax ):
+        self._syntax = syntax
+
     def close( self ):
         pass
+
+    def syntax( self ):
+        return self._syntax
 
     def execute_sql( self, sql ):
         pass
 
 
 def open( path ):
-    return Connection()
-
-def create_syntax( path ):
-    return Syntax()
+    return Connection( Syntax() )
 

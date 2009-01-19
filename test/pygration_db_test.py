@@ -1,22 +1,25 @@
 import unittest
 import pygration
 import pygration_db
+import oracle_syntax
 import mock_database
 
 
 class PygrationDBTestCase(unittest.TestCase):
     def setUp( self ):
-        self._db = mock_database.MockDatabase()
-        self._pygration_db = pygration_db.PygrationDB( self._db )
+        syntax = oracle_syntax.OracleSyntax()
+        self._conn = mock_database.MockConnection( syntax )
+        self._pdb = pygration_db.PygrationDB( self._conn )
 
     def tearDown( self ):
-        self._db = None
-        self._pygration_db = None
+        self._conn = None
+        self._pdb = None
 
     def testCreateTable( self ):
-        self._pygration_db.create_table( "user", [ \
+        self._pdb.create_table( "user", [ \
                 pygration.Number( "id" ) ,
                 pygration.String( "username", 20 ) ] )
-        self.assertEqual( "create table user (number id, string username, )"
-                , self._db.last_sql() )
+        expected = "CREATE TABLE user\n\t( number id"
+        expected += "\n\t, varchar2(20) username\n\t);"
+        self.assertEqual( expected, self._conn.last_sql() )
 
