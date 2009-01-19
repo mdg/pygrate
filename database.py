@@ -1,11 +1,7 @@
 
 
-class Database:
-    """An actual database
-    """
-
-    def close( self ):
-        pass
+class Syntax:
+    """Base class for formatting a DB command into actual SQL"""
 
     def create_table_sql( self, table_name, columns ):
         pass
@@ -27,10 +23,19 @@ class Database:
     def drop_column_sql( self, table, column_name ):
         pass
 
+
+class Connection:
+    """Base class for a connected DB."""
+    def close( self ):
+        pass
+
     def execute_sql( self, sql ):
         pass
 
+
 def open( path ):
-    import test.mock_database
-    return test.mock_database.MockDatabase()
+    return Connection()
+
+def create_syntax( path ):
+    return Syntax()
 

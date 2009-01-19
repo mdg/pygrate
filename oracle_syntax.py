@@ -1,18 +1,8 @@
 import database
 
 
-class OracleDatabase(database.Database):
-    """An oracle database
-    """
-
-    def __init__( self ):
-        self._last_sql = ""
-
-    def close( self ):
-        pass
-
-    def last_sql( self ):
-        return self._last_sql
+class OracleSyntax(database.Syntax):
+    """Oracle syntax formatter"""
 
     def create_table_sql( self, table_name, columns ):
         sql = "CREATE TABLE %s" % ( table_name )
@@ -38,7 +28,4 @@ class OracleDatabase(database.Database):
 
     def drop_column_sql( self, table, column_name ):
         pass
-
-    def execute_sql( self, sql ):
-        self._last_sql = sql
 
