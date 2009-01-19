@@ -7,58 +7,59 @@ import inspect
 import types
 
 
-class MigrationLoader:
-    """Loads a given set of migrations at runtime."""
+class PygrationLoader:
+    """Loads a given set of Pygrations at runtime."""
 
-    def __init__( self, path, migration_set ):
+    def __init__( self, path, pygration_set ):
         self._path = path
-        self._migration_set = migration_set
+        self._pygration_set = pygration_set
         self._modules = []
-        self._migrations = []
+        self._pygrations = []
 
     def load( self ):
-        self._modules = self._import_modules()
-        self._migrations = self._create_migrations()
+        self._import_modules()
+        self._create_pygrations()
+        return self.pygrations()
 
-    def migrations( self ):
-        return self._migrations
+    def pygrations( self ):
+        return self._pygrations
 
     def _import_modules( self ):
-        migrations = self._list_migrations()
+        pygration_files = self._list_pygration_files()
         modules = []
         sys.path.insert( 0, os.path.abspath( self._path ) )
-        for m in migrations:
-            print "__import__( "+ str(os.path.join( self._migration, m ) ) +")"
-            mod = __import__( os.path.join( self._migration, m ) )
+        for f in pygration_files:
+            # should filter these files somehow
+            filename = os.path.join( self._pygration_set, f )
+            print "__import__( "+ filename +")"
+            mod = __import__( filename )
             modules.append( mod )
-        self._modules = modules
+        self._modules.extend( modules )
 
         # mod_name = os.path.join( self._path, self._migration )
         # print "mod_name = "+ str(mod_name)
         # mod = __import__( mod_name )
         # print str(dir(mod))
 
-    def _create_migrations( self ):
-        migs = []
+    def _create_pygrations( self ):
+        pygs = []
         for mod in self._modules:
             print "module: "+ str(mod) + "\n"
-            for mig in mod.__dict__.values():
-                if self._pygration_subclass(mig):
-                    # print "was instance"
-                    print "mig: "+ str(mig.__name__)
-                    migs.append(mig())
-        return migs
+            for pyg in mod.__dict__.values():
+                if self._pygration_subclass(pyg):
+                    print "mig: "+ str(pyg.__name__)
+                    pygs.append(pyg())
+        self._pygrations.extend( pygs )
 
-    def _list_migrations( self ):
-        migration_path = os.path.join( self._path, self._migration )
-        print "migration_path = "+ str(migration_path)
-        files = os.listdir( migration_path )
-        migrations = []
+    def _list_pygration_files( self ):
+        pygration_path = os.path.join( self._path, self._pygration_set )
+        print "pygration_path = "+ str(pygration_path)
+        files = os.listdir( pygration_path )
+        pygrations = []
         for f in files:
             if f.endswith( '.py' ):
-                migrations.append( f.replace( ".py", "" ) )
-        # print str(migrations)
-        return migrations
+                pygrations.append( f.replace( ".py", "" ) )
+        return pygrations
 
     def _pygration_subclass( self, obj ):
         if type(obj) is not types.ClassType:

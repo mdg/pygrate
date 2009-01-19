@@ -1,8 +1,6 @@
 #! /usr/bin/python
 
-import pygrate.pygrate
-import pygrate.pygration
-import pygrate.pygration_db
+import pygrate.loader
 import pygrate.database
 import optparse
 import os.path
@@ -33,8 +31,8 @@ def run_main():
         path = opts.path
 
     db = pygrate.database.open( path )
-    p = pygrate.pygrate.Pygrator( db, path, migration )
-    p.migrate( stage )
+    p = pygrate.loader.PygrationLoader( path, migration )
+    p.load()
     db.close()
 
 

@@ -1,4 +1,4 @@
-import pygrate.pygrate
+import pygrate.loader
 import pygrate.pygration
 import pygrate.oracle_syntax
 import mock_database
@@ -16,26 +16,27 @@ class PygrateTestCase(unittest.TestCase):
     def setUp( self ):
         self._test_dir = os.path.dirname( __file__ )
         syntax = pygrate.oracle_syntax.OracleSyntax()
-        self._db = mock_database.MockConnection( syntax )
 
-    def testListMigrations( self ):
+    def testListPygrationFiles( self ):
         path, file = os.path.split( __file__ )
-        p = pygrate.pygrate.Pygrator( self._db, path, 'r1' )
-        m = p._list_migrations()
+        p = pygrate.loader.PygrationLoader( path, 'r1' )
+        m = p._list_pygration_files()
 
         self.assertEqual( [ 'employee' ], m )
 
-    def testImportMigrations( self ):
+    def testImportModules( self ):
         path, file = os.path.split( __file__ )
-        p = pygrate.pygrate.Pygrator( self._db, path, 'r1' )
-        p._import_migrations()
+        p = pygrate.loader.PygrationLoader( path, 'r1' )
+        p._import_modules()
         print dir(p._modules)
 
     def testPygrationSubclass( self ):
-        p = pygrate.pygrate.Pygrator( self._db, self._test_dir, 'r1' )
+        p = pygrate.loader.PygrationLoader( self._test_dir, 'r1' )
         tp = TestPygration
         bp = pygrate.pygration.Pygration
+        dict = {}
 
         self.assertEqual( True, p._pygration_subclass( tp ) )
         self.assertEqual( False, p._pygration_subclass( bp ) )
+        self.assertEqual( False, p._pygration_subclass( dict ) )
 
