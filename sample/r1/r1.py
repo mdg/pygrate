@@ -2,7 +2,8 @@ import pygrate
 
 
 class CreateEmployeeTable(pygrate.Pygration):
-    def __init__( self ):
+    def add( self, db ):
+        print "sample add"
         self._sql = \
                 """
                 CREATE TABLE employee
