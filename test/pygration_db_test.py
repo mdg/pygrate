@@ -16,7 +16,7 @@ class PygrationDBTestCase(unittest.TestCase):
     def testCreateTable( self ):
         self._pygration_db.create_table( "user", [ \
                 pygration.Number( "id" ) ,
-                pygration.String( "username" ) ] )
+                pygration.String( "username", 20 ) ] )
         self.assertEqual( "create table user (number id, string username, )"
                 , self._db.last_sql() )
 

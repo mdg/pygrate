@@ -18,7 +18,7 @@ class OracleDatabase(database.Database):
         sql = "CREATE TABLE %s" % ( table_name )
         column_prefix = '( '
         for c in columns:
-            sql += "\n\t%s%s %s" % ( column_prefix, c.type(), c.name() )
+            sql += "\n\t%s%s %s" % ( column_prefix, c.oracle_type(), c.name() )
             column_prefix = ', '
         sql += "\n\t);"
         return sql
@@ -29,7 +29,9 @@ class OracleDatabase(database.Database):
         return sql
 
     def add_column_sql( self, table, column_obj ):
-        pass
+        sql = "ALTER TABLE %s ADD %s %s;" % ( table, column_obj.oracle_type()
+                , column_obj.name() )
+        return sql
 
     def rename_column_sql( self, table, old_name, new_name ):
         pass
