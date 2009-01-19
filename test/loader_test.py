@@ -18,25 +18,26 @@ class PygrateTestCase(unittest.TestCase):
         syntax = pygrate.oracle_syntax.OracleSyntax()
 
     def testListPygrationFiles( self ):
-        path, file = os.path.split( __file__ )
-        p = pygrate.loader.PygrationLoader( path, 'r1' )
-        m = p._list_pygration_files()
+        l = pygrate.loader.PygrationLoader( self._test_dir, 'r1' )
+        m = l._list_pygration_files()
 
         self.assertEqual( [ 'employee' ], m )
 
     def testImportModules( self ):
-        path, file = os.path.split( __file__ )
-        p = pygrate.loader.PygrationLoader( path, 'r1' )
-        p._import_modules()
-        print dir(p._modules)
+        l = pygrate.loader.PygrationLoader( self._test_dir, 'r1' )
+        l._import_modules()
+        print dir(l._modules)
+
+    def testLoad( self ):
+        pass
 
     def testPygrationSubclass( self ):
-        p = pygrate.loader.PygrationLoader( self._test_dir, 'r1' )
+        l = pygrate.loader.PygrationLoader( self._test_dir, 'r1' )
         tp = TestPygration
         bp = pygrate.pygration.Pygration
         dict = {}
 
-        self.assertEqual( True, p._pygration_subclass( tp ) )
-        self.assertEqual( False, p._pygration_subclass( bp ) )
-        self.assertEqual( False, p._pygration_subclass( dict ) )
+        self.assertEqual( True, l._pygration_subclass( tp ) )
+        self.assertEqual( False, l._pygration_subclass( bp ) )
+        self.assertEqual( False, l._pygration_subclass( dict ) )
 
