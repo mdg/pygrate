@@ -20,3 +20,7 @@ class OracleDatabaseTestCase(unittest.TestCase):
         sql = self._db.rename_table_sql( "user", "_hidden_user" )
         self.assertEqual( "ALTER TABLE user RENAME TO _hidden_user;", sql )
 
+    def testDropTableSql( self ):
+        sql = self._db.drop_table_sql( "_hidden_user" )
+        self.assertEqual( "DROP TABLE _hidden_user;", sql )
+

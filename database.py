@@ -14,7 +14,9 @@ class Database:
         pass
 
     def drop_table_sql( self, table_name ):
-        pass
+        """Generic syntax to drop a table."""
+        sql = "DROP TABLE %s;" % ( table_name )
+        return sql
 
     def add_column_sql( self, table, column_obj ):
         pass

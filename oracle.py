@@ -28,16 +28,13 @@ class OracleDatabase(database.Database):
                 ( old_table_name, new_table_name )
         return sql
 
-    def drop_table( self, table_name ):
+    def add_column_sql( self, table, column_obj ):
         pass
 
-    def add_column( self, table, column_obj ):
+    def rename_column_sql( self, table, old_name, new_name ):
         pass
 
-    def rename_column( self, table, old_name, new_name ):
-        pass
-
-    def drop_column( self, table, column_name ):
+    def drop_column_sql( self, table, column_name ):
         pass
 
     def execute_sql( self, sql ):
