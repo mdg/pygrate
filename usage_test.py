@@ -40,15 +40,11 @@ class CreateOfficeTable(Pygration):
         db.add_column( "employee", pygration.Number( "office" ) )
 
     def hide( self, db ):
-        db.table( "employee" ).column( "office" ).drop()
-        db.hide_column( "office" ).from_table( "employee" )
-        db.in_table( "employee" ).hide_column( "office" )
         db.hide_column( "employee.office" )
         db.hide_table( "employee" )
 
     def drop( self, db ):
-        db.table( "employee" ).column( "office" ).drop()
-        db.drop_column( "office" ).from_table( "employee" )
+        db.drop_column( "employee.office" )
         db.drop_table( "employee" )
 
     def rollback_add( self, db ):
