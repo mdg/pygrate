@@ -4,6 +4,7 @@ import pygrate.loader
 import pygrate.database
 import pygrate.pygrator
 from pygrate.pygration_set import PygrationSet
+from pygrate.oracle_connection import OracleConnection
 import optparse
 import os.path
 import sys
@@ -32,7 +33,8 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
-    db = pygrate.database.open( path )
+    # db = pygrate.database.open( path )
+    db = OracleConnection()
 
     loader = pygrate.loader.PygrationLoader( path, migration )
     loader.load()
