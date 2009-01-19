@@ -1,4 +1,5 @@
 import pygration
+import pygration_db
 import optparse
 import os.path
 import sys
@@ -6,47 +7,9 @@ import inspect
 import types
 
 
-class PygrationDB:
-    """A single step for a migration.
-    """
-
-    def __init__( self, db ):
-        self._db
-
-    def create_table( self, table_name, columns )
-        pass
-
-    def hide_table( self, table_name )
-        pass
-
-    def drop_table( self, table_name )
-        pass
-
-    def add_column( self, table, column_obj )
-        pass
-
-    def hide_column( self, table_column_name )
-        pass
-
-    def drop_column( self, table_column_name )
-        pass
-
-    def execute_sql( self, sql ):
-        self._db.execute_sql( sql )
-
-    def execute_sql_file( self, sql_file ):
-        self._db.execute_sql_file( sql_file )
-
-
 class Pygrator:
     """The operator for running a set of pygrations.
     """
-    DB_MAP = { 'add': AddPygrationDB
-            , 'hide': HidePygrationDB
-            , 'drop': DropPygrationDB
-            , 'rollback_add': RollbackAddPygrationDB
-            , 'rollback_hide': RollbackHidePygrationDB
-            }
     # MIGRATOR_MAP = { 'add': 
 
     def __init__( self, path, migration ):
