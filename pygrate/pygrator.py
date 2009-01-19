@@ -3,9 +3,9 @@ class Pygrator:
     """The user's interface to the DB from an implemented Pygration."""
 
 
-    def __init__( self, db ):
-        self._db = db
-        self._syntax = db.syntax()
+    def __init__( self, db_conn ):
+        self._db = db_conn
+        self._syntax = db_conn.syntax()
         self._verbose = True
 
     def create_table( self, table_name, columns ):
