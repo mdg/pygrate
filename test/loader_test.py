@@ -28,7 +28,11 @@ class PygrateTestCase(unittest.TestCase):
         self.assertEqual( types.ModuleType, type(m[0]) )
 
     def testLoad( self ):
-        pass
+        self._loader.load()
+        p = self._loader.pygrations()
+
+        self.assertEqual( 1, len(p) )
+        self.assertTrue( isinstance( p[0], pygrate.pygration.Pygration ) )
 
     def testPygrationSubclass( self ):
         tp = TestPygration
