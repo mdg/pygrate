@@ -29,7 +29,7 @@ class PygrationLoader:
         for n in module_names:
             # should filter these files somehow
             import_path = os.path.join( self._pygration_set, n )
-            print "__import__( "+ import_path +")"
+            # print "__import__( "+ import_path +")"
             mod = __import__( import_path )
             modules.append( mod )
         self._modules.extend( modules )
@@ -42,10 +42,10 @@ class PygrationLoader:
     def _create_pygrations( self ):
         pygs = []
         for mod in self._modules:
-            print "module: "+ str(mod) + "\n"
+            # print "module: "+ str(mod) + "\n"
             for pyg in mod.__dict__.values():
                 if self._pygration_subclass(pyg):
-                    print "mig: "+ str(pyg.__name__)
+                    # print "mig: "+ str(pyg.__name__)
                     pygs.append(pyg())
         self._pygrations.extend( pygs )
 
