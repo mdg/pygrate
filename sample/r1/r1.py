@@ -23,7 +23,7 @@ class CreateJobTable(pygrate.Pygration):
                 """ )
 
     def drop( self, db ):
-        db.execute_sql( "DROP TABLE job" );
+        db.drop_table('job')
 
     def execute_sql( self, sql ):
         print "executed on the db:\n%s\n" % ( sql )
