@@ -1,7 +1,7 @@
-from pygrate.pygration import Pygration
+import pygrate
 
 
-class CreateEmployeeTable(Pygration):
+class CreateEmployeeTable(pygrate.Pygration):
     def __init__( self ):
         self._sql = \
                 """
@@ -11,7 +11,7 @@ class CreateEmployeeTable(Pygration):
                 );
                 """
 
-class CreateJobTable(Pygration):
+class CreateJobTable(pygrate.Pygration):
     def pre_up( self, step ):
         step.execute_sql( \
                 """
