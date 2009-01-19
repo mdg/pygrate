@@ -1,5 +1,6 @@
 #! /usr/bin/python
 
+import pygrate.pygrate
 import pygrate.pygration
 import pygrate.pygration_db
 import pygrate.database
@@ -15,8 +16,6 @@ def run_main():
     parser.add_option( "-p", "--path" )
 
     opts, args = parser.parse_args()
-    # print opts
-    # print args
 
     if len(args) == 0:
         parser.error("A stage must be specified")
@@ -33,8 +32,8 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
-    db = database.open( path )
-    p = Pygrator( db, path, migration )
+    db = pygrate.database.open( path )
+    p = pygrate.pygrate.Pygrator( db, path, migration )
     p.migrate( stage )
     db.close()
 
