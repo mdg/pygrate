@@ -10,8 +10,11 @@ class PygrationSet(pygration.Pygration):
 
     def __init__( self, pygrations ):
         self._pygrations = pygrations
-        self._function = { "add": self.add, "hide": self.hide
-                , "drop": self.drop, 'rollback_add': self.rollback_add
+        self._function = { "add": self.add
+                , "hide": self.hide, "drop": self.drop
+                , 'pre_add_check': self.pre_add_check
+                , 'post_add_check': self.post_add_check
+                , 'rollback_add': self.rollback_add
                 , 'rollback_hide': self.rollback_hide }
 
     def migrate( self, db, stage ):
@@ -20,8 +23,10 @@ class PygrationSet(pygration.Pygration):
 
     def add( self, db ):
         """Add elements to the db"""
+        self.pre_add_check( db )
         for p in self._pygrations:
             p.add( db )
+            p.post_add_check( db )
 
     def hide( self, db ):
         """Hide elements in the db before dropping them"""
@@ -42,4 +47,14 @@ class PygrationSet(pygration.Pygration):
         """Rollback any items that were hidden in the db"""
         for p in self._pygrations:
             p.rollback_hide( db )
+
+    def pre_add_check( self, db ):
+        """Check the state of the DB before running any migrations."""
+        for p in self._pygrations:
+            p.pre_add_check( db )
+
+    def post_add_check( self, db ):
+        """Check the state of the DB after all migrations were run."""
+        for p in self._pygrations:
+            p.post_add_check( db )
 

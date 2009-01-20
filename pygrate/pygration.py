@@ -8,6 +8,14 @@ class Pygration:
     """
 
     def __init__( self ):
+        self._failure = False
+
+    def pre_add_check( self, db ):
+        """Validate the DB is in the expected state prior to the add."""
+        pass
+
+    def post_add_check( self, db ):
+        """Validate the DB is in the expected state after the add."""
         pass
 
     def add( self, db ):
@@ -29,6 +37,12 @@ class Pygration:
     def rollback_hide( self, db ):
         """Rollback any items that were hidden in the db"""
         pass
+
+    def failure( self ):
+        return self._failure
+
+    def _fail( self, msg ):
+        self._failure = msg
 
 
 class Column:
