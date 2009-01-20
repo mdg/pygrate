@@ -19,7 +19,7 @@ def run_main():
     opts, args = parser.parse_args()
 
     if len(args) == 0:
-        parser.error("A stage must be specified")
+        parser.error("An operation must be specified")
     if len(args) == 1:
         parser.error("A migration set must be specified")
     if len(args) > 2:
