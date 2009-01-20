@@ -3,11 +3,12 @@ and supporting zero down time deployments.
 
 
 == GOALS ==
-Deploy DB changes separated into phases:
-* add new schema elements
-* (not pygrate): deploy new application code
-* hide old schema elements to simulate dropping
-* permanently drop old schema elements
+Separate DB changes into the 3 phases of Zero Downtime Deployment:
+* Expansion: add new schema elements
+* Rollout (not pygrate): deploy new application code
+* Cleanup:
+	* hide old schema elements to simulate dropping
+	* permanently drop old schema elements
 
 Easily rollback added and hidden elements
 
