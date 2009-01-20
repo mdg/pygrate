@@ -3,6 +3,7 @@
 class Syntax:
     """Base class for formatting a DB command into actual SQL"""
 
+    # Table commands
     def create_table_sql( self, table_name, columns ):
         pass
 
@@ -14,6 +15,7 @@ class Syntax:
         sql = "DROP TABLE %s;" % ( table_name )
         return sql
 
+    # Column commands
     def add_column_sql( self, table, column_obj ):
         pass
 
