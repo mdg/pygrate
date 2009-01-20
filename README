@@ -27,14 +27,17 @@ pygrate <operation> <release>
 <release> references the group of files to execute
 
 
-== Pygrations ==
-each database change is implemented in a subclass of the Pygration class.
-the pygration subclass has a method for each operation.  that method will
+== PYGRATIONS ==
+each logical database change is implemented in a subclass of the
+Pygration class.  the pygration subclass has a method for each of the
+high level operations listed above.  that method will
 get called by pygrate when it's run.
 
 
 == SUPPORTED DB OPERATIONS ==
 * add/drop table
+* raw sql
+(not yet supported directly)
 * add/drop column
 * add/drop stored procedure
 * add/drop view
