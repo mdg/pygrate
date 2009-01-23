@@ -13,13 +13,26 @@ class Version:
         return self._is_pygration
 
     def compare(self, other):
-        comparison = 0
+        """Compare 2 versions to see which is earlier."""
         if (not (self.is_pygration() or other.is_pygration() )):
             return 0
         if (self.is_pygration() and not other.is_pygration()):
             return -1
         if (other.is_pygration() and not self.is_pygration()):
             return 1
+
+        i = 0
+        while i<len(self._array) and i<len(other._array):
+            if self._array[i] < other._array[i]:
+                return -1
+            if self._array[i] > other._array[i]:
+                return 1
+
+        if len(self._array) < len(other._array):
+            return -1
+        if len(self._array) > len(other._array):
+            return 1
+
         return 0
 
     def _set_version( self, ver_string ):
