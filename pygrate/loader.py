@@ -5,6 +5,29 @@ import inspect
 import types
 
 
+class Version:
+    def __init__( self, ver_string ):
+        self._set_version( ver_string )
+
+    def is_pygration(self):
+        return self._string != None
+
+    def compare(self, other):
+        comparison = 0
+        if (not (self.is_pygration() or other.is_pygration() )):
+            return 0
+        if (self.is_pygration() and not other.is_pygration()):
+            return -1
+        if (other.is_pygration() and not self.is_pygration()):
+            return 1
+        return 0
+
+    def _set_version( self, ver_string ):
+        array = ver_string.split( ' -_' )
+        self._array = array
+        self._string = ver_string
+
+
 class PygrationLoader:
     """Loads a given set of Pygrations at runtime."""
 
