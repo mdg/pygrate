@@ -10,7 +10,7 @@ class Version:
         self._set_version( ver_string )
 
     def is_pygration(self):
-        return self._string != None
+        return self._is_pygration
 
     def compare(self, other):
         comparison = 0
@@ -23,9 +23,16 @@ class Version:
         return 0
 
     def _set_version( self, ver_string ):
-        array = ver_string.split( ' -_' )
-        self._array = array
+        self._is_pygration = False
+        self._string = ""
+        self._array = []
+
+        if ver_string[0] != 'v':
+            return
+
+        self._is_pygration = True
         self._string = ver_string
+        self._array = ver_string[1:].split( '.-_' )
 
 
 class PygrationLoader:

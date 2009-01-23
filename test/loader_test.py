@@ -45,6 +45,7 @@ class PygrateTestCase(unittest.TestCase):
 
 
 class VersionTestCase(unittest.TestCase):
+    """Tests for the pygration Version class."""
 
     def test_underscore_is_pygration(self):
         """Check that v0_0_0 is reported as a pygration version."""
@@ -65,4 +66,9 @@ class VersionTestCase(unittest.TestCase):
         """Assert that asdf is reported as not a pygration version."""
         v = pygrate.loader.Version("asdf")
         self.assertFalse( v.is_pygration() )
+
+    def test_dash_comparison(self):
+        v1 = pygrate.loader.Version("v0.1.2")
+        v2 = pygrate.loader.Version("v0.2.2")
+        self.assertTrue( v1.compare(v2) < 0 )
 
