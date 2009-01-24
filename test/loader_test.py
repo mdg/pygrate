@@ -67,8 +67,25 @@ class VersionTestCase(unittest.TestCase):
         v = pygrate.loader.Version("asdf")
         self.assertFalse( v.is_pygration() )
 
+    def test_underscore_comparison(self):
+        v1 = pygrate.loader.Version("v0_1_2")
+        v2 = pygrate.loader.Version("v0_2_2")
+        self.assertTrue( v1.compare(v2) < 0 )
+        self.assertTrue( v2.compare(v1) > 0 )
+
     def test_dash_comparison(self):
+        v1 = pygrate.loader.Version("v0-1-2")
+        v2 = pygrate.loader.Version("v0-2-2")
+        self.assertTrue( v1.compare(v2) < 0 )
+        self.assertTrue( v2.compare(v1) > 0 )
+
+    def test_dot_comparison(self):
         v1 = pygrate.loader.Version("v0.1.2")
         v2 = pygrate.loader.Version("v0.2.2")
         self.assertTrue( v1.compare(v2) < 0 )
+        self.assertTrue( v2.compare(v1) > 0 )
+
+    def test_self_comparison(self):
+        v = pygrate.loader.Version("v0.1.2")
+        self.assertTrue( v.compare(v) == 0 )
 
