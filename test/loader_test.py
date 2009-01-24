@@ -67,6 +67,20 @@ class VersionTestCase(unittest.TestCase):
         v = pygrate.loader.Version("asdf")
         self.assertFalse( v.is_pygration() )
 
+    def test_extended_version(self):
+        """Test that a version with a sub-build number is compared later"""
+        v1 = pygrate.loader.Version("v1")
+        v2 = pygrate.loader.Version("v1-2")
+        self.assertTrue( v1.compare(v2) < 0 )
+        self.assertTrue( v2.compare(v1) > 0 )
+
+    def test_numeric_compare(self):
+        """Test that a numeric version is compared as a number."""
+        v1 = pygrate.loader.Version("v1-2")
+        v2 = pygrate.loader.Version("v1-12")
+        self.assertTrue( v1.compare(v2) < 0 )
+        self.assertTrue( v2.compare(v1) > 0 )
+
     def test_underscore_comparison(self):
         v1 = pygrate.loader.Version("v0_1_2")
         v2 = pygrate.loader.Version("v0_2_2")
