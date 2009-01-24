@@ -27,6 +27,7 @@ class Version:
                 return -1
             if self._array[i] > other._array[i]:
                 return 1
+            i = i + 1
 
         if len(self._array) < len(other._array):
             return -1
