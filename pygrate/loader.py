@@ -23,10 +23,11 @@ class Version:
 
         i = 0
         while i<len(self._array) and i<len(other._array):
-            if self._array[i] < other._array[i]:
-                return -1
-            if self._array[i] > other._array[i]:
-                return 1
+            comparison = self._component_compare( self._array[i]
+                    , other._array[i])
+            if comparison != 0:
+                return comparison
+
             i = i + 1
 
         if len(self._array) < len(other._array):
@@ -35,6 +36,25 @@ class Version:
             return 1
 
         return 0
+
+    def _component_compare(self,component1,component2):
+        """Compare 2 components of a version."""
+        try:
+            number1 = int(component1)
+            number2 = int(component2)
+            component1, component2 = number1, number2
+        except:
+            pass
+        comparison = 0
+        if component1 < component2:
+            comparison = -1
+        if component1 > component2:
+            comparison = 1
+        print "compare %s to %s = %d" % (component1, component2, comparison)
+        return comparison
+
+    def _component(self,index):
+        return self._array[index]
 
     def _set_version( self, ver_string ):
         self._is_pygration = False

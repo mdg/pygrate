@@ -44,6 +44,17 @@ class PygrateTestCase(unittest.TestCase):
         self.assertFalse( self._loader._pygration_subclass( dict ) )
 
 
+class VersionComponentCompare(unittest.TestCase):
+    """Test results for the component comparison function in Version."""
+    def test_numeric_comparison(self):
+        v = pygrate.loader.Version("v0")
+        self.assertTrue( v._component_compare("1","2") < 0 )
+
+    def test_numeric_comparison_double_digits(self):
+        """Test that double digit numbers compare later than single digits."""
+        v = pygrate.loader.Version("v0")
+        self.assertTrue( v._component_compare("2","12") < 0 )
+
 class VersionTestCase(unittest.TestCase):
     """Tests for the pygration Version class."""
 
