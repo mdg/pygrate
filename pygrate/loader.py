@@ -66,7 +66,7 @@ class Version:
 
         self._is_pygration = True
         self._string = ver_string
-        self._array = ver_string[1:].split( '.-_' )
+        self._array = ver_string[1:].split( '-' )
 
 
 class PygrationLoader:
