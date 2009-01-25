@@ -7,7 +7,7 @@ import types
 
 class Version:
     def __init__( self, ver_string ):
-        self._set_version( ver_string )
+        self._parse_version( ver_string )
 
     def is_pygration(self):
         return self._is_pygration
@@ -56,7 +56,7 @@ class Version:
     def _component(self,index):
         return self._array[index]
 
-    def _set_version( self, ver_string ):
+    def _parse_version( self, ver_string ):
         self._is_pygration = False
         self._string = ""
         self._array = []
