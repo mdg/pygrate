@@ -37,4 +37,18 @@ class DropSuperTable(pygrate.Pygration):
         print "sample drop"
         db.drop_table("super")
 
+class RenameUserIDColumn(pygrate.Pygration):
+    """Rename the userid column to be username."""
+    def add(self,db):
+        """Add the username column and copy userid values to it."""
+        db.add_column( "user", String( "username") )
+        db.execute_sql( "update user set username=userid;" )
+
+    def hide(self,db):
+        """Hide the userid column before completely dropping it."""
+        db.hide_column( "user.userid" )
+
+    def drop(self,db):
+        """Permanently drop the userid column."""
+        db.drop_column( "user.userid" )
 
