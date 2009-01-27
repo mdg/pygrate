@@ -64,9 +64,18 @@ class Version:
         if ver_string[0] != 'v':
             return
 
+        array = [ ver_string[1:] ]
+        seps = ['-','_','.']
+        i=0
+        for s in seps:
+            tmp_array = []
+            for c in array:
+                tmp_array.extend(c.split(s))
+            array = tmp_array
+
         self._is_pygration = True
         self._string = ver_string
-        self._array = ver_string[1:].split( '-' )
+        self._array = array
 
 
 class PygrationLoader:
