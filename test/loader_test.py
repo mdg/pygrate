@@ -60,11 +60,11 @@ class VersionTestCase(unittest.TestCase):
 
     def test_underscore_is_pygration(self):
         """Check that v0_0_0 is reported as a pygration version."""
-        v = pygrate.loader.Version("v0_1_2")
+        v = pygrate.loader.Version("v1_2_13")
         self.assertTrue( v.is_pygration() )
         self.assertEqual(v._component(0), "1")
         self.assertEqual(v._component(1), "2")
-        self.assertEqual(v._component(2), "3")
+        self.assertEqual(v._component(2), "13")
 
     def test_dash_is_pygration(self):
         """Check that v0-0-0 is reported as a pygration version."""
