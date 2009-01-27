@@ -14,6 +14,9 @@ class Version:
 
     def compare(self, other):
         """Compare 2 versions to see which is earlier."""
+        if not other:
+            return -1
+
         if (not (self.is_pygration() or other.is_pygration() )):
             return 0
         if (self.is_pygration() and not other.is_pygration()):
