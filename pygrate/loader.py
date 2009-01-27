@@ -86,8 +86,6 @@ class PygrationLoader:
         self._version = version
         self._modules = []
         self._pygrations = []
-        if not self._version:
-            self._version = self._find_version()
 
     def load( self ):
         self._import_modules()
@@ -134,8 +132,14 @@ class PygrationLoader:
                 pygrations.append( f.replace( ".py", "" ) )
         return pygrations
 
-    def _find_version( self, version ):
-        return version
+    def _find_newest_version( self ):
+        dirs = os.listdir( self._path )
+        newest = None
+        for d in dirs:
+            v = Version( d )
+            if v.compare(newest) < 0:
+                newest = v
+        return newest
 
     def _pygration_subclass( self, obj ):
         if type(obj) is not types.ClassType:
