@@ -81,11 +81,13 @@ class Version:
 class PygrationLoader:
     """Loads a given set of Pygrations at runtime."""
 
-    def __init__( self, path, pygration_set ):
+    def __init__( self, path, version ):
         self._path = path
-        self._pygration_set = pygration_set
+        self._version = version
         self._modules = []
         self._pygrations = []
+        if not self._version:
+            self._version = self._find_version()
 
     def load( self ):
         self._import_modules()
@@ -101,7 +103,7 @@ class PygrationLoader:
         sys.path.insert( 0, os.path.abspath( self._path ) )
         for n in module_names:
             # should filter these files somehow
-            import_path = os.path.join( self._pygration_set, n )
+            import_path = os.path.join( self._version, n )
             # print "__import__( "+ import_path +")"
             mod = __import__( import_path )
             modules.append( mod )
@@ -123,7 +125,7 @@ class PygrationLoader:
         self._pygrations.extend( pygs )
 
     def _list_modules( self ):
-        pygration_path = os.path.join( self._path, self._pygration_set )
+        pygration_path = os.path.join( self._path, self._version )
         print "pygration_path = "+ str(pygration_path)
         files = os.listdir( pygration_path )
         pygrations = []
@@ -131,6 +133,9 @@ class PygrationLoader:
             if f.endswith( '.py' ):
                 pygrations.append( f.replace( ".py", "" ) )
         return pygrations
+
+    def _find_version( self, version ):
+        return version
 
     def _pygration_subclass( self, obj ):
         if type(obj) is not types.ClassType:
