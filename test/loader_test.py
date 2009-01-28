@@ -34,6 +34,10 @@ class PygrateTestCase(unittest.TestCase):
         self.assertEqual( 1, len(p) )
         self.assertTrue( isinstance( p[0], pygrate.pygration.Pygration ) )
 
+    def testFindNewestVersion(self):
+        newest = self._loader._find_newest_version()
+        self.assertEqual( "v1.1", newest._string )
+
     def testPygrationSubclass( self ):
         tp = TestPygration
         bp = pygrate.pygration.Pygration

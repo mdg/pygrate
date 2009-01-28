@@ -140,7 +140,7 @@ class PygrationLoader:
         newest = None
         for d in dirs:
             v = Version( d )
-            if v.compare(newest) < 0:
+            if v.is_pygration() and ( (not newest) or v.compare(newest) > 0 ):
                 newest = v
         return newest
 
