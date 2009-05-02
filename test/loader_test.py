@@ -13,7 +13,7 @@ class TestPygration(pygrate.pygration.Pygration):
 class PygrateTestCase(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.dirname( __file__ )
-        self._loader = pygrate.loader.PygrationLoader( test_dir, 'r1' )
+        self._loader = pygrate.loader.PygrationLoader( test_dir, 'v1' )
         syntax = pygrate.oracle_syntax.OracleSyntax()
 
     def testListModules( self ):
@@ -36,7 +36,7 @@ class PygrateTestCase(unittest.TestCase):
 
     def testFindNewestVersion(self):
         newest = self._loader._find_newest_version()
-        self.assertEqual( "v1.1", newest._string )
+        self.assertEqual( "v1", newest._string )
 
     def testPygrationSubclass( self ):
         tp = TestPygration
