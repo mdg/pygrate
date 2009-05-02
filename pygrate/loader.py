@@ -1,6 +1,7 @@
 import pygration
 import os.path
 import sys
+import imp
 import inspect
 import types
 
@@ -105,8 +106,8 @@ class PygrationLoader:
         for n in module_names:
             # should filter these files somehow
             import_path = os.path.join( self._version, n )
-            # print "__import__( "+ import_path +")"
-            mod = __import__( import_path )
+            mod_trip = imp.find_module(import_path)
+            mod = imp.load_module(import_path, *mod_trip)
             modules.append( mod )
         self._modules.extend( modules )
 
