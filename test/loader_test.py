@@ -14,7 +14,6 @@ class PygrateTestCase(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.dirname( __file__ )
         self._loader = pygrate.loader.PygrationLoader( test_dir, 'v1' )
-        syntax = pygrate.oracle_syntax.OracleSyntax()
 
     def testListModules( self ):
         modules = self._loader._list_modules()
