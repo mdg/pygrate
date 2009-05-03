@@ -17,7 +17,7 @@ def run_main():
     parser.add_option( "-p", "--path" )
 
     opts, args = parser.parse_args()
-
+ 
     if len(args) == 0:
         parser.error("An operation must be specified")
     if len(args) == 1:
