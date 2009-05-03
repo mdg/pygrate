@@ -47,6 +47,30 @@ class PygrateTestCase(unittest.TestCase):
         self.assertFalse( self._loader._pygration_subclass( dict ) )
 
 
+class PygrationLoadErrorsTest(unittest.TestCase):
+    """Test pygration loads with errors to verify error behavior."""
+ 
+    """Test with a bad type to make sure the errors are nice."""
+    def test_bad_type(self):
+        test_dir = os.path.dirname( __file__ )
+        loader = pygrate.loader.PygrationLoader( test_dir, 'v0-7' )
+        loader.load()
+        loader.pygrations()
+
+    """Verify correct behavior when a given module doesn't exist."""
+    def test_no_module(self):
+        test_dir = os.path.dirname( __file__ )
+        loader = pygrate.loader.PygrationLoader( test_dir, 'vasdf' )
+        try:
+            loader.load()
+        except:
+            # this should assert an exception was thrown somehow
+            pass
+        else:
+            failure( "no exception" )
+        loader.pygrations()
+
+
 class VersionComponentCompare(unittest.TestCase):
     """Test results for the component comparison function in Version."""
     def test_numeric_comparison(self):
