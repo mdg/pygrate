@@ -11,12 +11,15 @@ class PygrationSet(pygration.Pygration):
 
     def __init__( self, pygrations ):
         self._pygrations = pygrations
-        self._function = { "add": self.add
-                , "hide": self.hide, "drop": self.drop
+        self._function = \
+                { "add": self.add
+                , "drop": self.hide
+                , "commit_drop": self.drop
+                , 'rollback_add': self.rollback_add
+                , 'rollback_drop': self.rollback_hide
                 , 'pre_add_check': self.pre_add_check
                 , 'post_add_check': self.post_add_check
-                , 'rollback_add': self.rollback_add
-                , 'rollback_hide': self.rollback_hide }
+                }
 
     def migrate( self, db, stage ):
         f = self._function[stage]
