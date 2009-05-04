@@ -29,12 +29,12 @@ class Pygrator:
         self.execute_sql( sql )
 
     def hide_column( self, table_column_name ):
-        table, column = self.split_table_column( table_column_name )
+        table, column = self._split_table_column( table_column_name )
         sql = self._syntax.rename_column_sql( table, column, "_hidden"+ column )
         self.execute_sql( sql )
 
     def drop_column( self, table_column_name ):
-        table, column = self.split_table_column( table_column_name )
+        table, column = self._split_table_column( table_column_name )
         sql = self._syntax.drop_column_sql( table, "_hidden_"+ column )
         self.execute_sql( sql )
 
