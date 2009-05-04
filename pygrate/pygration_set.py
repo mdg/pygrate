@@ -26,7 +26,7 @@ class PygrationSet(pygration.Pygration):
             # typ, err, tb = sys.exc_info()
             tb_lines = traceback.format_exc().splitlines()
             print ''
-            print tb_lines[-1]
+            print "Pygration", tb_lines[-1]
             print tb_lines[-3]
             print tb_lines[-2]
             print ''
