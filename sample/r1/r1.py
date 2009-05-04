@@ -30,11 +30,9 @@ class CreateJobTable(pygrate.Pygration):
 
 class DropSuperTable(pygrate.Pygration):
     def hide(self,db):
-        print "sample hide"
         db.hide_table("super")
 
     def drop(self,db):
-        print "sample drop"
         db.drop_table("super")
 
 class RenameUserIDColumn(pygrate.Pygration):
