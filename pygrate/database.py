@@ -42,6 +42,6 @@ class Connection:
 
 
 def open( path ):
-    """Open a database connection as configured at the given."""
+    """Open a database connection as configured at the given path."""
     return Connection( Syntax() )
 
