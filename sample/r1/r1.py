@@ -3,7 +3,6 @@ import pygrate
 
 class CreateEmployeeTable(pygrate.Pygration):
     def add( self, db ):
-        print "sample add"
         db.drop_table( "employee" )
         db.execute_sql(
                 """
@@ -11,6 +10,7 @@ class CreateEmployeeTable(pygrate.Pygration):
                 ( a number
                 , b varchar2(10)
                 );""" )
+
 
 class CreateJobTable(pygrate.Pygration):
     def add( self, db ):
@@ -28,12 +28,14 @@ class CreateJobTable(pygrate.Pygration):
     def execute_sql( self, sql ):
         print "executed on the db:\n%s\n" % ( sql )
 
+
 class DropSuperTable(pygrate.Pygration):
     def hide(self,db):
         db.hide_table("super")
 
     def drop(self,db):
         db.drop_table("super")
+
 
 class RenameUserIDColumn(pygrate.Pygration):
     """Rename the userid column to be username."""
