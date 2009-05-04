@@ -61,7 +61,13 @@ class Column:
         return self._type
 
 class String(Column):
-    def __init__( self, name, size ):
+    """The string type for pygration table columns."""
+
+    DEFAULT_SIZE = 40
+
+    def __init__( self, name, size=None ):
+        if not size:
+            size = DEFAULT_SIZE
         Column.__init__( self, "string", name, size )
 
     def oracle_type( self ):
