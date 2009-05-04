@@ -1,4 +1,5 @@
 import pygration
+import traceback
 
 
 class PygrationSet(pygration.Pygration):
@@ -19,7 +20,16 @@ class PygrationSet(pygration.Pygration):
 
     def migrate( self, db, stage ):
         f = self._function[stage]
-        f( db )
+        try:
+            f(db)
+        except Exception:
+            # typ, err, tb = sys.exc_info()
+            tb_lines = traceback.format_exc().splitlines()
+            print ''
+            print tb_lines[-1]
+            print tb_lines[-3]
+            print tb_lines[-2]
+            print ''
 
     def add( self, db ):
         """Add elements to the db"""
