@@ -43,6 +43,7 @@ class RenameUserIDColumn(pygrate.Pygration):
         """Add the username column and copy userid values to it."""
         db.add_column( "user", String( "username") )
         db.execute_sql( "update user set username=userid;" )
+        # create trigger to update the new username column
 
     def hide(self,db):
         """Hide the userid column before completely dropping it."""
