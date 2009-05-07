@@ -67,7 +67,7 @@ class String(Column):
 
     def __init__( self, name, size=None ):
         if not size:
-            size = DEFAULT_SIZE
+            size = String.DEFAULT_SIZE
         Column.__init__( self, "string", name, size )
 
     def oracle_type( self ):

@@ -41,7 +41,7 @@ class RenameUserIDColumn(pygrate.Pygration):
     """Rename the userid column to be username."""
     def add(self,db):
         """Add the username column and copy userid values to it."""
-        db.add_column( "user", String( "username") )
+        db.add_column( "user", pygrate.String( "username") )
         db.execute_sql( "update user set username=userid;" )
         # create trigger to update the new username column
 
