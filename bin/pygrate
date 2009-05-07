@@ -19,14 +19,14 @@ def run_main():
     opts, args = parser.parse_args()
  
     if len(args) == 0:
-        parser.error("An operation must be specified")
-    if len(args) == 1:
         parser.error("A migration set must be specified")
+    if len(args) == 1:
+        parser.error("An operation must be specified")
     if len(args) > 2:
         parser.error("Too many arguments")
 
-    operation = args[0]
-    migration = args[1]
+    migration = args[0]
+    operation = args[1]
 
     path = '.'
     if opts.path:
