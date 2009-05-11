@@ -1,13 +1,14 @@
-from pygrate.pygration import Pygration
+import pygrate
 
 
-class EmployeeTable(Pygration):
+class EmployeeTable(pygrate.Pygration):
+    """Creates an employee table."""
+
+    table = pygrate.Table( "employee",
+            [ pygrate.Number("id")
+            , pygrate.Number("name")
+            ])
+
     def add( self, db ):
-        print "EmployeeTable.add()"
-
-    def hide( self, db ):
-        print "EmployeeTable.hide()"
-
-    def drop( self, db ):
-        print "EmployeeTable.drop()"
+        db.create(table)
 

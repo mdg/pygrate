@@ -77,3 +77,24 @@ class Number(Column):
     def __init__( self, name ):
         Column.__init__( self, "number", name )
 
+
+class Table:
+    def __init__(self, name, columns):
+        self._name = name
+        self._columns = columns
+
+    def name(self):
+        """Get the name of this table."""
+        return self._name
+
+    def num_columns(self):
+        """Get the number of columns in this table."""
+        return len(self._columns)
+
+    def column(self,idx):
+        """Get a specific column in this table."""
+        return self._columns[idx]
+
+    def columns(self):
+        return iter(self._columns)
+
