@@ -1,4 +1,5 @@
 import unittest
+import pygrate
 import pygrate.pygration
 import pygrate.oracle_syntax
 
@@ -8,9 +9,11 @@ class OracleSyntaxTestCase(unittest.TestCase):
         self._syntax = pygrate.oracle_syntax.OracleSyntax()
 
     def testCreateTableSql( self ):
-        columns = [pygrate.pygration.Number( "id" )
-                , pygrate.pygration.String("username", 20)]
-        sql = self._syntax.create_table_sql( "user", columns )
+        t = pygrate.Table("user", \
+                [pygrate.Number("id")
+                ,pygrate.String("username",size=20)
+                ])
+        sql = self._syntax.create_table_sql_2(t)
         expected  = "CREATE TABLE user\n"
         expected += "\t( number id\n"
         expected += "\t, varchar2(20) username\n"

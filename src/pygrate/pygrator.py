@@ -8,6 +8,9 @@ class Pygrator:
         self._syntax = db_conn.syntax()
         self._verbose = True
 
+    def create( self, obj ):
+        pass
+
     def create_table( self, table_name, columns ):
         sql = self._syntax.create_table_sql( table_name, columns )
         self.execute_sql( sql )

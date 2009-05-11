@@ -4,6 +4,15 @@ import database
 class OracleSyntax(database.Syntax):
     """Oracle syntax formatter"""
 
+    def create_table_sql_2( self, table ):
+        sql = "CREATE TABLE %s" % ( table.name() )
+        column_prefix = '( '
+        for c in table.columns():
+            sql += "\n\t%s%s %s" % ( column_prefix, c.oracle_type(), c.name() )
+            column_prefix = ', '
+        sql += "\n\t);"
+        return sql
+
     def create_table_sql( self, table_name, columns ):
         sql = "CREATE TABLE %s" % ( table_name )
         column_prefix = '( '
