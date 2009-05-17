@@ -11,7 +11,12 @@ class Pygrator:
 
     def add(self, obj):
         """Add the object to the schema."""
-        pass
+        if isinstance(obj, pygrate.Table):
+            table_name = obj.name()
+            sql = self._syntax.create_table_sql(obj)
+            self.execute_sql( sql )
+        else:
+            print "add unknown object %s" % repr(obj)
 
     def drop(self, obj):
         """Drop an object from the schema."""
@@ -20,7 +25,7 @@ class Pygrator:
             sql = self._syntax.drop_table_sql( "_hidden_"+ table_name )
             self.execute_sql( sql )
         else:
-            print "drop unknown object %s" % str(obj)
+            print "drop unknown object %s" % repr(obj)
 
     def create_table( self, table_name, columns ):
         sql = self._syntax.create_table_sql( table_name, columns )
