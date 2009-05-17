@@ -15,8 +15,11 @@ def run_main():
     usage = "usage: %prog [options] operation migration"
     parser = optparse.OptionParser( usage=usage )
     parser.add_option( "-p", "--path" )
+    parser.add_option( "-v", "--verbose" )
 
     opts, args = parser.parse_args()
+
+    verbose = True
  
     if len(args) == 0:
         parser.error("A migration set must be specified")
@@ -46,6 +49,9 @@ def run_main():
 
     set = PygrationSet( loader.pygrations() )
     p = pygrate.pygrator.Pygrator( db )
+
+    if verbose:
+        print "migrate: %s" % operation
     set.migrate( p, operation )
 
     db.close()
