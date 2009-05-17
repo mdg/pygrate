@@ -20,6 +20,24 @@ class PygrateTestCase(unittest.TestCase):
 
         self.assertEqual( [ 'employee' ], modules )
 
+    def testImportModule(self):
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        l = pygrate.loader.PygrationLoader(test_dir, 'v001')
+        l._import_module()
+
+        m = l._modules
+        self.assertEqual( 1, len(m) )
+        self.assertEqual( types.ModuleType, type(m[0]) )
+
+    def testLoad_1(self):
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        l = pygrate.loader.PygrationLoader(test_dir, 'v001')
+        p = l.load_1()
+
+        print dir(p[0])
+        self.assertEqual( 1, len(p) )
+        self.assertTrue( isinstance(p[0], pygrate.Pygration) )
+
     def testImportModules( self ):
         self._loader._import_modules()
         m = self._loader._modules

@@ -96,8 +96,25 @@ class PygrationLoader:
         self._create_pygrations()
         return self.pygrations()
 
+    def load_1(self):
+        self._import_module()
+        self._create_pygrations()
+        return self.pygrations()
+
     def pygrations( self ):
         return self._pygrations
+
+    def _import_module( self ):
+        # pygration_path = os.path.join( self._path, self._version )
+        # pygration_path = os.path.join( pygration_path, ".py" )
+        module_name = os.path.join( self._version )
+        print "pygration_path = "+ str(module_name)
+
+        sys.path.insert( 0, os.path.abspath( self._path ) )
+        # should filter these files somehow
+        mod_trip = imp.find_module(module_name)
+        mod = imp.load_module(module_name, *mod_trip)
+        self._modules.append( mod )
 
     def _import_modules( self ):
         module_names = self._list_modules()
