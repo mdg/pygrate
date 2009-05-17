@@ -23,16 +23,7 @@ class PygrationSet(pygration.Pygration):
 
     def migrate( self, db, stage ):
         f = self._function[stage]
-        try:
-            f(db)
-        except Exception:
-            # typ, err, tb = sys.exc_info()
-            tb_lines = traceback.format_exc().splitlines()
-            print ''
-            print "Pygration", tb_lines[-1]
-            print tb_lines[-3]
-            print tb_lines[-2]
-            print ''
+        f(db)
 
     def add( self, db ):
         """Add elements to the db"""
