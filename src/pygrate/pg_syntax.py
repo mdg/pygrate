@@ -6,13 +6,12 @@ class PgSyntax(database.Syntax):
 
     def create_table_sql( self, table ):
         """Format a postgres create table command."""
-        print "PgSyntax.create_table_sql"
 
         sql = "CREATE TABLE %s" % ( table.name() )
         column_prefix = '( '
         for c in table.columns():
-            sql += "\n\t%s%s %s" % ( column_prefix, c.postgres_type()
-                    , c.name() )
+            sql += "\n\t%s%s %s" % ( column_prefix, c.name()
+                    , c.postgres_type() )
             column_prefix = ', '
         sql += "\n\t);"
         return sql
