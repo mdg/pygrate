@@ -80,7 +80,7 @@ class String(Column):
         Column.__init__( self, "string", name, size )
 
     def postgres_type( self ):
-        return "varchar(%d)" % ( self._size )
+        return "text"
 
     def oracle_type( self ):
         return "varchar2(%d)" % ( self._size )
