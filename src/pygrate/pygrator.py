@@ -1,27 +1,38 @@
+import pygrate
+
 
 class Pygrator:
     """The user's interface to the DB from an implemented Pygration."""
-
 
     def __init__( self, db_conn ):
         self._db = db_conn
         self._syntax = db_conn.syntax()
         self._verbose = True
 
-    def create( self, obj ):
+    def add(self, obj):
+        """Add the object to the schema."""
         pass
+
+    def drop(self, obj):
+        """Drop an object from the schema."""
+        if isinstance(obj, pygrate.Table):
+            table_name = obj.name()
+            sql = self._syntax.drop_table_sql( "_hidden_"+ table_name )
+            self.execute_sql( sql )
+        else:
+            print "drop unknown object %s" % str(obj)
 
     def create_table( self, table_name, columns ):
         sql = self._syntax.create_table_sql( table_name, columns )
         self.execute_sql( sql )
 
-    def hide_table( self, table_name ):
+    def drop_table( self, table_name ):
         """Hide a table before deleting it."""
         sql = self._syntax.rename_table_sql( table_name, "_hidden_"
                 + str(table_name) )
         self.execute_sql( sql )
 
-    def drop_table( self, table_name ):
+    def commit_drop_table( self, table_name ):
         """Drop a table that was previously hidden."""
         sql = self._syntax.drop_table_sql( "_hidden_"+ str(table_name) )
         self.execute_sql( sql )
@@ -50,8 +61,8 @@ class Pygrator:
     def execute_sql_file( self, sql_file_name ):
         sql_file = open( sql_file_name )
         sql_file_string = sql_file.read()
-        self._db.execute_sql_file( sql_file_string )
         sql_file.close()
+        self.execute_sql( sql_file_string )
 
     def _split_table_column( self, table_column_name ):
         """Split a table.column string into separate table & column strings
@@ -60,4 +71,57 @@ class Pygrator:
         table = split_strings[0]
         column = split_strings[1]
         return table, column
+
+
+class AddPygrator(Pygrator):
+    """Pygrator for the add step."""
+
+    def add(self, obj):
+        """Add the object to the schema."""
+        if isinstance(obj, pygrate.Table):
+            sql = self._syntax.create_table_sql(obj)
+            self.execute_sql(sql)
+        else:
+            print "add unknown object %s" % str(obj)
+
+class DropPygrator(Pygrator):
+    """Pygrator for the drop step."""
+
+    def drop(self, obj):
+        """Drop the object to the schema."""
+        if isinstance(obj, pygrate.Table):
+            sql = self._syntax.drop_table_sql(obj)
+            self.execute_sql(sql)
+        else:
+            print "drop unknown object %s" % str(obj)
+
+class CommitPygrator(Pygrator):
+    """Pygrator to commit changes."""
+
+    def drop(self, obj):
+        """Commit a dropped object to the schema."""
+        if isinstance(obj, pygrate.Table):
+            sql = self._syntax.drop_table_sql(obj)
+            self.execute_sql(sql)
+        else:
+            print "commit drop of unknown object %s" % str(obj)
+
+class RollbackPygrator(Pygrator):
+    """Pygrator to rollback changes."""
+
+    def add(self, obj):
+        """Rollback an added object."""
+        if isinstance(obj, pygrate.Table):
+            sql = self._syntax.drop_table_sql(obj)
+            self.execute_sql(sql)
+        else:
+            print "rollback an unknown added object %s" % str(obj)
+
+    def drop(self, obj):
+        """Rollback a dropped object from the schema."""
+        if isinstance(obj, pygrate.Table):
+            sql = self._syntax.drop_table_sql(obj)
+            self.execute_sql(sql)
+        else:
+            print "rollback an unknown dropped object %s" % str(obj)
 

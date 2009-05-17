@@ -12,6 +12,9 @@ class Pygration:
 
     def pre_add_check( self, db ):
         """Validate the DB is in the expected state prior to the add."""
+        # p = PreAddCheckPygrator(db)
+        # self.add(p)
+        # do nothing for now.  get actual behavior right first.
         pass
 
     def post_add_check( self, db ):
@@ -22,21 +25,24 @@ class Pygration:
         """Add elements to the db"""
         pass
 
-    def hide( self, db ):
+    def drop( self, db ):
         """Hide elements in the db before dropping them"""
         pass
 
-    def drop( self, db ):
+    def commit_drop( self, db ):
         """Permanently drop elements from the db"""
-        pass
+        p = CommitPygrator(db)
+        self.drop(p)
 
     def rollback_add( self, db ):
         """Rollback any items that were added to the db"""
-        pass
+        p = RollbackPygrator(db)
+        self.add(p)
 
-    def rollback_hide( self, db ):
+    def rollback_drop( self, db ):
         """Rollback any items that were hidden in the db"""
-        pass
+        p = RollbackPygrator(db)
+        self.add(p)
 
     def failure( self ):
         return self._failure
