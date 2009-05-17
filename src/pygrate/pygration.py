@@ -63,6 +63,9 @@ class Column:
     def name( self ):
         return self._name
 
+    def postgres_type( self ):
+        return self._type
+
     def oracle_type( self ):
         return self._type
 
@@ -75,6 +78,9 @@ class String(Column):
         if not size:
             size = String.DEFAULT_SIZE
         Column.__init__( self, "string", name, size )
+
+    def postgres_type( self ):
+        return "varchar(%d)" % ( self._size )
 
     def oracle_type( self ):
         return "varchar2(%d)" % ( self._size )
