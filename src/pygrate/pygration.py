@@ -89,6 +89,10 @@ class Number(Column):
     def __init__( self, name ):
         Column.__init__( self, "number", name )
 
+class Integer(Column):
+    def __init__( self, name ):
+        Column.__init__( self, "integer", name )
+
 
 class Table:
     def __init__(self, name, columns):
