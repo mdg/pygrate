@@ -1,15 +1,17 @@
 import database
 import pg_syntax
+import pg
 
 
 class PygresqlConnection(database.Connection):
     """An oracle database connection wrapper."""
 
-    def __init__( self ):
-        import pg
+    def __init__(self, opts):
         database.Connection.__init__(self, pg_syntax.PgSyntax())
-        self._conn = pg.connect(dbname='prospekz', user='prospekz_dba'
-                , passwd='dba123')
+        db = opts['database']
+        user = opts['prospekz_dba']
+        passwd = opts['passwd']
+        self._conn = pg.connect(dbname=db, user=user, passwd=passwd)
 
     def close( self ):
         """Close this pygresql connection."""

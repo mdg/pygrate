@@ -4,7 +4,7 @@ import pygrate.loader
 import pygrate.database
 import pygrate.pygrator
 from pygrate.pygration_set import PygrationSet
-from pygrate.oracle_connection import OracleConnection
+from pygrate.pygresql_connection import PygresqlConnection
 import optparse
 import os.path
 import sys
@@ -33,8 +33,13 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
+    conf_file = open('pygrate.yaml')
+    db_file = open('database.d/dev.yaml')
+    conf = pygrate.database.Config()
+    conf.load(conf_file, db_file)
+
     # db = pygrate.database.open( path )
-    db = OracleConnection()
+    db = PygresqlConnection(conf.db_opts)
 
     loader = pygrate.loader.PygrationLoader( path, migration )
     loader.load()

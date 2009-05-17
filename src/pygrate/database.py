@@ -1,3 +1,9 @@
+import yaml
+try:
+    from yaml import CLoader as Loader
+    from yaml import CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 
 class Syntax:
@@ -49,4 +55,23 @@ class Connection:
 def open( path ):
     """Open a database connection as configured at the given path."""
     return Connection( Syntax() )
+
+
+class Config:
+    def __init__(self):
+        self.schema = None
+        self.db_opts = {}
+
+    def load(self, conf_file, db_file):
+        self._load_yaml_conf(conf_file)
+        self._load_yaml_db(db_file)
+
+
+    def _load_yaml_conf(self, conf_file):
+        conf = yaml.load(conf_file)
+        self.schema = conf['schema']
+
+    def _load_yaml_db(self, db_file):
+        self.db_opts = yaml.load(db_file)
+        self.driver = self.db_opts['driver']
 
