@@ -30,6 +30,7 @@ class Connection:
     """Base class for a connected DB."""
     def __init__( self, syntax ):
         self._syntax = syntax
+        self._last_sql = ''
 
     def close( self ):
         pass
@@ -38,7 +39,11 @@ class Connection:
         return self._syntax
 
     def execute_sql( self, sql ):
+        """Execute SQL should be overridden by child classes."""
         pass
+
+    def last_sql(self):
+        return self._last_sql
 
 
 def open( path ):
