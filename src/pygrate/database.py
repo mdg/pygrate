@@ -60,6 +60,7 @@ def open( path ):
 class Config:
     def __init__(self):
         self.schema = None
+        self.driver = None
         self.db_opts = {}
 
     def load(self, conf_file, db_file):
@@ -69,9 +70,15 @@ class Config:
 
     def _load_yaml_conf(self, conf_file):
         conf = yaml.load(conf_file)
-        self.schema = conf['schema']
+        print "conf = %s" % repr(conf)
+        if conf and 'schema' in conf:
+            self.schema = conf['schema']
 
     def _load_yaml_db(self, db_file):
         self.db_opts = yaml.load(db_file)
-        self.driver = self.db_opts['driver']
+        if self.db_opts:
+            if 'driver' in self.db_opts:
+                self.driver = self.db_opts['driver']
+        else:
+            self.db_opts = {}
 

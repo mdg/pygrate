@@ -30,3 +30,8 @@ password: app_pass
             ,'user':'app_user', 'password':'app_pass'}
             , self._config.db_opts)
 
+    def testLoadEmptyYaml(self):
+        self._config.load('', '')
+        self.assertEqual(None, self._config.schema)
+        self.assertEqual({}, self._config.db_opts)
+
