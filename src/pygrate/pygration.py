@@ -1,11 +1,26 @@
 
+# forward declaration only.  redefined below.
+def is_pygration_subclass(cls):
+    pass
 
-class Pygration:
+
+class PygrationType(type):
+    pygrations = []
+
+    def __init__(cls, name, bases, cls_dict):
+        super(PygrationType, cls).__init__(name, bases, cls_dict)
+        if not is_pygration_subclass(cls):
+            return
+        cls.pygrations.append(cls)
+
+
+class Pygration(object):
     """A collection of steps to change the database.
     
     The pygration includes steps to make the change prior to and
     subsequent to the application deployment.
     """
+    __metaclass__ = PygrationType
 
     def __init__( self ):
         self._failure = False
@@ -113,4 +128,13 @@ class Table:
 
     def columns(self):
         return iter(self._columns)
+
+
+def is_pygration_subclass(cls):
+    if not isinstance(cls, type):
+        return False
+    # print "%s.name = '%s'" % (cls, cls.__name__)
+    return issubclass(cls, Pygration) \
+            and ( cls != Pygration ) \
+            and ( cls.__name__ != "PygrationSet" )
 

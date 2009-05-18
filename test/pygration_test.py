@@ -1,6 +1,18 @@
 import pygrate
+from pygrate import pygration
+from pygrate.pygration import PygrationType
+from pygrate.pygration_set import PygrationSet
 import unittest
 
+
+class PygrationTypeTestCase(unittest.TestCase):
+    def test_pygration_not_subclass(self):
+        p = pygrate.Pygration
+        self.assertFalse( pygration.is_pygration_subclass(p) )
+
+    def test_pygration_set_not_subclass(self):
+        self.assertFalse( pygration.is_pygration_subclass( PygrationSet ) )
+                
 
 class PygrationColumnTestCase(unittest.TestCase):
     def testString( self ):

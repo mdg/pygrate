@@ -1,4 +1,5 @@
 import pygration
+from pygration_set import PygrationSet
 import os.path
 import sys
 import imp
@@ -162,9 +163,6 @@ class PygrationLoader:
                 newest = v
         return newest
 
-    def _pygration_subclass( self, obj ):
-        if type(obj) is not types.ClassType:
-            return False
-        return issubclass(obj, pygration.Pygration) \
-                and not obj == pygration.Pygration
+    def _pygration_subclass( self, cls ):
+        return pygration.is_pygration_subclass(cls)
 
