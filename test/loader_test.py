@@ -34,9 +34,9 @@ class PygrateTestCase(unittest.TestCase):
         l = pygrate.loader.PygrationLoader(test_dir, 'v001')
         p = l.load_1()
 
-        print dir(p[0])
-        self.assertEqual( 1, len(p) )
-        self.assertTrue( isinstance(p[0], pygrate.Pygration) )
+        self.assertEqual( 2, len(p) )
+        self.assertEqual( "SalaryTable", p[0].__class__.__name__ )
+        self.assertEqual( "EmployeeTable", p[1].__class__.__name__ )
 
     def testImportModules( self ):
         self._loader._import_modules()
