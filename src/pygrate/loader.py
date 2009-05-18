@@ -1,5 +1,6 @@
 import pygration
 from pygration_set import PygrationSet
+from pygration import PygrationType
 import os.path
 import sys
 import imp
@@ -98,24 +99,33 @@ class PygrationLoader:
         return self.pygrations()
 
     def load_1(self):
-        self._import_module()
-        self._create_pygrations()
-        return self.pygrations()
+        return self._import_module()
 
     def pygrations( self ):
         return self._pygrations
 
     def _import_module( self ):
-        # pygration_path = os.path.join( self._path, self._version )
-        # pygration_path = os.path.join( pygration_path, ".py" )
+        """Import the module & pygrations for the given version.
+
+        Also creates pygrations from that module and does so in the
+        order they are written in the file.
+        """
+
+        initial_count = len(PygrationType.pygrations)
         module_name = os.path.join( self._version )
         print "pygration_path = "+ str(module_name)
 
         sys.path.insert( 0, os.path.abspath( self._path ) )
-        # should filter these files somehow
         mod_trip = imp.find_module(module_name)
         mod = imp.load_module(module_name, *mod_trip)
         self._modules.append( mod )
+
+        pygration_classes = PygrationType.pygrations[initial_count:]
+        pygrations = []
+        for pcls in pygration_classes:
+            pygrations.append( pcls() )
+        self._pygrations = pygrations
+        return self._pygrations
 
     def _import_modules( self ):
         module_names = self._list_modules()

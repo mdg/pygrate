@@ -42,6 +42,8 @@ class PygrateTestCase(unittest.TestCase):
                 PygrationType.pygrations[initial_len].__name__)
         self.assertEqual("EmployeeTable", \
                 PygrationType.pygrations[initial_len+1].__name__)
+        self.assertEqual("SalaryTable", p[0].__class__.__name__)
+        self.assertEqual("EmployeeTable", p[1].__class__.__name__)
         # self.assertEqual([], PygrationType.pygrations)
 
     def testImportModules( self ):
