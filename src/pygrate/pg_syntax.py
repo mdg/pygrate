@@ -27,8 +27,8 @@ class PgSyntax(database.Syntax):
         """Format a postgres statement to add a column to a table."""
         print "PgSyntax.add_column_sql"
 
-        sql = "ALTER TABLE %s ADD %s %s;" % ( table, column_obj.postgres_type()
-                , column_obj.name() )
+        sql = "ALTER TABLE %s ADD %s %s;" % ( table, column_obj.name()
+                , column_obj.postgres_type() )
         return sql
 
     def rename_column_sql( self, table, old_name, new_name ):

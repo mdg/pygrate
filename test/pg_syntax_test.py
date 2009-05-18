@@ -13,13 +13,13 @@ class PgSyntaxTestCase(unittest.TestCase):
 
     def testCreateTableSql( self ):
         t = pygrate.Table("user", \
-                [pygrate.Number("id")
+                [pygrate.Integer("id")
                 ,pygrate.String("username",size=20)
                 ])
         sql = self._syntax.create_table_sql(t)
         expected  = "CREATE TABLE user\n"
-        expected += "\t( number id\n"
-        expected += "\t, varchar(20) username\n"
+        expected += "\t( id integer\n"
+        expected += "\t, username text\n"
         expected += "\t);"
         self.assertEqual( expected, sql )
 
@@ -34,5 +34,5 @@ class PgSyntaxTestCase(unittest.TestCase):
     def testAddColumnSql( self ):
         sql = self._syntax.add_column_sql("user"
                 , pygrate.pygration.String("first_name",32))
-        self.assertEqual("ALTER TABLE user ADD varchar(32) first_name;", sql)
+        self.assertEqual("ALTER TABLE user ADD first_name text;", sql)
 
