@@ -1,5 +1,6 @@
 import database
 import oracle_syntax
+import cx_Oracle
 
 
 class OracleConnection(database.Connection):
