@@ -1,5 +1,6 @@
 import pygrate.loader
 import pygrate.pygration
+from pygrate.pygration import PygrationType
 import unittest
 import os.path
 import types
@@ -19,6 +20,31 @@ class PygrateTestCase(unittest.TestCase):
         modules = self._loader._list_modules()
 
         self.assertEqual( [ 'employee' ], modules )
+
+    def testImportModule(self):
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        l = pygrate.loader.PygrationLoader(test_dir, 'v001')
+        l._import_module()
+
+        m = l._modules
+        self.assertEqual( 1, len(m) )
+        self.assertEqual( types.ModuleType, type(m[0]) )
+
+    def testLoad_1(self):
+        initial_len = len(PygrationType.pygrations)
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        l = pygrate.loader.PygrationLoader(test_dir, 'v001')
+        p = l.load_1()
+
+        self.assertEqual( 2, len(p) )
+        self.assertEqual(2, len(PygrationType.pygrations)-initial_len)
+        self.assertEqual("SalaryTable", \
+                PygrationType.pygrations[initial_len].__name__)
+        self.assertEqual("EmployeeTable", \
+                PygrationType.pygrations[initial_len+1].__name__)
+        self.assertEqual("SalaryTable", p[0].__class__.__name__)
+        self.assertEqual("EmployeeTable", p[1].__class__.__name__)
+        # self.assertEqual([], PygrationType.pygrations)
 
     def testImportModules( self ):
         self._loader._import_modules()

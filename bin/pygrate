@@ -4,7 +4,7 @@ import pygrate.loader
 import pygrate.database
 import pygrate.pygrator
 from pygrate.pygration_set import PygrationSet
-from pygrate.oracle_connection import OracleConnection
+from pygrate.pygresql_connection import PygresqlConnection
 import optparse
 import os.path
 import sys
@@ -15,8 +15,11 @@ def run_main():
     usage = "usage: %prog [options] operation migration"
     parser = optparse.OptionParser( usage=usage )
     parser.add_option( "-p", "--path" )
+    parser.add_option( "-v", "--verbose" )
 
     opts, args = parser.parse_args()
+
+    verbose = True
  
     if len(args) == 0:
         parser.error("A migration set must be specified")
@@ -33,14 +36,30 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
+    # pygration config
+    if os.path.exists('pygrate.yaml'):
+        conf_file = open('pygrate.yaml')
+    else:
+        conf_file = ''
+    # db config
+    if os.path.exists('database.d/dev.yaml'):
+        db_file = open('database.d/dev.yaml')
+    else:
+        db_file = ''
+    conf = pygrate.database.Config()
+    conf.load(conf_file, db_file)
+
     # db = pygrate.database.open( path )
-    db = OracleConnection()
+    db = PygresqlConnection(conf.db_opts)
 
     loader = pygrate.loader.PygrationLoader( path, migration )
     loader.load()
 
     set = PygrationSet( loader.pygrations() )
     p = pygrate.pygrator.Pygrator( db )
+
+    if verbose:
+        print "migrate: %s" % operation
     set.migrate( p, operation )
 
     db.close()

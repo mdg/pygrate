@@ -1,17 +1,35 @@
 
+# forward declaration only.  redefined below.
+def is_pygration_subclass(cls):
+    pass
 
-class Pygration:
+
+class PygrationType(type):
+    pygrations = []
+
+    def __init__(cls, name, bases, cls_dict):
+        super(PygrationType, cls).__init__(name, bases, cls_dict)
+        if not is_pygration_subclass(cls):
+            return
+        cls.pygrations.append(cls)
+
+
+class Pygration(object):
     """A collection of steps to change the database.
     
     The pygration includes steps to make the change prior to and
     subsequent to the application deployment.
     """
+    __metaclass__ = PygrationType
 
     def __init__( self ):
         self._failure = False
 
     def pre_add_check( self, db ):
         """Validate the DB is in the expected state prior to the add."""
+        # p = PreAddCheckPygrator(db)
+        # self.add(p)
+        # do nothing for now.  get actual behavior right first.
         pass
 
     def post_add_check( self, db ):
@@ -22,21 +40,24 @@ class Pygration:
         """Add elements to the db"""
         pass
 
-    def hide( self, db ):
+    def drop( self, db ):
         """Hide elements in the db before dropping them"""
         pass
 
-    def drop( self, db ):
+    def commit_drop( self, db ):
         """Permanently drop elements from the db"""
-        pass
+        p = CommitPygrator(db)
+        self.drop(p)
 
     def rollback_add( self, db ):
         """Rollback any items that were added to the db"""
-        pass
+        p = RollbackPygrator(db)
+        self.add(p)
 
-    def rollback_hide( self, db ):
+    def rollback_drop( self, db ):
         """Rollback any items that were hidden in the db"""
-        pass
+        p = RollbackPygrator(db)
+        self.add(p)
 
     def failure( self ):
         return self._failure
@@ -57,6 +78,9 @@ class Column:
     def name( self ):
         return self._name
 
+    def postgres_type( self ):
+        return self._type
+
     def oracle_type( self ):
         return self._type
 
@@ -70,12 +94,19 @@ class String(Column):
             size = String.DEFAULT_SIZE
         Column.__init__( self, "string", name, size )
 
+    def postgres_type( self ):
+        return "text"
+
     def oracle_type( self ):
         return "varchar2(%d)" % ( self._size )
 
 class Number(Column):
     def __init__( self, name ):
         Column.__init__( self, "number", name )
+
+class Integer(Column):
+    def __init__( self, name ):
+        Column.__init__( self, "integer", name )
 
 
 class Table:
@@ -97,4 +128,13 @@ class Table:
 
     def columns(self):
         return iter(self._columns)
+
+
+def is_pygration_subclass(cls):
+    if not isinstance(cls, type):
+        return False
+    # print "%s.name = '%s'" % (cls, cls.__name__)
+    return issubclass(cls, Pygration) \
+            and ( cls != Pygration ) \
+            and ( cls.__name__ != "PygrationSet" )
 

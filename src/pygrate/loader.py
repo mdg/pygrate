@@ -1,4 +1,6 @@
 import pygration
+from pygration_set import PygrationSet
+from pygration import PygrationType
 import os.path
 import sys
 import imp
@@ -96,7 +98,33 @@ class PygrationLoader:
         self._create_pygrations()
         return self.pygrations()
 
+    def load_1(self):
+        return self._import_module()
+
     def pygrations( self ):
+        return self._pygrations
+
+    def _import_module( self ):
+        """Import the module & pygrations for the given version.
+
+        Also creates pygrations from that module and does so in the
+        order they are written in the file.
+        """
+
+        initial_count = len(PygrationType.pygrations)
+        module_name = os.path.join( self._version )
+        print "pygration_path = "+ str(module_name)
+
+        sys.path.insert( 0, os.path.abspath( self._path ) )
+        mod_trip = imp.find_module(module_name)
+        mod = imp.load_module(module_name, *mod_trip)
+        self._modules.append( mod )
+
+        pygration_classes = PygrationType.pygrations[initial_count:]
+        pygrations = []
+        for pcls in pygration_classes:
+            pygrations.append( pcls() )
+        self._pygrations = pygrations
         return self._pygrations
 
     def _import_modules( self ):
@@ -145,9 +173,6 @@ class PygrationLoader:
                 newest = v
         return newest
 
-    def _pygration_subclass( self, obj ):
-        if type(obj) is not types.ClassType:
-            return False
-        return issubclass(obj, pygration.Pygration) \
-                and not obj == pygration.Pygration
+    def _pygration_subclass( self, cls ):
+        return pygration.is_pygration_subclass(cls)
 
