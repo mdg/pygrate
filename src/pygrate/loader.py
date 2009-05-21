@@ -15,7 +15,7 @@ class Version:
     def is_pygration(self):
         return self._is_pygration
 
-    def compare(self, other):
+    def __cmp__(self, other):
         """Compare 2 versions to see which is earlier."""
         if not other:
             return -1
@@ -83,11 +83,14 @@ class Version:
         self._string = ver_string
         self._array = array
 
+    def __repr__(self):
+        return "<Version(%s)>" % self._string
+
 
 class PygrationLoader:
     """Loads a given set of Pygrations at runtime."""
 
-    def __init__( self, path, version ):
+    def __init__( self, path, version=None ):
         self._path = path
         self._version = version
         self._modules = []
@@ -98,7 +101,7 @@ class PygrationLoader:
         self._create_pygrations()
         return self.pygrations()
 
-    def load_1(self):
+    def load(self):
         return self._import_module()
 
     def pygrations( self ):
@@ -127,43 +130,6 @@ class PygrationLoader:
         self._pygrations = pygrations
         return self._pygrations
 
-    def _import_modules( self ):
-        module_names = self._list_modules()
-        modules = []
-        sys.path.insert( 0, os.path.abspath( self._path ) )
-        for n in module_names:
-            # should filter these files somehow
-            import_path = os.path.join( self._version, n )
-            mod_trip = imp.find_module(import_path)
-            mod = imp.load_module(import_path, *mod_trip)
-            modules.append( mod )
-        self._modules.extend( modules )
-
-        # mod_name = os.path.join( self._path, self._migration )
-        # print "mod_name = "+ str(mod_name)
-        # mod = __import__( mod_name )
-        # print str(dir(mod))
-
-    def _create_pygrations( self ):
-        pygs = []
-        for mod in self._modules:
-            # print "module: "+ str(mod) + "\n"
-            for pyg in mod.__dict__.values():
-                if self._pygration_subclass(pyg):
-                    # print "mig: "+ str(pyg.__name__)
-                    pygs.append(pyg())
-        self._pygrations.extend( pygs )
-
-    def _list_modules( self ):
-        pygration_path = os.path.join( self._path, self._version )
-        print "pygration_path = "+ str(pygration_path)
-        files = os.listdir( pygration_path )
-        pygrations = []
-        for f in files:
-            if f.endswith( '.py' ):
-                pygrations.append( f.replace( ".py", "" ) )
-        return pygrations
-
     def _find_newest_version( self ):
         dirs = os.listdir( self._path )
         newest = None
@@ -173,6 +139,22 @@ class PygrationLoader:
                 newest = v
         return newest
 
-    def _pygration_subclass( self, cls ):
-        return pygration.is_pygration_subclass(cls)
+    def _find_versions( self ):
+        #print "_find_versions"
+        files = os.listdir( self._path )
+        versions = []
+        for f in files:
+            p = os.path.join(self._path, f)
+            if not os.path.isfile(p):
+                continue
+            #print "f = %s" % f
+            root, ext = os.path.splitext(f)
+            if ext != ".py":
+                continue
+            #print "root, ext = %s, %s" % (root, ext)
+            v = Version( root )
+            if v.is_pygration():
+                versions.append(v)
+        versions.sort()
+        return versions
 

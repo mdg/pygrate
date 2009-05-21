@@ -1,25 +1,16 @@
 import pygrate.loader
 import pygrate.pygration
 from pygrate.pygration import PygrationType
+from pygrate.loader import Version
 import unittest
 import os.path
 import types
 
 
-class TestPygration(pygrate.pygration.Pygration):
-    def add( self ):
-        pass
-
-
 class PygrateTestCase(unittest.TestCase):
     def setUp( self ):
-        test_dir = os.path.dirname( __file__ )
-        self._loader = pygrate.loader.PygrationLoader( test_dir, 'v1' )
-
-    def testListModules( self ):
-        modules = self._loader._list_modules()
-
-        self.assertEqual( [ 'employee' ], modules )
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        self._loader = pygrate.loader.PygrationLoader( test_dir )
 
     def testImportModule(self):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
@@ -30,11 +21,11 @@ class PygrateTestCase(unittest.TestCase):
         self.assertEqual( 1, len(m) )
         self.assertEqual( types.ModuleType, type(m[0]) )
 
-    def testLoad_1(self):
+    def testLoad(self):
         initial_len = len(PygrationType.pygrations)
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
         l = pygrate.loader.PygrationLoader(test_dir, 'v001')
-        p = l.load_1()
+        p = l.load()
 
         self.assertEqual( 2, len(p) )
         self.assertEqual(2, len(PygrationType.pygrations)-initial_len)
@@ -46,31 +37,15 @@ class PygrateTestCase(unittest.TestCase):
         self.assertEqual("EmployeeTable", p[1].__class__.__name__)
         # self.assertEqual([], PygrationType.pygrations)
 
-    def testImportModules( self ):
-        self._loader._import_modules()
-        m = self._loader._modules
-        self.assertEqual( 1, len(m) )
-        self.assertEqual( types.ModuleType, type(m[0]) )
-
-    def testLoad( self ):
-        self._loader.load()
-        p = self._loader.pygrations()
-
-        self.assertEqual( 1, len(p) )
-        self.assertTrue( isinstance( p[0], pygrate.pygration.Pygration ) )
+    def test_find_versions(self):
+        v001 = Version('v001')
+        v002 = Version('v002')
+        v07 = Version('v0-7')
+        self.assertEqual([v07, v001, v002], self._loader._find_versions())
 
     def testFindNewestVersion(self):
         newest = self._loader._find_newest_version()
         self.assertEqual( "v1", newest._string )
-
-    def testPygrationSubclass( self ):
-        tp = TestPygration
-        bp = pygrate.pygration.Pygration
-        dict = {}
-
-        self.assertTrue( self._loader._pygration_subclass( tp ) )
-        self.assertFalse( self._loader._pygration_subclass( bp ) )
-        self.assertFalse( self._loader._pygration_subclass( dict ) )
 
 
 class PygrationLoadErrorsTest(unittest.TestCase):
@@ -144,35 +119,40 @@ class VersionTestCase(unittest.TestCase):
         """Test that a version with a sub-build number is compared later"""
         v1 = pygrate.loader.Version("v1")
         v2 = pygrate.loader.Version("v1-2")
-        self.assertTrue( v1.compare(v2) < 0 )
-        self.assertTrue( v2.compare(v1) > 0 )
+        self.assertTrue( cmp(v1, v2) < 0 )
+        self.assertTrue( cmp(v2, v1) > 0 )
 
     def test_numeric_compare(self):
         """Test that a numeric version is compared as a number."""
         v1 = pygrate.loader.Version("v1-2")
         v2 = pygrate.loader.Version("v1-12")
-        self.assertTrue( v1.compare(v2) < 0 )
-        self.assertTrue( v2.compare(v1) > 0 )
+        self.assertTrue( cmp(v1, v2) < 0 )
+        self.assertTrue( cmp(v2, v1) > 0 )
 
     def test_underscore_comparison(self):
         v1 = pygrate.loader.Version("v0_1_2")
         v2 = pygrate.loader.Version("v0_2_2")
-        self.assertTrue( v1.compare(v2) < 0 )
-        self.assertTrue( v2.compare(v1) > 0 )
+        self.assertTrue( cmp(v1, v2) < 0 )
+        self.assertTrue( cmp(v2, v1) > 0 )
 
     def test_dash_comparison(self):
         v1 = pygrate.loader.Version("v0-1-2")
         v2 = pygrate.loader.Version("v0-2-2")
-        self.assertTrue( v1.compare(v2) < 0 )
-        self.assertTrue( v2.compare(v1) > 0 )
+        self.assertTrue( cmp(v1, v2) < 0 )
+        self.assertTrue( cmp(v2, v1) > 0 )
 
     def test_dot_comparison(self):
         v1 = pygrate.loader.Version("v0.1.2")
         v2 = pygrate.loader.Version("v0.2.2")
-        self.assertTrue( v1.compare(v2) < 0 )
-        self.assertTrue( v2.compare(v1) > 0 )
+        self.assertTrue( cmp(v1, v2) < 0 )
+        self.assertTrue( cmp(v2, v1) > 0 )
 
     def test_self_comparison(self):
         v = pygrate.loader.Version("v0.1.2")
-        self.assertTrue( v.compare(v) == 0 )
+        self.assertTrue( cmp(v, v) == 0 )
+
+    def test_equality_comparison(self):
+        vA = Version("v001")
+        vB = Version("v001")
+        self.assertTrue(vA == vB)
 
