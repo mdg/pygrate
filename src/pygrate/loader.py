@@ -122,6 +122,7 @@ class PygrationLoader:
         mod_trip = imp.find_module(module_name)
         mod = imp.load_module(module_name, *mod_trip)
         self._modules.append( mod )
+        # need to close the file in mod_trip
 
         pygration_classes = PygrationType.pygrations[initial_count:]
         pygrations = []
