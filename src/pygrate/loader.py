@@ -130,15 +130,6 @@ class PygrationLoader:
         self._pygrations = pygrations
         return self._pygrations
 
-    def _find_newest_version( self ):
-        dirs = os.listdir( self._path )
-        newest = None
-        for d in dirs:
-            v = Version( d )
-            if v.is_pygration() and ( (not newest) or cmp(v, newest) > 0 ):
-                newest = v
-        return newest
-
     def _find_versions( self ):
         #print "_find_versions"
         files = os.listdir( self._path )

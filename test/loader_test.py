@@ -43,10 +43,6 @@ class PygrateTestCase(unittest.TestCase):
         v07 = Version('v0-7')
         self.assertEqual([v07, v001, v002], self._loader._find_versions())
 
-    def testFindNewestVersion(self):
-        newest = self._loader._find_newest_version()
-        self.assertEqual( "v1", newest._string )
-
 
 class PygrationLoadErrorsTest(unittest.TestCase):
     """Test pygration loads with errors to verify error behavior."""
