@@ -7,10 +7,22 @@ import os.path
 import types
 
 
-class PygrateTestCase(unittest.TestCase):
+class VersionFinderTestCase(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
-        self._loader = pygrate.loader.PygrationLoader( test_dir )
+        self._finder = pygrate.loader.VersionFinder( test_dir )
+
+    def test_find_versions(self):
+        v001 = Version('v001')
+        v002 = Version('v002')
+        v07 = Version('v0-7')
+        self.assertEqual([v07, v001, v002], self._finder.find_versions())
+
+
+class LoaderTestCase(unittest.TestCase):
+    def setUp( self ):
+        test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+        self._loader = pygrate.loader.PygrationLoader( test_dir, 'v001' )
 
     def testImportModule(self):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
@@ -36,12 +48,6 @@ class PygrateTestCase(unittest.TestCase):
         self.assertEqual("SalaryTable", p[0].__class__.__name__)
         self.assertEqual("EmployeeTable", p[1].__class__.__name__)
         # self.assertEqual([], PygrationType.pygrations)
-
-    def test_find_versions(self):
-        v001 = Version('v001')
-        v002 = Version('v002')
-        v07 = Version('v0-7')
-        self.assertEqual([v07, v001, v002], self._loader._find_versions())
 
 
 class PygrationLoadErrorsTest(unittest.TestCase):

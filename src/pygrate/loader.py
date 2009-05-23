@@ -87,16 +87,42 @@ class Version:
         return "<Version(%s)>" % self._string
 
 
+class VersionFinder(object):
+    """Object for finding available pygration_sets."""
+    def __init__(self, path):
+        self._path = path
+        self._versions = []
+
+    def find_versions( self ):
+        #print "_find_versions"
+        files = os.listdir( self._path )
+        versions = []
+        for f in files:
+            p = os.path.join(self._path, f)
+            if not os.path.isfile(p):
+                continue
+            #print "f = %s" % f
+            root, ext = os.path.splitext(f)
+            if ext != ".py":
+                continue
+            #print "root, ext = %s, %s" % (root, ext)
+            v = Version( root )
+            if v.is_pygration():
+                versions.append(v)
+        versions.sort()
+        return versions
+
+
 class PygrationLoader:
     """Loads a given set of Pygrations at runtime."""
 
-    def __init__( self, path, version=None ):
+    def __init__( self, path, version ):
         self._path = path
         self._version = version
         self._modules = []
         self._pygrations = []
 
-    def load( self ):
+    def load(self):
         self._import_modules()
         self._create_pygrations()
         return self.pygrations()
@@ -130,23 +156,4 @@ class PygrationLoader:
             pygrations.append( pcls() )
         self._pygrations = pygrations
         return self._pygrations
-
-    def _find_versions( self ):
-        #print "_find_versions"
-        files = os.listdir( self._path )
-        versions = []
-        for f in files:
-            p = os.path.join(self._path, f)
-            if not os.path.isfile(p):
-                continue
-            #print "f = %s" % f
-            root, ext = os.path.splitext(f)
-            if ext != ".py":
-                continue
-            #print "root, ext = %s, %s" % (root, ext)
-            v = Version( root )
-            if v.is_pygration():
-                versions.append(v)
-        versions.sort()
-        return versions
 
