@@ -3,7 +3,7 @@
 import pygrate.loader
 import pygrate.database
 import pygrate.pygration_db
-from pygrate.pygration_set import PygrationSet
+from pygrate.pygrator import Pygrator
 from pygrate.pygresql_connection import PygresqlConnection
 import optparse
 import os.path
@@ -49,20 +49,22 @@ def run_main():
     conf = pygrate.database.Config()
     conf.load(conf_file, db_file)
 
-    # db = pygrate.database.open( path )
-    db = PygresqlConnection(conf.db_opts)
-
     loader = pygrate.loader.PygrationLoader( path, migration )
     loader.load()
 
-    set = PygrationSet( loader.pygrations() )
-    p = pygrate.pygration_db.PygrationDB( db )
+    p = Pygrator( loader.pygrations() )
 
-    if verbose:
-        print "migrate: %s" % operation
-    set.migrate( p, operation )
+    # conn = pygrate.database.open( path )
+    conn = PygresqlConnection(conf.db_opts)
+    try:
+        db = pygrate.pygration_db.PygrationDB( conn )
 
-    db.close()
+        if verbose:
+            print "migrate: %s" % operation
+        p.migrate( db, operation )
+
+    finally:
+        conn.close()
 
 
 if ( __name__ == "__main__" ):

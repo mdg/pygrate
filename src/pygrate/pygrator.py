@@ -2,15 +2,15 @@ import pygration
 import traceback
 
 
-class PygrationSet(pygration.Pygration):
-    """A collection of steps to change the database.
+class Pygrator(object):
+    """An object to run a set of steps to migrate the database.
     
     The pygration includes steps to make the change prior to and
     subsequent to the application deployment.
     """
 
-    def __init__( self, pygrations ):
-        self._pygrations = pygrations
+    def __init__(self, pygration_set):
+        self._pygrations = pygration_set
         self._function = \
                 { "add": self.add
                 , "drop": self.hide

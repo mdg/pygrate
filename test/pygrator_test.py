@@ -1,25 +1,60 @@
-import pygrate.pygration_db
-import pygrate.pygration
-import pygrate.oracle_syntax
-import mock_database
+from pygrate.pygration_set import PygrationSet
+from pygrate.pygration import Pygration
+from pygrate.pygration_db import PygrationDB
+from pygrate import database
+import mock_pygrations
 import unittest
 
 
-class PygrationDBTestCase(unittest.TestCase):
-    def setUp( self ):
-        syntax = pygrate.oracle_syntax.OracleSyntax()
-        self._conn = mock_database.MockConnection( syntax )
-        self._db = pygrate.pygration_db.PygrationDB( self._conn )
+class PygrationTracker(object):
+    def __init__(self):
+        self._operation = ''
 
-    def tearDown( self ):
-        self._conn = None
-        self._db = None
+    def add(self,db):
+        self._operation = 'add'
 
-    def testCreateTable( self ):
-        self._db.create_table( "user", [ \
-                pygrate.pygration.Number( "id" ) ,
-                pygrate.pygration.String( "username", 20 ) ] )
-        expected = "CREATE TABLE user\n\t( number id"
-        expected += "\n\t, varchar2(20) username\n\t);"
-        self.assertEqual( expected, self._conn.last_sql() )
+    def hide(self,db):
+        self._operation = 'drop'
+
+    def drop(self,db):
+        self._operation = 'commit_drop'
+
+    def rollback_add(self,db):
+        self._operation = 'rollback_add'
+
+    def rollback_hide(self,db):
+        self._operation = 'rollback_drop'
+
+
+class PygratorTestCase(unittest.TestCase):
+    def setUp(self):
+        self._pygration = [PygrationTracker()]
+        self._set = Pygrator(self._pygration)
+        conn = database.Connection( database.Syntax() )
+        self._db = PygrationDB( conn )
+
+    def testAdd(self):
+        self._set.migrate(self._db,"add")
+
+        self.assertTrue("add",self._pygration[0]._operation)
+
+    def testDrop(self):
+        self._set.migrate(self._db,"drop")
+
+        self.assertTrue("drop",self._pygration[0]._operation)
+
+    def testCommitDrop(self):
+        self._set.migrate(self._db,"commit_drop")
+
+        self.assertTrue("commit_drop",self._pygration[0]._operation)
+
+    def testRollbackAdd(self):
+        self._set.migrate(self._db,"rollback_add")
+
+        self.assertTrue("rollback_add",self._pygration[0]._operation)
+
+    def testRollbackDrop(self):
+        self._set.migrate(self._db,"rollback_drop")
+
+        self.assertTrue("rollback_drop",self._pygration[0]._operation)
 
