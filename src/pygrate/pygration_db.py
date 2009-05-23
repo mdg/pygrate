@@ -1,7 +1,7 @@
 import pygrate
 
 
-class Pygrator:
+class PygrationDB:
     """The user's interface to the DB from an implemented Pygration."""
 
     def __init__( self, db_conn ):
@@ -78,8 +78,8 @@ class Pygrator:
         return table, column
 
 
-class AddPygrator(Pygrator):
-    """Pygrator for the add step."""
+class AddPygrationDB(PygrationDB):
+    """PygrationDB for the add step."""
 
     def add(self, obj):
         """Add the object to the schema."""
@@ -89,8 +89,8 @@ class AddPygrator(Pygrator):
         else:
             print "add unknown object %s" % str(obj)
 
-class DropPygrator(Pygrator):
-    """Pygrator for the drop step."""
+class DropPygrationDB(PygrationDB):
+    """PygrationDB for the drop step."""
 
     def drop(self, obj):
         """Drop the object to the schema."""
@@ -100,8 +100,8 @@ class DropPygrator(Pygrator):
         else:
             print "drop unknown object %s" % str(obj)
 
-class CommitPygrator(Pygrator):
-    """Pygrator to commit changes."""
+class CommitPygrationDB(PygrationDB):
+    """PygrationDB to commit changes."""
 
     def drop(self, obj):
         """Commit a dropped object to the schema."""
@@ -111,8 +111,8 @@ class CommitPygrator(Pygrator):
         else:
             print "commit drop of unknown object %s" % str(obj)
 
-class RollbackPygrator(Pygrator):
-    """Pygrator to rollback changes."""
+class RollbackPygrationDB(PygrationDB):
+    """PygrationDB to rollback changes."""
 
     def add(self, obj):
         """Rollback an added object."""

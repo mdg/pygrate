@@ -2,7 +2,7 @@
 
 import pygrate.loader
 import pygrate.database
-import pygrate.pygrator
+import pygrate.pygration_db
 from pygrate.pygration_set import PygrationSet
 from pygrate.pygresql_connection import PygresqlConnection
 import optparse
@@ -56,7 +56,7 @@ def run_main():
     loader.load()
 
     set = PygrationSet( loader.pygrations() )
-    p = pygrate.pygrator.Pygrator( db )
+    p = pygrate.pygration_db.PygrationDB( db )
 
     if verbose:
         print "migrate: %s" % operation

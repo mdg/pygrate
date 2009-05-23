@@ -1,6 +1,6 @@
 from pygrate.pygration_set import PygrationSet
 from pygrate.pygration import Pygration
-from pygrate.pygrator import Pygrator
+from pygrate.pygration_db import PygrationDB
 from pygrate import database
 import mock_pygrations
 import unittest
@@ -31,30 +31,30 @@ class PygrationSetTestCase(unittest.TestCase):
         self._pygration = [PygrationTracker()]
         self._set = PygrationSet(self._pygration)
         conn = database.Connection( database.Syntax() )
-        self._pygrator = Pygrator( conn )
+        self._db = PygrationDB( conn )
 
     def testAdd(self):
-        self._set.migrate(self._pygrator,"add")
+        self._set.migrate(self._db,"add")
 
         self.assertTrue("add",self._pygration[0]._operation)
 
     def testDrop(self):
-        self._set.migrate(self._pygrator,"drop")
+        self._set.migrate(self._db,"drop")
 
         self.assertTrue("drop",self._pygration[0]._operation)
 
     def testCommitDrop(self):
-        self._set.migrate(self._pygrator,"commit_drop")
+        self._set.migrate(self._db,"commit_drop")
 
         self.assertTrue("commit_drop",self._pygration[0]._operation)
 
     def testRollbackAdd(self):
-        self._set.migrate(self._pygrator,"rollback_add")
+        self._set.migrate(self._db,"rollback_add")
 
         self.assertTrue("rollback_add",self._pygration[0]._operation)
 
     def testRollbackDrop(self):
-        self._set.migrate(self._pygrator,"rollback_drop")
+        self._set.migrate(self._db,"rollback_drop")
 
         self.assertTrue("rollback_drop",self._pygration[0]._operation)
 
