@@ -23,6 +23,11 @@ class PgSyntax(database.Syntax):
                 ( old_table_name, new_table_name )
         return sql
 
+    def table_exists_sql(self, table_name):
+        sql = """select *
+                   from information_schema.tables t
+                  where t.table_schema = %s""" % table_name
+
     def add_column_sql( self, table, column_obj ):
         """Format a postgres statement to add a column to a table."""
         print "PgSyntax.add_column_sql"

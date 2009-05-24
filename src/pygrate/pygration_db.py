@@ -42,6 +42,10 @@ class PygrationDB:
         sql = self._syntax.drop_table_sql( "_hidden_"+ str(table_name) )
         self.execute_sql( sql )
 
+    def table_exists(self, table_name):
+        sql = self._syntax.table_exists_sql(table_name)
+        self.execute_sql(sql)
+
     def add_column( self, table, column_obj ):
         """Add a column."""
         sql = self._syntax.add_column_sql( table, column_obj )
