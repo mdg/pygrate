@@ -25,6 +25,12 @@ class PygrationTracker(object):
     def rollback_hide(self,db):
         self._operation = 'rollback_drop'
 
+    def pre_add_check(self, db):
+        self._operation = 'pre_add_check'
+
+    def post_add_check(self, db):
+        self._operation = 'post_add_check'
+
 
 class PygratorTestCase(unittest.TestCase):
     def setUp(self):
