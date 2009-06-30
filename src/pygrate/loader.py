@@ -1,5 +1,4 @@
 import pygration
-from pygration_set import PygrationSet
 from pygration import PygrationType
 import os.path
 import sys
