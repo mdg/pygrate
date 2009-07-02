@@ -56,29 +56,3 @@ def open( path ):
     """Open a database connection as configured at the given path."""
     return Connection( Syntax() )
 
-
-class Config:
-    def __init__(self):
-        self.schema = None
-        self.driver = None
-        self.db_opts = {}
-
-    def load(self, conf_file, db_file):
-        self._load_yaml_conf(conf_file)
-        self._load_yaml_db(db_file)
-
-
-    def _load_yaml_conf(self, conf_file):
-        conf = yaml.load(conf_file)
-        print "conf = %s" % repr(conf)
-        if conf and 'schema' in conf:
-            self.schema = conf['schema']
-
-    def _load_yaml_db(self, db_file):
-        self.db_opts = yaml.load(db_file)
-        if self.db_opts:
-            if 'driver' in self.db_opts:
-                self.driver = self.db_opts['driver']
-        else:
-            self.db_opts = {}
-
