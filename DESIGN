@@ -1,0 +1,41 @@
+
+= pygration =
+Step
+* An individual change to the DB.
+* Overridden by users
+* Includes hooks for each phase
+
+VersionSet
+* A collection of Steps that constitute a logical
+  change set and can be referenced by a version number.
+* Defined by a single python file containing all the Steps.
+* All each Phase is run for each step in the VersionStep before moving
+  on to the next Phase.
+
+= pygration.load =
+Finder
+* loads available VersionSets from the filesystem
+
+Loader
+* loads Steps for a given VersionSet from the filesystem
+
+= pygration.history =
+History
+* loads the history from the DB
+* writes new history back to the DB when changes are made
+
+= pygration.migrator =
+Migrator
+* execute_sql()
+* execute_file()
+* a special migrator is used for each phase
+
+= pygration.model =
+Model code will eventually be added to allow structural changes rather than
+writing direct SQL.
+
+AddMigrator
+DropMigrator
+CommitDropMigrator
+RollbackAddMigrator
+RollbackDropMigrator
