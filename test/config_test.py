@@ -23,4 +23,5 @@ class ConfigTest(unittest.TestCase):
 
         self.assertEqual(None, c.schema)
         self.assertEqual(None, c.connection)
+        self.assertEqual({}, c.db_opts)
 
