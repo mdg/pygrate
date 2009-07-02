@@ -1,9 +1,12 @@
 
 
-class VersionState:
-    """A class for loading version state from the DB."""
-    def __init__(self, db_conn):
-        self._db = db_conn
+class History:
+    """A class for loading version history from the DB.  It also writes
+    history back to the DB as it changes."""
+
+    def __init__(self, schema, dbconn):
+        self._schema = schema
+        self._db = dbconn
 
     def load(self):
         pass
@@ -11,6 +14,6 @@ class VersionState:
     def store(self, version_set):
         pass
 
-    def latest_version(self):
-        pass
+    def versions(self):
+        return []
 

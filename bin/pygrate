@@ -3,9 +3,7 @@
 import pygration
 import pygration.load
 from pygration.config import Config
-import pygrate.pygration_db
-from pygrate.pygrator import Pygrator
-from pygrate.pygresql_connection import PygresqlConnection
+import sqlalchemy
 import optparse
 import os.path
 import sys
