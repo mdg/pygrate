@@ -1,5 +1,5 @@
 import pygration
-from pygration import PygrationType
+from step import StepType
 import os.path
 import sys
 import imp
@@ -36,31 +36,30 @@ class VersionFinder(object):
 class VersionSetLoader:
     """Loads a given set of Pygrations at runtime."""
 
-    def __init__( self, path, version ):
+    def __init__(self, path, version):
         self._path = path
         self._version = version
-        self._modules = []
+        self._steps = []
         self._pygrations = []
-
-    def load(self):
-        self._import_modules()
-        self._create_pygrations()
-        return self.pygrations()
 
     def load(self):
         return self._import_module()
 
-    def pygrations( self ):
+    def steps(self):
+        return self._steps
+
+    def pygrations(self):
         return self._pygrations
 
-    def _import_module( self ):
+    def _import_module(self):
         """Import the module & pygrations for the given version.
 
         Also creates pygrations from that module and does so in the
         order they are written in the file.
         """
 
-        initial_count = len(PygrationType.pygrations)
+        # pygrations should be passed in as an array, not called directly here
+        initial_count = len(StepType.pygrations)
         module_name = os.path.join( self._version )
         print "pygration_path = "+ str(module_name)
 
@@ -70,7 +69,7 @@ class VersionSetLoader:
         self._modules.append( mod )
         # need to close the file in mod_trip
 
-        pygration_classes = PygrationType.pygrations[initial_count:]
+        pygration_classes = StepType.pygrations[initial_count:]
         pygrations = []
         for pcls in pygration_classes:
             pygrations.append( pcls() )
