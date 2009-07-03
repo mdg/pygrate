@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 import pygration
-import pygration.load
+import pygration.config
 import sqlalchemy
 import optparse
 import os
@@ -32,26 +32,23 @@ def run_main():
 
     path = '.'
     if opts.path:
-        print "opts.path="+ opts.path
         path = opts.path
+
+    if opts.verbose:
+        print "Migration Directory = '%s'" % path
 
     # Config Loading Section #
     config_path = os.path.join(path, 'conf.d')
     conf_files = os.listdir(config_path)
-    print "ls %s\n%s" % (config_path, conf_files)
-    config_selection = pygration.load.select_config(conf_files, opts.env)
+    config_selection = pygration.config.select(conf_files, opts.env)
     config_selection = os.path.join(config_path, config_selection)
-    print "selected config file: %s" % config_selection
-    # pygration config
-    if os.path.exists(config_selection):
-        if opts.verbose:
-            print "opening %s as conf_file" % config_selection
-        conf_file = open(config_selection)
-    else:
-        conf_file = ''
-    conf = pygration.load.Config()
-    conf.load(conf_file)
-    print "conf = %s" % conf
+    print "Config File = '%s'" % config_selection
+    conf = pygration.config.load(config_selection)
+    if opts.verbose:
+        print "Config Options = %s" % conf
+
+    # History Section #
+    #history = pygration.history.load(conf_file)
 
     # loader = pygrate.loader.PygrationLoader( path, migration )
     # loader.load()

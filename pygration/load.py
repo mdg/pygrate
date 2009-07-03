@@ -5,39 +5,6 @@ import sys
 import imp
 import inspect
 import types
-import yaml
-from yaml import Loader, Dumper
-
-
-class Config:
-    """Config file loader
-    
-    Parses yaml content into config options."""
-
-    def __init__(self):
-        self.schema = None
-        self.connection = None
-        self.username = None
-        self.password = None
-        self.opts = {}
-
-    def load(self, conf_file):
-        self.opts = yaml.load(conf_file)
-        print "opts = %s" % repr(self.opts)
-        if self.opts:
-            self._set_option('connection')
-            self._set_option('schema')
-            self._set_option('username')
-            self._set_option('password')
-        else:
-            self.opts = {}
-
-    def _set_option(self, option):
-        if self.opts and option in self.opts:
-            setattr(self, option, self.opts[option])
-
-    def __repr__(self):
-        return "<Config(%s)>" % self.opts
 
 
 class VersionFinder(object):
@@ -108,13 +75,4 @@ class VersionSetLoader:
             pygrations.append( pcls() )
         self._pygrations = pygrations
         return self._pygrations
-
-def select_config(conf_files, env):
-    if len(conf_files) == 1:
-        print "select single config file"
-        return conf_files[0]
-    for c in conf_files:
-        if c.find(env) == 0:
-            pass
-    return None
 

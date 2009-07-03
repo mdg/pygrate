@@ -12,6 +12,16 @@ VersionSet
 * All each Phase is run for each step in the VersionStep before moving
   on to the next Phase.
 
+= pygration.config =
+select()
+* Selects a config file from a set based on options
+
+load()
+* Loads a Config for a given file
+
+Config
+* Object that holds db & environment configuration
+
 = pygration.load =
 Finder
 * loads available VersionSets from the filesystem
