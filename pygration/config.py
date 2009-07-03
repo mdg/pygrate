@@ -8,18 +8,21 @@ class Config:
     def __init__(self):
         self.schema = None
         self.connection = None
-        self.db_opts = {}
+        self.opts = {}
 
     def load(self, conf_file):
-        self.db_opts = yaml.load(conf_file)
-        print "db_opts = %s" % repr(self.db_opts)
-        if self.db_opts:
+        self.opts = yaml.load(conf_file)
+        print "opts = %s" % repr(self.opts)
+        if self.opts:
             self._set_option('schema')
             self._set_option('connection')
         else:
-            self.db_opts = {}
+            self.opts = {}
 
     def _set_option(self, option):
-        if self.db_opts and option in self.db_opts:
-            setattr(self, option, self.db_opts[option])
+        if self.opts and option in self.opts:
+            setattr(self, option, self.opts[option])
+
+    def __repr__(self):
+        return "<Config(%s)>" % self.opts
 

@@ -76,3 +76,12 @@ class VersionSetLoader:
         self._pygrations = pygrations
         return self._pygrations
 
+def select_config(conf_files, env):
+    if len(conf_files) == 1:
+        print "select single config file"
+        return conf_files[0]
+    for c in conf_files:
+        if c.find(env) == 0:
+            pass
+    return None
+

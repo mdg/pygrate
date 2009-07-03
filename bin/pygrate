@@ -5,65 +5,71 @@ import pygration.load
 from pygration.config import Config
 import sqlalchemy
 import optparse
+import os
 import os.path
 import sys
 import types
 
 
+PATH_HELP = "path to the pygration directory"
+
 def run_main():
-    usage = "usage: %prog [options] operation migration"
+    usage = "usage: %prog [options] <command>"
     parser = optparse.OptionParser( usage=usage )
-    parser.add_option( "-p", "--path" )
+    parser.add_option("-p", "--path", help=PATH_HELP)
+    parser.add_option("-e", "--env")
     parser.add_option( "-v", "--verbose" )
 
     opts, args = parser.parse_args()
 
-    verbose = True
+    opts.verbose = True
  
     if len(args) == 0:
-        parser.error("A migration set must be specified")
-    if len(args) == 1:
-        parser.error("An operation must be specified")
-    if len(args) > 2:
+        parser.error("A command must be specified")
+    if len(args) > 1:
         parser.error("Too many arguments")
 
-    migration = args[0]
-    operation = args[1]
+    command = args[0]
 
     path = '.'
     if opts.path:
         print "opts.path="+ opts.path
         path = opts.path
 
+    config_path = os.path.join(path, 'conf.d')
+    conf_files = os.listdir(config_path)
+    print "ls %s\n%s" % (config_path, conf_files)
+    config_selection = pygration.load.select_config(conf_files, opts.env)
+    config_selection = os.path.join(config_path, config_selection)
+    print "selected config file: %s" % config_selection
     # pygration config
-    if os.path.exists('pygrate.yaml'):
-        conf_file = open('pygrate.yaml')
+    if os.path.exists(config_selection):
+        if opts.verbose:
+            print "opening %s as conf_file" % config_selection
+        conf_file = open(config_selection)
     else:
         conf_file = ''
-    # db config
-    if os.path.exists('database.d/dev.yaml'):
-        db_file = open('database.d/dev.yaml')
-    else:
-        db_file = ''
-    conf = pygrate.database.Config()
-    conf.load(conf_file, db_file)
+    conf = Config()
+    conf.load(conf_file)
+    print "conf = %s" % conf
 
-    loader = pygrate.loader.PygrationLoader( path, migration )
-    loader.load()
+    # loader = pygrate.loader.PygrationLoader( path, migration )
+    # loader.load()
 
-    p = Pygrator( loader.pygrations() )
+    # p = Pygrator( loader.pygrations() )
 
     # conn = pygrate.database.open( path )
-    conn = PygresqlConnection(conf.db_opts)
+    # conn = PygresqlConnection(conf.db_opts)
     try:
-        db = pygrate.pygration_db.PygrationDB( conn )
+        # db = pygrate.pygration_db.PygrationDB( conn )
 
-        if verbose:
-            print "migrate: %s" % operation
-        p.migrate( db, operation )
+        if opts.verbose:
+            print "migrate: %s" % command
+        # p.migrate( db, operation )
 
     finally:
-        conn.close()
+        # conn.close()
+        pass
 
 
 if ( __name__ == "__main__" ):
