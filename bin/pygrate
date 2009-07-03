@@ -2,7 +2,6 @@
 
 import pygration
 import pygration.load
-from pygration.config import Config
 import sqlalchemy
 import optparse
 import os
@@ -36,6 +35,7 @@ def run_main():
         print "opts.path="+ opts.path
         path = opts.path
 
+    # Config Loading Section #
     config_path = os.path.join(path, 'conf.d')
     conf_files = os.listdir(config_path)
     print "ls %s\n%s" % (config_path, conf_files)
@@ -49,7 +49,7 @@ def run_main():
         conf_file = open(config_selection)
     else:
         conf_file = ''
-    conf = Config()
+    conf = pygration.load.Config()
     conf.load(conf_file)
     print "conf = %s" % conf
 

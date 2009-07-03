@@ -1,5 +1,5 @@
 import unittest
-from pygration.config import Config
+from pygration.load import Config
 
 
 NORMAL_CONFIG_FILE = """
