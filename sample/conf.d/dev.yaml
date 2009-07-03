@@ -1,9 +1,6 @@
-db=oracle
-db=mysql
-db=postgresql
-db=sqlite
+connection: "oracle://server.com/mysite"
 
-database=work_db
-username=web
-password=pass1
+schema: myapp
+username: web
+password: pass1
 
