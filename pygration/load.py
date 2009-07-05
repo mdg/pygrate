@@ -7,32 +7,6 @@ import inspect
 import types
 
 
-class VersionFinder(object):
-    """Object for finding available pygration_sets."""
-    def __init__(self, path):
-        self._path = path
-        self._versions = []
-
-    def find_versions( self ):
-        #print "_find_versions"
-        files = os.listdir( self._path )
-        versions = []
-        for f in files:
-            p = os.path.join(self._path, f)
-            if not os.path.isfile(p):
-                continue
-            #print "f = %s" % f
-            root, ext = os.path.splitext(f)
-            if ext != ".py":
-                continue
-            #print "root, ext = %s, %s" % (root, ext)
-            v = Version( root )
-            if v.is_pygration():
-                versions.append(v)
-        versions.sort()
-        return versions
-
-
 class VersionSetLoader:
     """Loads a given set of Pygrations at runtime."""
 

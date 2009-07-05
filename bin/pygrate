@@ -3,6 +3,7 @@
 import pygration
 import pygration.config
 import pygration.history
+import pygration.version
 import sqlalchemy
 import optparse
 import os
@@ -54,8 +55,8 @@ def run_main():
     # History Section #
     history = pygration.history.load(engine, conf.schema)
 
-    # Migration List #
-    migrations = pygration.migration.list_migrations(path)
+    # VersionSet List #
+    migrations = pygration.version.find(path)
 
     # p = Pygrator( loader.pygrations() )
 

@@ -20,6 +20,7 @@ class History:
         self._schema = schema
 
     def load(self):
+        #History.metadata.version_history_table.query()
         pass
 
     def store(self, version_set):
