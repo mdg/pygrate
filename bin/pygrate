@@ -2,6 +2,7 @@
 
 import pygration
 import pygration.config
+import pygration.history
 import sqlalchemy
 import optparse
 import os
@@ -47,11 +48,14 @@ def run_main():
     if opts.verbose:
         print "Config Options = %s" % conf
 
-    # History Section #
-    #history = pygration.history.load(conf_file)
+    # Open SQLAlchemy DB Engine
+    engine = sqlalchemy.create_engine(conf.connection)
 
-    # loader = pygrate.loader.PygrationLoader( path, migration )
-    # loader.load()
+    # History Section #
+    history = pygration.history.load(engine, conf.schema)
+
+    # Migration List #
+    migrations = pygration.migration.list_migrations(path)
 
     # p = Pygrator( loader.pygrations() )
 

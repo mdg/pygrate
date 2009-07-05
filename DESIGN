@@ -22,17 +22,22 @@ load()
 Config
 * Object that holds db & environment configuration
 
-= pygration.load =
-Finder
-* loads available VersionSets from the filesystem
+= pygration.history =
+load()
+* loads a History object from the DB
+
+History
+* reports current history
+* writes new history back to the DB when changes are made
+
+= pygration.migration =
+find()
+* finds available VersionSets from the filesystem
 
 Loader
 * loads Steps for a given VersionSet from the filesystem
 
-= pygration.history =
-History
-* loads the history from the DB
-* writes new history back to the DB when changes are made
+Step and VersionSet implemented here also
 
 = pygration.migrator =
 Migrator
