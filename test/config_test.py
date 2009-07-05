@@ -1,5 +1,5 @@
 import unittest
-from pygration.load import Config
+from pygration.config import Config
 
 
 NORMAL_CONFIG_FILE = """
@@ -23,5 +23,5 @@ class ConfigTest(unittest.TestCase):
 
         self.assertEqual(None, c.schema)
         self.assertEqual(None, c.connection)
-        self.assertEqual({}, c.db_opts)
+        self.assertEqual({}, c.opts)
 
