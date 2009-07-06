@@ -50,10 +50,10 @@ def run_main():
         print "Config Options = %s" % conf
 
     # Open SQLAlchemy DB Engine
-    engine = sqlalchemy.create_engine(conf.connection)
+    session = pygration.db.open(conf.connection, conf.schema)
 
     # History Section #
-    history = pygration.history.load(engine, conf.schema)
+    history = pygration.history.load(session)
 
     # VersionSet List #
     versions = pygration.version.find(path)
@@ -62,6 +62,10 @@ def run_main():
         print "Versions:"
         for v in versions:
             print "\t%s" % v
+
+        print "History:"
+        for h in history:
+            print "\t%s" % h
 
     # p = Pygrator( loader.pygrations() )
 
