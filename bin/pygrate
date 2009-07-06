@@ -56,12 +56,15 @@ def run_main():
     history = pygration.history.load(engine, conf.schema)
 
     # VersionSet List #
-    migrations = pygration.version.find(path)
+    versions = pygration.version.find(path)
+
+    if opts.verbose:
+        print "Versions:"
+        for v in versions:
+            print "\t%s" % v
 
     # p = Pygrator( loader.pygrations() )
 
-    # conn = pygrate.database.open( path )
-    # conn = PygresqlConnection(conf.db_opts)
     try:
         # db = pygrate.pygration_db.PygrationDB( conn )
 

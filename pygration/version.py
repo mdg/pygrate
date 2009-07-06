@@ -77,6 +77,9 @@ class VersionNumber:
         self._string = ver_string
         self._array = array
 
+    def __str__(self):
+        return self._string
+
     def __repr__(self):
         return "<VersionNumber(%s)>" % self._string
 
@@ -95,7 +98,11 @@ class VersionFinder(object):
         self._path = path
         self._files = None
 
-    def find_files(self):
+    def find_versions(self):
+        self._find_files()
+        return self._find_versions()
+
+    def _find_files(self):
         """Find python files at the given path."""
         self._files = []
         entries = os.listdir(self._path)
@@ -104,11 +111,12 @@ class VersionFinder(object):
             if os.path.isfile(p) and p.endswith('.py'):
                 self._files.append(p)
 
-    def find_versions(self):
+    def _find_versions(self):
         """Find version numbers based on a given set of files."""
         versions = []
         for f in self._files:
-            root, ext = os.path.splitext(f)
+            filename = os.path.basename(f)
+            root, ext = os.path.splitext(filename)
             v = VersionNumber(root)
             if v.is_pygration():
                 versions.append(v)
@@ -120,6 +128,5 @@ def find(path):
     """Find all migration VersionSets at the given path."""
 
     finder = VersionFinder(path)
-    finder.find_files()
     return finder.find_versions()
 
