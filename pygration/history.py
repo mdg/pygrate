@@ -22,21 +22,25 @@ class History:
 
 
 def load(session):
-    #h = History(schema)
-    h = []
-    retry = False
-    try:
-        h = session.query(VersionState).all()
-    except sqlalchemy.exc.ProgrammingError, saerr:
-        token = '.version_state" does not exist\n'
-        if str(saerr.args[0]).endswith(token):
-            retry = True
-        else:
-            raise saerr
+    create_failed = False
 
-    if retry:
+    try:
+        print "\n...\tcreating version_state table"
         Table.version_state.create()
         session.commit()
+    except:
+        create_failed = True
+        print "error creating table.  assume it already exists and continue."
+
+    h = None
+    try:
         h = session.query(VersionState).all()
+    except Exception, x:
+        print "error querying version history"
+        if create_failed:
+            print "create version_state table failed"
+        else:
+            print "create version_state table succeeded"
+        raise x
     return h
 
