@@ -1,7 +1,7 @@
-import pygrate
+import pygration
 
 
-class CreateEmployeeTable(pygrate.Pygration):
+class CreateEmployeeTable(pygration.Step):
     def add( self, db ):
         db.drop_table( "employee" )
         db.execute_sql(
@@ -12,7 +12,7 @@ class CreateEmployeeTable(pygrate.Pygration):
                 );""" )
 
 
-class CreateJobTable(pygrate.Pygration):
+class CreateJobTable(pygration.Step):
     def add( self, db ):
         db.execute_sql( \
                 """
@@ -29,7 +29,7 @@ class CreateJobTable(pygrate.Pygration):
         print "executed on the db:\n%s\n" % ( sql )
 
 
-class DropSuperTable(pygrate.Pygration):
+class DropSuperTable(pygration.Step):
     def hide(self,db):
         db.hide_table("super")
 
@@ -37,7 +37,7 @@ class DropSuperTable(pygrate.Pygration):
         db.drop_table("super")
 
 
-class RenameUserIDColumn(pygrate.Pygration):
+class RenameUserIDColumn(pygration.Step):
     """Rename the userid column to be username."""
     def add(self,db):
         """Add the username column and copy userid values to it."""

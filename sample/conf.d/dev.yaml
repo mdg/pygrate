@@ -1,6 +1,6 @@
-connection: "oracle://server.com/mysite"
+connection: "sqlite:///sample/sampledb"
 
-schema: myapp
+schema: main
 username: web
 password: pass1
 
