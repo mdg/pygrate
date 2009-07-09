@@ -1,6 +1,6 @@
 import unittest
 import os.path
-from pygration.version import VersionNumber, VersionFinder
+from pygration.migration import VersionNumber, MigrationSet
 
 
 class VersionComponentCompare(unittest.TestCase):
@@ -15,7 +15,7 @@ class VersionComponentCompare(unittest.TestCase):
         self.assertTrue( v._component_compare("2","12") < 0 )
 
 
-class VersionTestCase(unittest.TestCase):
+class VersionNumberTest(unittest.TestCase):
     """Tests for the pygration Version class."""
 
     def test_underscore_is_pygration(self):
@@ -89,14 +89,14 @@ class VersionTestCase(unittest.TestCase):
         self.assertTrue(vA == vB)
 
 
-class VersionFinderTestCase(unittest.TestCase):
+class MigrationSetTest(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
-        self._finder = VersionFinder(test_dir)
+        self._set = MigrationSet(test_dir)
 
     def test_find_versions(self):
         v001 = VersionNumber('v001')
         v002 = VersionNumber('v002')
         v07 = VersionNumber('v0-7')
-        self.assertEqual([v07, v001, v002], self._finder.find_versions())
+        self.assertEqual([v07, v001, v002], self._set.find_migrations())
 

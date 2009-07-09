@@ -7,12 +7,11 @@ class History:
     """A class for loading version history from the DB.  It also writes
     history back to the DB as it changes."""
 
-    def __init__(self, schema=None):
-        self._schema = schema
+    def __init__(self, session):
+        self._session = session
 
     def load(self):
-        History.metadata.version_history_table.query()
-        pass
+        self._history = self._session.query(VersionState).all()
 
     def store(self, version_set):
         pass
@@ -32,11 +31,11 @@ def load(session):
         create_failed = True
         print "error creating table.  assume it already exists and continue."
 
-    h = None
+    h = History(session)
     try:
-        h = session.query(VersionState).all()
+        h.load()
     except Exception, x:
-        print "error querying version history"
+        print "error loading version history"
         if create_failed:
             print "create version_state table failed"
         else:

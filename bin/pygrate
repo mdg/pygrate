@@ -3,7 +3,7 @@
 import pygration
 import pygration.config
 import pygration.history
-import pygration.version
+import pygration.migration
 import sqlalchemy
 import optparse
 import os
@@ -52,12 +52,16 @@ def run_main():
     # Open SQLAlchemy DB Engine
     session = pygration.db.open(conf.connection, conf.schema)
 
+    # MigrationSet #
+    migration_set = pygration.migration.MigrationSet(path)
+
     # History Section #
     history = pygration.history.load(session)
 
-    # VersionSet List #
-    versions = pygration.version.find(path)
+    #migrator = pygration.migrator.Migrator(migration_set, history)
 
+    versions = []
+    history = []
     if opts.verbose:
         print "Versions:"
         for v in versions:

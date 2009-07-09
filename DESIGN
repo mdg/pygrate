@@ -4,13 +4,7 @@ Step
 * An individual change to the DB.
 * Overridden by users
 * Includes hooks for each phase
-
-VersionSet
-* A collection of Steps that constitute a logical
-  change set and can be referenced by a version number.
-* Defined by a single python file containing all the Steps.
-* All each Phase is run for each step in the VersionStep before moving
-  on to the next Phase.
+* Implemented in pygration.step
 
 = pygration.config =
 select()
@@ -31,13 +25,20 @@ History
 * writes new history back to the DB when changes are made
 
 = pygration.migration =
-find()
-* finds available VersionSets from the filesystem
 
-Loader
+Migration
+* A collection of Steps that constitute a logical
+  change set and can be referenced by a version number.
+* Defined by a single python file containing all the Steps.
+* Each Phase is run for each step in the Migration before moving
+  on to the next Phase.
+
+MigrationSet
+* finds migrations at the given path
 * loads Steps for a given VersionSet from the filesystem
 
-Step and VersionSet implemented here also
+find()
+* finds available VersionSets from the filesystem
 
 = pygration.migrator =
 Migrator

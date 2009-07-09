@@ -84,7 +84,7 @@ class VersionNumber:
         return "<VersionNumber(%s)>" % self._string
 
 
-class VersionSet(object):
+class Migration(object):
     """A logical set of changes to the database.
 
     Named by a version number.
@@ -92,13 +92,13 @@ class VersionSet(object):
     pass
 
 
-class VersionFinder(object):
+class MigrationSet(object):
     """Object for finding available pygration_sets."""
     def __init__(self, path):
         self._path = path
         self._files = None
 
-    def find_versions(self):
+    def find_migrations(self):
         self._find_files()
         return self._find_versions()
 
@@ -122,11 +122,4 @@ class VersionFinder(object):
                 versions.append(v)
         versions.sort()
         return versions
-
-
-def find(path):
-    """Find all migration VersionSets at the given path."""
-
-    finder = VersionFinder(path)
-    return finder.find_versions()
 
