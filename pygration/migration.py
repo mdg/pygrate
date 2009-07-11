@@ -50,7 +50,7 @@ class VersionNumber:
             comparison = -1
         if component1 > component2:
             comparison = 1
-        print "compare %s to %s = %d" % (component1, component2, comparison)
+        #print "compare %s to %s = %d" % (component1, component2, comparison)
         return comparison
 
     def _component(self,index):
@@ -89,7 +89,9 @@ class Migration(object):
 
     Named by a version number.
     """
-    pass
+
+    def committed():
+        return False
 
 
 class MigrationSet(object):
@@ -97,6 +99,21 @@ class MigrationSet(object):
     def __init__(self, path):
         self._path = path
         self._files = None
+        self._migrations = None
+
+    def versions(self):
+        if self._migrations is None:
+            self._migrations = self.find_migrations()
+        return self._migrations
+
+    def migration(self, version):
+        """Get the migration module for a given version."""
+        if version in self._migrations:
+            return version # self._migrations[version]
+        return None
+
+    def migrations(self):
+        pass
 
     def find_migrations(self):
         self._find_files()

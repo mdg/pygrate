@@ -4,6 +4,7 @@ import pygration
 import pygration.config
 import pygration.history
 import pygration.migration
+import pygration.migrator
 import sqlalchemy
 import optparse
 import os
@@ -13,6 +14,11 @@ import types
 
 
 PATH_HELP = "path to the pygration directory"
+
+
+def print_usage():
+    print "Usage:\n\tpygrate <command>"
+
 
 def run_main():
     usage = "usage: %prog [options] <command>"
@@ -26,11 +32,12 @@ def run_main():
     opts.verbose = True
  
     if len(args) == 0:
-        parser.error("A command must be specified")
-    if len(args) > 1:
+        command = ''
+    elif len(args) > 1:
         parser.error("Too many arguments")
+    else:
+        command = args[0]
 
-    command = args[0]
 
     path = '.'
     if opts.path:
@@ -58,8 +65,20 @@ def run_main():
     # History Section #
     history = pygration.history.load(session)
 
-    #migrator = pygration.migrator.Migrator(migration_set, history)
+    migrator = pygration.migrator.Migrator(migration_set, history)
 
+    migration_command_set = ['add', 'drop', 'commit']
+    show_set = ['', 'next?', 'last?']
+    if command in migration_command_set:
+        migrator.migrate(command)
+    elif command in show_set:
+        migrator.show(command)
+    else:
+        print "Unknown command: %s" % command
+        print_usage()
+        exit(1)
+
+    # Old code, remove it
     versions = []
     history = []
     if opts.verbose:
@@ -70,19 +89,6 @@ def run_main():
         print "History:"
         for h in history:
             print "\t%s" % h
-
-    # p = Pygrator( loader.pygrations() )
-
-    try:
-        # db = pygrate.pygration_db.PygrationDB( conn )
-
-        if opts.verbose:
-            print "migrate: %s" % command
-        # p.migrate( db, operation )
-
-    finally:
-        # conn.close()
-        pass
 
 
 if ( __name__ == "__main__" ):

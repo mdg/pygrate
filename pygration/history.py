@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import Column, Integer, String
-from pygration.db import VersionState, Table
+from pygration.db import PygrationState, Table
 
 
 class History:
@@ -10,8 +10,17 @@ class History:
     def __init__(self, session):
         self._session = session
 
+    def committed(self, version):
+        return False
+
     def load(self):
-        self._history = self._session.query(VersionState).all()
+        self._history = self._session.query(PygrationState).all()
+
+    def state(self, version):
+        for state in self._history:
+            if version == state.migration:
+                return state
+        return PygrationState(migration=version)
 
     def store(self, version_set):
         pass
@@ -25,7 +34,7 @@ def load(session):
 
     try:
         print "\n...\tcreating version_state table"
-        Table.version_state.create()
+        Table.pygration_state.create()
         session.commit()
     except:
         create_failed = True

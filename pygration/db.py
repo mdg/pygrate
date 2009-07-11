@@ -3,25 +3,30 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import mapper, sessionmaker
 
 
-class VersionState(object):
-    def __init__(self):
-        self.version_number = None
+class PygrationState(object):
+    def __init__(self, migration=None):
+        self.migration = migration
+        self.step = None
         self.sequence = None
         self.add = None
         self.drop = None
         self.commit = None
+
+    def __repr__(self):
+        return "<PygrationState(%s)>" % (self.migration)
 
 
 class Table(object):
     metadata = sqlalchemy.MetaData()
     engine = None
 
-    version_state = None
+    pygration_state = None
 
     @classmethod
     def define(cls, schema=None):
-        cls.version_state = sqlalchemy.Table('version_state', cls.metadata
-                , Column('version_number', String, primary_key=True)
+        cls.pygration_state = sqlalchemy.Table('pygration_state', cls.metadata
+                , Column('migration', String, primary_key=True)
+                , Column('step', String, primary_key=True)
                 , Column('sequence', Integer)
                 , Column('add', String)
                 , Column('drop', String)
@@ -43,6 +48,6 @@ def open(connection, schema=None):
     session = Session()
 
     Table.define(schema)
-    mapper(VersionState, Table.version_state)
+    mapper(PygrationState, Table.pygration_state)
     return session
 
