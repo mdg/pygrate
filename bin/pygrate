@@ -43,6 +43,9 @@ def run_main():
     if opts.path:
         path = opts.path
 
+    # Put the path 
+    sys.path.insert(0, os.path.abspath(path))
+
     if opts.verbose:
         print "Migration Directory = '%s'" % path
 
@@ -60,7 +63,7 @@ def run_main():
     session = pygration.db.open(conf.connection, conf.schema)
 
     # MigrationSet #
-    migration_set = pygration.migration.MigrationSet(path)
+    migration_set = pygration.migration.load(path)
 
     # History Section #
     history = pygration.history.load(session)

@@ -5,13 +5,19 @@ def pygration_step_subclass(cls):
 
 
 class StepType(type):
-    pygrations = []
+    steps = []
 
     def __init__(cls, name, bases, cls_dict):
         super(StepType, cls).__init__(name, bases, cls_dict)
         if not pygration_step_subclass(cls):
             return
-        cls.pygrations.append(cls)
+        StepType.steps.append(cls)
+
+    @staticmethod
+    def extract_steps():
+        extract = StepType.steps
+        StepType.steps = []
+        return extract
 
 
 class Step(object):

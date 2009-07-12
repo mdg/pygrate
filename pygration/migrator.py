@@ -1,4 +1,9 @@
 
+def step_name(step):
+    """Get the name of a step.  It's just the name of the class."""
+    return step.__name__
+
+
 class StepMigrator(object):
     def __init__(self, version, step, state):
         self._version = version
@@ -13,6 +18,9 @@ class StepMigrator(object):
     def migrate(self, phase):
         pass
 
+    def __repr__(self):
+        return "<StepMigrator(%s, %s)>" % (self._version, self._step)
+
 
 class Migrator(object):
     """The object that handles the history and available version sets."""
@@ -21,13 +29,17 @@ class Migrator(object):
         self._migration_set = migration_set
         self._history = history
         self._steps = []
-        for v in self._migration_set.versions():
-            state = self._history.state(v)
-            self._steps.append(StepMigrator(v, None, state))
+        for m in self._migration_set.migrations():
+            print "loading steps for migration(%s)" % m
+            for s in m.steps():
+                v = m.version()
+                state = self._history.state(v, step_name(s))
+                self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase):
         print "Migrator.migrate(%s)" % phase
         for m in self._steps:
+            #print "\tcheck step(%s)" % m
             if not m.phase_complete(phase):
                 m.migrate(phase)
 

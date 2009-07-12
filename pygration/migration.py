@@ -1,5 +1,7 @@
 import os
 import os.path
+import imp
+import step
 
 
 class VersionNumber:
@@ -89,9 +91,18 @@ class Migration(object):
 
     Named by a version number.
     """
+    def __init__(self, version, steps=[]):
+        self._version = version
+        self._steps = steps
 
-    def committed():
-        return False
+    def version(self):
+        return self._version
+
+    def steps(self):
+        return self._steps
+
+    def __repr__(self):
+        return "<Migration(%s)>" % (self._version)
 
 
 class MigrationSet(object):
@@ -99,21 +110,32 @@ class MigrationSet(object):
     def __init__(self, path):
         self._path = path
         self._files = None
+        self._versions = None
+        self._modules = None
         self._migrations = None
+
+    def load(self):
+        """Load migration modules from the given path."""
+        self._find_files()
+        self._find_versions()
+        self._load_migrations()
 
     def versions(self):
         if self._migrations is None:
             self._migrations = self.find_migrations()
         return self._migrations
 
+    def migrations(self):
+        return self._migrations
+
+    def steps(self, migration):
+        return []
+
     def migration(self, version):
         """Get the migration module for a given version."""
         if version in self._migrations:
             return version # self._migrations[version]
         return None
-
-    def migrations(self):
-        pass
 
     def find_migrations(self):
         self._find_files()
@@ -130,13 +152,37 @@ class MigrationSet(object):
 
     def _find_versions(self):
         """Find version numbers based on a given set of files."""
-        versions = []
+        self._versions = []
         for f in self._files:
             filename = os.path.basename(f)
             root, ext = os.path.splitext(filename)
             v = VersionNumber(root)
             if v.is_pygration():
-                versions.append(v)
-        versions.sort()
-        return versions
+                self._versions.append(v)
+        self._versions.sort()
+        return self._versions
+
+    def _load_migrations(self):
+        self._modules = []
+        self._migrations = []
+        for v in self._versions:
+            self._load_migration_module(str(v))
+
+    def _load_migration_module(self, module_name):
+        print "load module(%s)" % module_name
+        mod_trip = imp.find_module(module_name)
+        mod = imp.load_module(module_name, *mod_trip)
+        self._modules.append(mod)
+        steps = step.StepType.extract_steps()
+        for s in steps:
+            print "\t%s" % (s.__name__)
+        m = Migration(module_name, steps)
+        self._migrations.append(m)
+        print "remaining steps:\n\t", step.StepType.steps
+
+
+def load(path):
+    m = MigrationSet(path)
+    m.load()
+    return m
 

@@ -4,16 +4,16 @@ from sqlalchemy.orm import mapper, sessionmaker
 
 
 class PygrationState(object):
-    def __init__(self, migration=None):
+    def __init__(self, migration=None, step=None):
         self.migration = migration
-        self.step = None
+        self.step = step
         self.sequence = None
         self.add = None
         self.drop = None
         self.commit = None
 
     def __repr__(self):
-        return "<PygrationState(%s)>" % (self.migration)
+        return "<PygrationState(%s, %s)>" % (self.migration, self.step)
 
 
 class Table(object):
