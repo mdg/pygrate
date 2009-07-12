@@ -78,18 +78,6 @@ def run_main():
         print_usage()
         exit(1)
 
-    # Old code, remove it
-    versions = []
-    history = []
-    if opts.verbose:
-        print "Versions:"
-        for v in versions:
-            print "\t%s" % v
-
-        print "History:"
-        for h in history:
-            print "\t%s" % h
-
 
 if ( __name__ == "__main__" ):
     run_main()
