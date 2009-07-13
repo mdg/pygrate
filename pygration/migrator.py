@@ -16,7 +16,10 @@ class StepMigrator(object):
         return state == 'pass'
 
     def migrate(self, phase):
-        pass
+        print "%s.migrate(%s)" % (self, phase)
+        step_instance = self._step()
+        step_phase = getattr(step_instance, phase)
+        step_phase(None)
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
