@@ -14,6 +14,8 @@ import types
 
 
 PATH_HELP = "path to the pygration directory"
+NOOP_HELP = "show what will be done without actually doing it"
+VERBOSE_HELP = "print extra output to the screen"
 
 
 def print_usage():
@@ -25,11 +27,13 @@ def run_main():
     parser = optparse.OptionParser( usage=usage )
     parser.add_option("-p", "--path", help=PATH_HELP)
     parser.add_option("-e", "--env")
-    parser.add_option( "-v", "--verbose" )
+    parser.add_option("-n", "--noop", dest="noop", action="store_true"
+            , default=True, help=NOOP_HELP)
+    parser.add_option( "-v", "--verbose", dest="verbose", action="store_true"
+            , default=True, help=VERBOSE_HELP)
 
     opts, args = parser.parse_args()
 
-    opts.verbose = True
  
     if len(args) == 0:
         command = ''
