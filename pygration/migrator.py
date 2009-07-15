@@ -10,16 +10,32 @@ class StepMigrator(object):
         self._step = step
         self._state = state
 
+    def version(self):
+        return self._version
+
+    def step_name(self):
+        return step_name(self._step)
+
     def phase_complete(self, phase):
-        #print "state = %s, %s, %s" % (self._state.add, self._state.drop
-        #        , self._state.commit)
+        print "state = %s, %s, %s" % (self._state.add, self._state.drop
+                , self._state.commit)
+        if (not hasattr(self._step, phase)):
+            return True
         state = getattr(self._state, phase)
         return state == 'pass'
 
     def migrate(self, db, phase):
+        """The step wrapper that joins the db, step, history and phase."""
         step_instance = self._step()
         step_phase = getattr(step_instance, phase)
-        return step_phase(db)
+        result = step_phase(db)
+        return 'pass'
+
+    def store_state(self, session, phase, state):
+        if hasattr(self._state, phase):
+            setattr(self._state, phase, state)
+            self._state = session.merge(self._state)
+            session.commit()
 
     def __str__(self):
         return "%s.%s" % (self._version, step_name(self._step))
@@ -44,7 +60,8 @@ class NoopDB(object):
 class Migrator(object):
     """The object that handles the history and available version sets."""
 
-    def __init__(self, database, migration_set, history):
+    def __init__(self, session, database, migration_set, history):
+        self._session = session
         self._database = database
         self._migration_set = migration_set
         self._history = history
@@ -62,7 +79,8 @@ class Migrator(object):
             #print "\tcheck step(%s)" % m
             if not m.phase_complete(phase):
                 print "\n%s.%s()" % (str(m), phase)
-                m.migrate(self._database, phase)
+                result = m.migrate(self._database, phase)
+                m.store_state(self._session, phase, result)
 
     def find_next_phase(self):
         phase = None
