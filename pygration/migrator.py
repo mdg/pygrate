@@ -11,27 +11,34 @@ class StepMigrator(object):
         self._state = state
 
     def phase_complete(self, phase):
-        print "state = %s" % self._state
+        #print "state = %s, %s, %s" % (self._state.add, self._state.drop
+        #        , self._state.commit)
         state = getattr(self._state, phase)
         return state == 'pass'
 
     def migrate(self, db, phase):
-        print "%s.migrate(%s)" % (self, phase)
         step_instance = self._step()
         step_phase = getattr(step_instance, phase)
         return step_phase(db)
+
+    def __str__(self):
+        return "%s.%s" % (self._version, step_name(self._step))
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
 
 
 class LiveDB(object):
+    def __init__(self, session):
+        self._session = session
+
     def sql(self, sql):
-        print "Execute: '%s'" % sql
+        print "  Execute: '%s'" % sql
+        self._session.execute(sql)
 
 class NoopDB(object):
     def sql(self, sql):
-        print "Execute: '%s'" % sql
+        print "  Noop Execute: '%s'" % sql
 
 
 class Migrator(object):
@@ -50,10 +57,11 @@ class Migrator(object):
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase):
-        print "Migrator.migrate(%s)" % phase
+        print "Migrate(%s)" % phase
         for m in self._steps:
             #print "\tcheck step(%s)" % m
             if not m.phase_complete(phase):
+                print "\n%s.%s()" % (str(m), phase)
                 m.migrate(self._database, phase)
 
     def find_next_phase(self):

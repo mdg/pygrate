@@ -28,7 +28,7 @@ def run_main():
     parser.add_option("-p", "--path", help=PATH_HELP)
     parser.add_option("-e", "--env")
     parser.add_option("-n", "--noop", dest="noop", action="store_true"
-            , default=True, help=NOOP_HELP)
+            , default=False, help=NOOP_HELP)
     parser.add_option( "-v", "--verbose", dest="verbose", action="store_true"
             , default=True, help=VERBOSE_HELP)
 
@@ -76,7 +76,7 @@ def run_main():
     if opts.noop:
         migrator_db = pygration.migrator.NoopDB()
     else:
-        migrator_db = pygration.migrator.LiveDB()
+        migrator_db = pygration.migrator.LiveDB(session)
     migrator = pygration.migrator.Migrator(migrator_db, migration_set, history)
 
     migration_command_set = ['add', 'drop', 'commit']
