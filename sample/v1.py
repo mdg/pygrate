@@ -30,11 +30,11 @@ class RenameEmployeeNumberColumn(pygration.Step):
         db.sql( "UPDATE employee set id=a;" )
         # create trigger to update the new username column
 
-    def hide(self,db):
+    def drop(self,db):
         """Hide the userid column before completely dropping it."""
         db.sql( "ALTER TABLE employee RENAME COLUMN a pd_a" )
 
-    def drop(self,db):
+    def commit(self,db):
         """Permanently drop the userid column."""
         db.sql("ALTER TABLE employee DROP COLUMN pd_a")
 
