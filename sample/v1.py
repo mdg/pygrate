@@ -3,7 +3,7 @@ import pygration
 
 class CreateEmployeeTable(pygration.Step):
     def add(self, db):
-        db.execute_sql(
+        db.sql(
                 """
                 CREATE TABLE employee
                 ( a number
@@ -13,7 +13,7 @@ class CreateEmployeeTable(pygration.Step):
 
 class CreateJobTable(pygration.Step):
     def add(self, db):
-        db.execute_sql( \
+        db.sql( \
                 """
                 CREATE TABLE job
                 ( id number
@@ -26,8 +26,8 @@ class RenameEmployeeNumberColumn(pygration.Step):
     """Rename the userid column to be username."""
     def add(self,db):
         """Add the username column and copy userid values to it."""
-        db.execute_sql( "ALTER TABLE employee ADD COLUMN id number" )
-        db.execute_sql( "update user set id=number;" )
+        db.sql( "ALTER TABLE employee ADD COLUMN id number" )
+        db.sql( "update user set id=number;" )
         # create trigger to update the new username column
 
     def hide(self,db):

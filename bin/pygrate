@@ -68,7 +68,9 @@ def run_main():
     # History Section #
     history = pygration.history.load(session)
 
-    migrator = pygration.migrator.Migrator(migration_set, history)
+    # Create Migrator objects #
+    migrator_db = pygration.migrator.NoopDB()
+    migrator = pygration.migrator.Migrator(migrator_db, migration_set, history)
 
     migration_command_set = ['add', 'drop', 'commit']
     show_set = ['', 'next?', 'last?']

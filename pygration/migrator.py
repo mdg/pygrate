@@ -25,19 +25,20 @@ class StepMigrator(object):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
 
 
-class MigratorDB(object):
+class LiveDB(object):
     def sql(self, sql):
         print "Execute: '%s'" % sql
 
-    def execute_sql(self, sql):
-        return self.sql(sql)
+class NoopDB(object):
+    def sql(self, sql):
+        print "Execute: '%s'" % sql
 
 
 class Migrator(object):
     """The object that handles the history and available version sets."""
 
-    def __init__(self, migration_set, history):
-        self._database = MigratorDB()
+    def __init__(self, database, migration_set, history):
+        self._database = database
         self._migration_set = migration_set
         self._history = history
         self._steps = []
