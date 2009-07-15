@@ -15,20 +15,29 @@ class StepMigrator(object):
         state = getattr(self._state, phase)
         return state == 'pass'
 
-    def migrate(self, phase):
+    def migrate(self, db, phase):
         print "%s.migrate(%s)" % (self, phase)
         step_instance = self._step()
         step_phase = getattr(step_instance, phase)
-        step_phase(None)
+        return step_phase(db)
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
+
+
+class MigratorDB(object):
+    def sql(self, sql):
+        print "Execute: '%s'" % sql
+
+    def execute_sql(self, sql):
+        return self.sql(sql)
 
 
 class Migrator(object):
     """The object that handles the history and available version sets."""
 
     def __init__(self, migration_set, history):
+        self._database = MigratorDB()
         self._migration_set = migration_set
         self._history = history
         self._steps = []
@@ -44,7 +53,7 @@ class Migrator(object):
         for m in self._steps:
             #print "\tcheck step(%s)" % m
             if not m.phase_complete(phase):
-                m.migrate(phase)
+                m.migrate(self._database, phase)
 
     def find_next_phase(self):
         phase = None
