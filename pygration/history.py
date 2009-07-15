@@ -22,7 +22,7 @@ class History:
                 return state
         return PygrationState(version, step)
 
-    def store(self, version_set):
+    def store(self, version, step, state):
         pass
 
     def versions(self):
