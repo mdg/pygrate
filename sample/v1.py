@@ -6,8 +6,9 @@ class CreateEmployeeTable(pygration.Step):
         db.sql(
                 """
                 CREATE TABLE employee
-                ( a number
-                , b varchar2(10)
+                ( id number
+                , firstname varchar2(10)
+                , lastname varchar2(10)
                 );""" )
 
 
@@ -20,21 +21,4 @@ class CreateJobTable(pygration.Step):
                 , name varchar2(57)
                 );
                 """ )
-
-
-class RenameEmployeeNumberColumn(pygration.Step):
-    """Rename the userid column to be username."""
-    def add(self,db):
-        """Add the username column and copy userid values to it."""
-        db.sql( "ALTER TABLE employee ADD COLUMN id number" )
-        db.sql( "UPDATE employee set id=a;" )
-        # create trigger to update the new username column
-
-    def drop(self,db):
-        """Hide the userid column before completely dropping it."""
-        db.sql( "ALTER TABLE employee RENAME COLUMN a pd_a" )
-
-    def commit(self,db):
-        """Permanently drop the userid column."""
-        db.sql("ALTER TABLE employee DROP COLUMN pd_a")
 
