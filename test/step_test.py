@@ -1,29 +1,24 @@
-import pygrate
-from pygrate import pygration
-from pygrate.pygration import PygrationType
-from pygrate.pygrator import Pygrator
+import pygration
+from pygration.step import pygration_step_subclass
 import unittest
 
 
-class TestPygration(pygrate.pygration.Pygration):
+class TestStep(pygration.Step):
     def add( self ):
         pass
 
 
-class PygrationTypeTestCase(unittest.TestCase):
-    def test_pygration_not_subclass(self):
-        p = pygrate.Pygration
-        self.assertFalse( pygration.is_pygration_subclass(p) )
+class StepTypeTestCase(unittest.TestCase):
+    def test_step_not_subclass(self):
+        p = pygration.Step
+        self.assertFalse(pygration_step_subclass(p))
 
-    def test_pygration_set_not_subclass(self):
-        self.assertFalse( pygration.is_pygration_subclass( Pygrator ) )
-
-    def test_pygration_subclass( self ):
-        tp = TestPygration
-        bp = pygrate.pygration.Pygration
+    def test_child_step_subclass( self ):
+        child = TestStep
+        base = pygration.Step
         dict = {}
 
-        self.assertTrue( pygration.is_pygration_subclass( tp ) )
-        self.assertFalse( pygration.is_pygration_subclass( bp ) )
-        self.assertFalse( pygration.is_pygration_subclass( dict ) )
+        self.assertTrue( pygration_step_subclass( child ) )
+        self.assertFalse( pygration_step_subclass( base ) )
+        self.assertFalse( pygration_step_subclass( dict ) )
 
