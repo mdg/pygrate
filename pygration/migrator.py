@@ -17,11 +17,13 @@ class StepMigrator(object):
         return step_name(self._step)
 
     def phase_complete(self, phase):
-        print "state = %s, %s, %s" % (self._state.add, self._state.drop
-                , self._state.commit)
+        print "state = %s, %s, %s" % (self._state.add_state
+                , self._state.drop_state
+                , self._state.commit_state)
         if (not hasattr(self._step, phase)):
             return True
-        state = getattr(self._state, phase)
+        state_flag = "%s_state" % phase
+        state = getattr(self._state, state_flag)
         return state == 'pass'
 
     def migrate(self, db, phase):
@@ -31,9 +33,16 @@ class StepMigrator(object):
         result = step_phase(db)
         return 'pass'
 
+    def rollback(self, db, phase):
+        step_instance = self._step()
+        func = "rollback_%s" % phase
+        step_phase = getattr(step_instance, func)
+        result = step_phase(db)
+
     def store_state(self, session, phase, state):
         if hasattr(self._state, phase):
-            setattr(self._state, phase, state)
+            state_flag = "%s_state" % phase
+            setattr(self._state, state_flag, state)
             self._state = session.merge(self._state)
             session.commit()
 
@@ -75,12 +84,37 @@ class Migrator(object):
 
     def migrate(self, phase):
         print "Migrate(%s)" % phase
+        migrate_steps = []
+        complete_steps = []
         for m in self._steps:
             #print "\tcheck step(%s)" % m
             if not m.phase_complete(phase):
+                migrate_steps.append(m)
+            else:
+                complete_steps.append(m)
+
+        print "These steps are already complete:"
+        for m in complete_steps:
+            print "\n%s.%s()" % (str(m), phase)
+
+        print "Begin migration:"
+        for m in migrate_steps:
                 print "\n%s.%s()" % (str(m), phase)
                 result = m.migrate(self._database, phase)
                 m.store_state(self._session, phase, result)
+
+    def rollback(self, phase):
+        print "Migrate(%s)" % phase
+        rollback_steps = []
+        for m in self._steps:
+            #print "\tcheck step(%s)" % m
+            if m.phase_complete(phase):
+                rollback_steps.insert(0, m)
+
+        for m in rollback_steps:
+            print "\n%s.%s()" % (str(m), phase)
+            result = m.rollback(self._database, phase)
+            m.store_state(self._session, phase, result)
 
     def find_next_phase(self):
         phase = None

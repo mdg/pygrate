@@ -19,11 +19,11 @@ VERBOSE_HELP = "print extra output to the screen"
 
 
 def print_usage():
-    print "Usage:\n\tpygrate <command>"
+    print "Usage:\n\tpygrate [<command>] <phase>"
 
 
 def run_main():
-    usage = "usage: %prog [options] <command>"
+    usage = "usage: %prog [options] [<command>] <phase>"
     parser = optparse.OptionParser( usage=usage )
     parser.add_option("-p", "--path", help=PATH_HELP)
     parser.add_option("-e", "--env")
@@ -34,15 +34,36 @@ def run_main():
 
     opts, args = parser.parse_args()
 
- 
     if len(args) == 0:
-        command = ''
-    elif len(args) > 1:
-        parser.error("Too many arguments")
-    else:
+        command = 'show'
+        phase = ''
+    elif len(args) == 1:
+        command = 'migrate'
+        phase = args[0]
+    elif len(args) == 2:
         command = args[0]
+        phase = args[1]
+    else:
+        print_usage()
+        exit()
 
-
+    if command == 'migrate':
+        if phase not in ['add', 'drop', 'commit']:
+            parser.error("Unknown migration phase")
+            exit(1)
+    elif command == 'rollback':
+        if phase == 'commit':
+            parser.error("Commit phase cannot be rolled back")
+            exit(1)
+        elif phase not in ['add', 'drop']:
+            parser.error("Unknown rollback phase")
+            exit(1)
+    elif command == 'show':
+        parser.error("show command is not yet supported")
+        exit(1)
+    else:
+        parser.error("Unknown command")
+ 
     path = '.'
     if opts.path:
         path = opts.path
@@ -80,16 +101,8 @@ def run_main():
     migrator = pygration.migrator.Migrator(session, migrator_db
             , migration_set, history)
 
-    migration_command_set = ['add', 'drop', 'commit']
-    show_set = ['', 'next?', 'last?']
-    if command in migration_command_set:
-        migrator.migrate(command)
-    elif command in show_set:
-        migrator.show(command)
-    else:
-        print "Unknown command: %s" % command
-        print_usage()
-        exit(1)
+    call = getattr(migrator, command)
+    call(phase)
 
 
 if ( __name__ == "__main__" ):
