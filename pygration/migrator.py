@@ -40,11 +40,10 @@ class StepMigrator(object):
         result = step_phase(db)
 
     def store_state(self, session, phase, state):
-        if hasattr(self._state, phase):
-            state_flag = "%s_state" % phase
+        state_flag = "%s_state" % phase
+        if hasattr(self._state, state_flag):
             setattr(self._state, state_flag, state)
             self._state = session.merge(self._state)
-            session.commit()
 
     def __str__(self):
         return "%s.%s" % (self._version, step_name(self._step))
@@ -102,6 +101,7 @@ class Migrator(object):
                 print "\n%s.%s()" % (str(m), phase)
                 result = m.migrate(self._database, phase)
                 m.store_state(self._session, phase, result)
+                self._session.commit()
 
     def rollback(self, phase):
         print "Migrate(%s)" % phase
