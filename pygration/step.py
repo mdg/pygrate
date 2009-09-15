@@ -37,11 +37,11 @@ class Step(object):
         # p = PreAddCheckPygrationDB(db)
         # self.add(p)
         # do nothing for now.  get actual behavior right first.
-        pass
+        return True
 
     def post_add_check( self, db ):
         """Validate the DB is in the expected state after the add."""
-        pass
+        return True
 
     def add( self, db ):
         """Add elements to the db"""
@@ -53,18 +53,15 @@ class Step(object):
 
     def commit_drop( self, db ):
         """Permanently drop elements from the db"""
-        p = CommitPygrationDB(db)
-        self.drop(p)
+        pass
 
     def rollback_add( self, db ):
         """Rollback any items that were added to the db"""
-        p = RollbackPygrationDB(db)
-        self.add(p)
+        pass
 
     def rollback_drop( self, db ):
         """Rollback any items that were hidden in the db"""
-        p = RollbackPygrationDB(db)
-        self.add(p)
+        pass
 
     def failure( self ):
         return self._failure
