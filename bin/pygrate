@@ -18,6 +18,9 @@ NOOP_HELP = "show what will be done without actually doing it"
 VERBOSE_HELP = "print extra output to the screen"
 
 
+DEFAULT_PATH = '.'
+
+
 def print_usage():
     print "Usage:\n\tpygrate [<command>] <phase>"
 
@@ -64,7 +67,7 @@ def run_main():
     else:
         parser.error("Unknown command")
  
-    path = '.'
+    path = DEFAULT_PATH
     if opts.path:
         path = opts.path
 
