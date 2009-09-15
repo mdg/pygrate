@@ -7,12 +7,12 @@ Separate DB changes into the 3 phases of Zero Downtime Deployment:
 * Expansion: add new schema elements
 * Rollout (not pygrate): deploy new application code
 * Cleanup:
-	* hide old schema elements to simulate dropping
+	* move old schema elements to simulate dropping
 	* permanently drop old schema elements
 
-Easily rollback added and hidden elements
+Easily rollback added and "dropped" elements
 
-Segregate DB changes by "release", to limit how much can be rolled back
+Segregate DB changes by "release", to limit how much can be released or rolled back with a single command
 
 
 == USAGE ==
@@ -25,7 +25,7 @@ pygrate <operation> <release>
 * rollback_add
 * rollback_hide
 
-<release> references the group of files to execute
+<release> references a file containing steps to execute
 
 
 == PYGRATIONS ==
@@ -35,27 +35,26 @@ high level operations listed above.  that method will
 get called by pygrate when it's run.
 
 Sample Pygration:
-class RenameUserIDColumn(pygrate.Pygration):
+class RenameUserIDColumn(pygration.Step):
     """Rename the userid column to be username."""
 
     def add(self,db):
         """Add the username column and copy userid values to it."""
-        db.add_column( "user", String( "username") )
-        db.execute_sql( "update user set username=userid;" )
+        db.sql( "alter table user add column text username;" )
+        db.sql( "update user set username=userid;" )
 
     def drop(self,db):
         """Drop the userid column before completely dropping it."""
-        db.drop_column( "user.userid" )
+        db.sql( "alter table user drop column userid;" )
 
 
-== SUPPORTED DB OPERATIONS ==
+== FUTURE ORM DB OPERATIONS ==
+Currently all changes must be done through direct SQL.  Possible ORM functionality added in the future includes:
 * add/drop table
 * raw sql
-(not yet supported directly)
 * add/drop column
 * add/drop stored procedure
 * add/drop view
 * add/drop index
 * add/drop constraint
 * grant/revoke
-
