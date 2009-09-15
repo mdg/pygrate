@@ -17,17 +17,24 @@ PATH_HELP = "path to the pygration directory"
 NOOP_HELP = "show what will be done without actually doing it"
 VERBOSE_HELP = "print extra output to the screen"
 
+USAGE = """
+    pygrate [options] [command] <phase>
+
+Commands:
+    migrate      (default) Deploy a phase
+    rollback     Rollback a phase
+
+Phases:
+    add          Expansion phase, add to the DB
+    simdrop      Simulate the drop phase (move elements)
+    drop         Contraction phase, drop from the DB"""
+
 
 DEFAULT_PATH = '.'
 
 
-def print_usage():
-    print "Usage:\n\tpygrate [<command>] <phase>"
-
-
 def run_main():
-    usage = "usage: %prog [options] [<command>] <phase>"
-    parser = optparse.OptionParser( usage=usage )
+    parser = optparse.OptionParser( usage=USAGE )
     parser.add_option("-p", "--path", help=PATH_HELP)
     parser.add_option("-e", "--env")
     parser.add_option("-n", "--noop", dest="noop", action="store_true"
@@ -47,7 +54,7 @@ def run_main():
         command = args[0]
         phase = args[1]
     else:
-        print_usage()
+        parser.error("Too many arguments")
         exit()
 
     if command == 'migrate':
