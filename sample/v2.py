@@ -9,3 +9,6 @@ class CreateSalaryTable(pygration.Step):
                 , salary number
                 );""" )
 
+    def rollback_add(self, db):
+        db.sql("DROP TABLE salary;")
+

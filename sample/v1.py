@@ -11,6 +11,9 @@ class CreateEmployeeTable(pygration.Step):
                 , lastname varchar2(10)
                 );""" )
 
+    def rollback_add(self, db):
+        db.sql("DROP TABLE employee;")
+
 
 class CreateJobTable(pygration.Step):
     def add(self, db):
@@ -21,4 +24,7 @@ class CreateJobTable(pygration.Step):
                 , name varchar2(57)
                 );
                 """ )
+
+    def rollback_add(self, db):
+        db.sql("DROP TABLE job;")
 
