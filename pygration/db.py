@@ -26,11 +26,11 @@ class Table(object):
     def define(cls, schema=None):
         cls.pygration_state = sqlalchemy.Table('pygration_state', cls.metadata
                 , Column('migration', String, primary_key=True)
-                , Column('step', String, primary_key=True)
+                , Column('step', String(length=80), primary_key=True)
                 , Column('sequence', Integer)
-                , Column('add_state', String)
-                , Column('drop_state', String)
-                , Column('commit_state', String)
+                , Column('add_state', String(length=16))
+                , Column('drop_state', String(length=16))
+                , Column('commit_state', String(length=16))
                 , schema=schema
                 )
 
