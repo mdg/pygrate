@@ -5,3 +5,8 @@ show all
 
 migrate a phase for all steps
 
+phase commands need to be restricted to a single migration
+
+make it more tolerant of Step renames
+	this includes a persistent ID value probably
+
