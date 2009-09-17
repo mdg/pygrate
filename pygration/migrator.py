@@ -94,9 +94,10 @@ class Migrator(object):
             else:
                 complete_steps.append(m)
 
-        print "These steps are already complete:"
-        for m in complete_steps:
-            print "\n%s.%s()" % (str(m), phase)
+        if len(complete_steps) > 0:
+            print "These steps are already complete:"
+            for m in complete_steps:
+                print "\n%s.%s()" % (str(m), phase)
 
         print "Begin migration:"
         for m in migrate_steps:
