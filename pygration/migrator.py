@@ -97,14 +97,17 @@ class Migrator(object):
         if len(complete_steps) > 0:
             print "These steps are already complete:"
             for m in complete_steps:
-                print "\n%s.%s()" % (str(m), phase)
+                print "\t%s.%s()" % (str(m), phase)
 
-        print "Begin migration:"
-        for m in migrate_steps:
+        if len(migrate_steps) > 0:
+            print "Begin migration:"
+            for m in migrate_steps:
                 print "\n%s.%s()" % (str(m), phase)
                 result = m.migrate(self._database, phase)
                 m.store_state(self._session, phase, result)
                 self._session.commit()
+        else:
+            print "Nothing left to migrate."
 
     def rollback(self, phase):
         print "Migrate(%s)" % phase
