@@ -18,16 +18,18 @@ NOOP_HELP = "show what will be done without actually doing it"
 VERBOSE_HELP = "print extra output to the screen"
 
 USAGE = """
-    pygrate [options] [command] <phase>
+    pygrate [options] <command> <migration>
 
 Commands:
-    migrate      (default) Deploy a phase
-    rollback     Rollback a phase
+    show              Show the status of a migration
+    add               Run the expansion phase, add to the DB
+    simdrop           Simulate the drop phase (move elements)
+    drop              Run the contraction phase, drop from the DB
+    rollback_add      Rollback the add phase of the migration
+    rollback_simdrop  Rollback the simdrop phase of the migration
 
-Phases:
-    add          Expansion phase, add to the DB
-    simdrop      Simulate the drop phase (move elements)
-    drop         Contraction phase, drop from the DB"""
+Migration:
+    The filename (without extension) of the migration you want to run"""
 
 
 DEFAULT_PATH = '.'
@@ -44,36 +46,22 @@ def run_main():
 
     opts, args = parser.parse_args()
 
-    if len(args) == 0:
-        command = 'show'
-        phase = ''
-    elif len(args) == 1:
-        command = 'migrate'
-        phase = args[0]
+    if len(args) < 2:
+        parser.error("Too few arguments")
+        exit(1)
     elif len(args) == 2:
         command = args[0]
-        phase = args[1]
+        migration = args[1]
     else:
         parser.error("Too many arguments")
-        exit()
-
-    if command == 'migrate':
-        if phase not in ['add', 'drop', 'commit']:
-            parser.error("Unknown migration phase")
-            exit(1)
-    elif command == 'rollback':
-        if phase == 'commit':
-            parser.error("Commit phase cannot be rolled back")
-            exit(1)
-        elif phase not in ['add', 'drop']:
-            parser.error("Unknown rollback phase")
-            exit(1)
-    elif command == 'show':
-        parser.error("show command is not yet supported")
         exit(1)
-    else:
-        parser.error("Unknown command")
- 
+
+    cmds = ['show', 'add', 'simdrop', 'drop'
+            , 'rollback_add', 'rollback_simdrop']
+    if command not in cmds:
+        parser.error("Unknown command '%s'" % command)
+        exit(1)
+
     path = DEFAULT_PATH
     if opts.path:
         path = opts.path
@@ -111,8 +99,14 @@ def run_main():
     migrator = pygration.migrator.Migrator(session, migrator_db
             , migration_set, history)
 
-    call = getattr(migrator, command)
-    call(phase)
+    if command in ['show']:
+        migrator.show(migration)
+    elif command in ['add', 'simdrop', 'drop']:
+        migrator.migrate(command, migration)
+    elif command in ['rollback_add', 'rollback_drop']:
+        migrator.rollback(command, migration)
+    else:
+        print "Unknown migrator command"
 
 
 if ( __name__ == "__main__" ):

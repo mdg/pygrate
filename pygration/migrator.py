@@ -81,12 +81,14 @@ class Migrator(object):
                 state = self._history.state(v, step_name(s))
                 self._steps.append(StepMigrator(v, s, state))
 
-    def migrate(self, phase):
+    def migrate(self, phase, migration):
         print "Migrate(%s)" % phase
         migrate_steps = []
         complete_steps = []
         for m in self._steps:
             #print "\tcheck step(%s)" % m
+            if m.version() != migration:
+                continue
             if not m.phase_complete(phase):
                 migrate_steps.append(m)
             else:
