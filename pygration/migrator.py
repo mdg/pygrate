@@ -109,10 +109,12 @@ class Migrator(object):
         else:
             print "Nothing left to migrate."
 
-    def rollback(self, phase):
+    def rollback(self, phase, migration):
         print "Migrate(%s)" % phase
         rollback_steps = []
         for m in self._steps:
+            if m.version() != migration:
+                continue
             #print "\tcheck step(%s)" % m
             if m.phase_complete(phase):
                 rollback_steps.insert(0, m)

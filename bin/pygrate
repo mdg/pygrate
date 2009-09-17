@@ -104,7 +104,7 @@ def run_main():
     elif command in ['add', 'simdrop', 'drop']:
         migrator.migrate(command, migration)
     elif command in ['rollback_add', 'rollback_drop']:
-        migrator.rollback(command, migration)
+        migrator.rollback(command[9:], migration)
     else:
         print "Unknown migrator command"
 
