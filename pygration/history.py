@@ -30,7 +30,7 @@ def load(session):
     create_failed = False
 
     try:
-        print "\n...\tcreating version_state table"
+        print "\n...\tcreating pygration_state table"
         Table.pygration_state.create()
         session.commit()
     except:
