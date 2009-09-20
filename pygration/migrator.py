@@ -1,5 +1,12 @@
 
 
+STEP_PHASE_PASS = "P"
+STEP_PHASE_FAIL = "F"
+STEP_PHASE_ROLLBACK = "RB"
+STEP_PHASE_FAIL_ROLLBACK = "FRB"
+STEP_PHASE_NOT_IMPLEMENTED = "NI"
+
+
 class StepMigrator(object):
     def __init__(self, version, step, state):
         self._version = version
