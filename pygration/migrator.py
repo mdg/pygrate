@@ -123,6 +123,17 @@ class Migrator(object):
             result = m.rollback(self._database, phase)
             m.store_state(self._session, phase, result)
 
+    def show(self, migration):
+        print "%s migration:" % migration
+        columns = "%-16s %-40s %-8s %-8s %-8s"
+        print columns % ("id", "name", "add", "simdrop", "drop")
+        for m in self._steps:
+            if m.version() != migration:
+                continue
+            print columns % (m.step_id(), m.step_name(), m._state.add_state
+                    , m._state.drop_state, m._state.commit_state)
+
+
     def find_next_phase(self):
         phase = None
         next_version, last_version = self.find_next_last()
@@ -141,7 +152,7 @@ class Migrator(object):
                 break
         return final_next, last
 
-    def show(self, what):
+    def old_show(self, what):
         print "Migrator.show(%s)" % what
         if what == 'next?':
             self.show_next()
