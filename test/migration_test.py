@@ -1,6 +1,6 @@
 import unittest
 import os.path
-from pygration.migration import VersionNumber, MigrationSet
+from pygration.migration import VersionNumber, Loader
 
 
 class VersionComponentCompare(unittest.TestCase):
@@ -89,14 +89,14 @@ class VersionNumberTest(unittest.TestCase):
         self.assertTrue(vA == vB)
 
 
-class MigrationSetTest(unittest.TestCase):
+class LoaderTest(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
-        self._set = MigrationSet(test_dir)
+        self._loader = Loader(test_dir)
 
     def test_find_versions(self):
         v001 = VersionNumber('v001')
         v002 = VersionNumber('v002')
         v07 = VersionNumber('v0-7')
-        self.assertEqual([v07, v001, v002], self._set.find_migrations())
+        self.assertEqual([v07, v001, v002], self._loader.find_migrations())
 

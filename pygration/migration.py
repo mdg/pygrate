@@ -105,7 +105,7 @@ class Migration(object):
         return "<Migration(%s)>" % (self._version)
 
 
-class MigrationSet(object):
+class Loader(object):
     """Object for finding available pygration_sets."""
     def __init__(self, path):
         self._path = path
@@ -182,7 +182,7 @@ class MigrationSet(object):
 
 
 def load(path):
-    m = MigrationSet(path)
+    m = Loader(path)
     m.load()
     return m
 
