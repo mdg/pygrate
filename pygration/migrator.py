@@ -59,9 +59,15 @@ class LiveDB(object):
         print "  Execute: '%s'" % sql
         self._session.execute(sql)
 
+    def sql_file(self, filename):
+        print "  File execution not yet implemented: %s" % filename
+
 class NoopDB(object):
     def sql(self, sql):
         print "  Noop Execute: '%s'" % sql
+
+    def sql_file(self, filename):
+        print "  File execution not yet implemented: %s" % filename
 
 
 class Migrator(object):
