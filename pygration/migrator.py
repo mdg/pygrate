@@ -1,8 +1,4 @@
 
-def step_name(step):
-    """Get the name of a step.  It's just the name of the class."""
-    return step.__name__
-
 
 class StepMigrator(object):
     def __init__(self, version, step, state):
@@ -13,8 +9,11 @@ class StepMigrator(object):
     def version(self):
         return self._version
 
+    def step_id(self):
+        return self._step.step_id()
+
     def step_name(self):
-        return step_name(self._step)
+        return self._step.step_name()
 
     def phase_complete(self, phase):
         print "state = %s, %s, %s" % (self._state.add_state
@@ -46,7 +45,7 @@ class StepMigrator(object):
             self._state = session.merge(self._state)
 
     def __str__(self):
-        return "%s.%s" % (self._version, step_name(self._step))
+        return "%s.%s" % (self._version, self._step.step_name())
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
@@ -78,7 +77,7 @@ class Migrator(object):
             print "loading steps for migration(%s)" % m
             for s in m.steps():
                 v = m.version()
-                state = self._history.state(v, step_name(s))
+                state = self._history.state(v, s.step_id(), s.step_name())
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase, migration):

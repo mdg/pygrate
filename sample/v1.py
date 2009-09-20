@@ -2,6 +2,8 @@ import pygration
 
 
 class CreateEmployeeTable(pygration.Step):
+    ID = "1"
+
     def add(self, db):
         db.sql(
                 """
@@ -16,6 +18,8 @@ class CreateEmployeeTable(pygration.Step):
 
 
 class CreateJobTable(pygration.Step):
+    ID = "2"
+
     def add(self, db):
         db.sql( \
                 """

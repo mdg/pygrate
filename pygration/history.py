@@ -16,11 +16,11 @@ class History:
     def load(self):
         self._history = self._session.query(PygrationState).all()
 
-    def state(self, version, step):
+    def state(self, version, stepid, stepname):
         for state in self._history:
-            if version == state.migration and step == state.step:
+            if version == state.migration and stepid == state.step_id:
                 return state
-        return PygrationState(version, step)
+        return PygrationState(version, stepid, stepname)
 
     def store(self, version, step, state):
         pass
