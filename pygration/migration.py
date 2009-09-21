@@ -142,7 +142,6 @@ class Loader(object):
 
     def __init__(self, path):
         self._path = path
-        self._syspaths = set()
         self._files = None
         self._versions = None
         self._modules = []
