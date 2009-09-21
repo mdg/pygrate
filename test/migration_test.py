@@ -1,6 +1,8 @@
 import unittest
 import os.path
+import types
 from pygration.migration import VersionNumber, Loader
+import pygration
 
 
 class VersionComponentCompare(unittest.TestCase):
@@ -89,6 +91,10 @@ class VersionNumberTest(unittest.TestCase):
         self.assertTrue(vA == vB)
 
 
+class MigrationSetTest(unittest.TestCase):
+    pass
+
+
 class LoaderTest(unittest.TestCase):
     def setUp( self ):
         test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
@@ -98,5 +104,41 @@ class LoaderTest(unittest.TestCase):
         v001 = VersionNumber('v001')
         v002 = VersionNumber('v002')
         v07 = VersionNumber('v0-7')
-        self.assertEqual([v07, v001, v002], self._loader.find_migrations())
+        self._loader._find_files()
+        self.assertEqual([v07, v001, v002], self._loader._find_versions())
+
+    def test_load_migration_module(self):
+        self._loader._load_migration_module('v001')
+
+        m = self._loader._modules
+        self.assertEqual( 1, len(m) )
+        self.assertEqual( types.ModuleType, type(m[0]) )
+
+
+class MigrationLoadTest(unittest.TestCase):
+    def setUp( self ):
+        self._test_dir = os.path.join( os.path.dirname( __file__ ), "test1" )
+
+    def test_load(self):
+        """Test that the migration loader loads correctly."""
+        migset = pygration.migration.load(self._test_dir)
+        migs = migset.migrations()
+
+        self.assertEqual(3, len(migs))
+        self.assertEqual("v0-7", migs[0].version())
+        self.assertEqual("v001", migs[1].version())
+        self.assertEqual("v002", migs[2].version())
+
+        v07 = migs[0]
+        self.assertEqual(1, len(v07.steps()))
+        self.assertEqual("EmployeeTable", v07.step(0).step_name())
+
+        v001 = migs[1]
+        self.assertEqual(2, len(v001.steps()))
+        self.assertEqual("SalaryTable", v001.step(0).step_name())
+        self.assertEqual("EmployeeTable", v001.step(1).step_name())
+
+        v002 = migs[2]
+        self.assertEqual(1, len(v002.steps()))
+        self.assertEqual("AccountTable", v002.step(0).step_name())
 

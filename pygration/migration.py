@@ -2,6 +2,7 @@ import os
 import os.path
 import imp
 import step
+import sys
 
 
 class VersionNumber:
@@ -101,35 +102,25 @@ class Migration(object):
     def steps(self):
         return self._steps
 
+    def step(self, index):
+        return self._steps[index]
+
     def __repr__(self):
         return "<Migration(%s)>" % (self._version)
 
 
-class Loader(object):
-    """Object for finding available pygration_sets."""
-    def __init__(self, path):
-        self._path = path
-        self._files = None
-        self._versions = None
-        self._modules = None
-        self._migrations = None
+class MigrationSet(object):
+    """An object for holding the set of available migrations."""
 
-    def load(self):
-        """Load migration modules from the given path."""
-        self._find_files()
+    def __init__(self, migs):
+        self._migrations = migs
         self._find_versions()
-        self._load_migrations()
 
     def versions(self):
-        if self._migrations is None:
-            self._migrations = self.find_migrations()
-        return self._migrations
+        return self._versions
 
     def migrations(self):
         return self._migrations
-
-    def steps(self, migration):
-        return []
 
     def migration(self, version):
         """Get the migration module for a given version."""
@@ -137,9 +128,35 @@ class Loader(object):
             return version # self._migrations[version]
         return None
 
-    def find_migrations(self):
-        self._find_files()
-        return self._find_versions()
+    def steps(self, migration):
+        return []
+
+    def _find_versions(self):
+        self._versions = set()
+        for m in self._migrations:
+            self._versions.add(m.version())
+
+
+class Loader(object):
+    """Object for finding available MigrationSets."""
+
+    def __init__(self, path):
+        self._path = path
+        self._syspaths = set()
+        self._files = None
+        self._versions = None
+        self._modules = []
+        self._set = None
+        self._migrations = []
+
+    def load(self):
+        """Load migration modules from the given path."""
+        if self._set is None:
+            self._find_files()
+            self._find_versions()
+            self._load_migrations()
+            self._set = MigrationSet(self._migrations)
+        return self._set
 
     def _find_files(self):
         """Find python files at the given path."""
@@ -168,8 +185,15 @@ class Loader(object):
         for v in self._versions:
             self._load_migration_module(str(v))
 
+    def _set_import_path(self):
+        abspath = os.path.abspath(self._path)
+        if abspath not in sys.path:
+            # Add the path to the sys.path
+            sys.path.insert(0, abspath)
+
     def _load_migration_module(self, module_name):
         print "load module(%s)" % module_name
+        self._set_import_path()
         mod_trip = imp.find_module(module_name)
         mod = imp.load_module(module_name, *mod_trip)
         self._modules.append(mod)
@@ -183,6 +207,5 @@ class Loader(object):
 
 def load(path):
     m = Loader(path)
-    m.load()
-    return m
+    return m.load()
 
