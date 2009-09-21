@@ -1,14 +1,9 @@
-import pygrate
+import pygration
 
 
-class AccountTable(pygrate.Pygration):
+class AccountTable(pygration.Step):
     """Creates an account table."""
 
-    table = pygrate.Table( "account",
-            [ pygrate.Integer("id")
-            , pygrate.Integer("balance")
-            ])
-
     def add( self, db ):
-        db.create(table)
+        db.sql("CREATE TABLE account (id integer, balance integer);")
 
