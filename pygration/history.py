@@ -7,14 +7,11 @@ class History:
     """A class for loading version history from the DB.  It also writes
     history back to the DB as it changes."""
 
-    def __init__(self, session):
-        self._session = session
+    def __init__(self, history):
+        self._history = history
 
     def committed(self, version):
         return False
-
-    def load(self):
-        self._history = self._session.query(PygrationState).all()
 
     def state(self, version, stepid, stepname):
         for state in self._history:
@@ -40,9 +37,9 @@ def load(session):
         create_failed = True
         print "error creating table.  assume it already exists and continue."
 
-    h = History(session)
     try:
-        h.load()
+        rows = session.query(PygrationState).all()
+        h = History(rows)
     except Exception, x:
         print "error loading version history"
         if create_failed:
