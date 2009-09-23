@@ -11,4 +11,23 @@ provide PrefixStep and PostfixStep as part of each migration
 
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
+	rather than a persistent ID, turn it into a DeletedStep
+	The DeletedStep will let it be rolled back by anyone no matter
+	what they've migrated
+
+Ste
+
+pygration_state table should have dates for add, simdrop, drop
+
+error out if the given migration version doesn't exist
+
+fix rollback so it doesn't break when its already been rolled back
+
+error out if trying to execute versions or steps out of sequence
+
+
+log which sql is executed
+	might just need a hash, some DBs (oracle) won't be able to hold
+	everything
+report error if steps in a migration change since it was run
 

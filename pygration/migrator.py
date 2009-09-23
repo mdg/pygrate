@@ -1,8 +1,4 @@
 
-def step_name(step):
-    """Get the name of a step.  It's just the name of the class."""
-    return step.__name__
-
 
 class StepMigrator(object):
     def __init__(self, version, step, state):
@@ -13,8 +9,11 @@ class StepMigrator(object):
     def version(self):
         return self._version
 
+    def step_id(self):
+        return self._step.step_id()
+
     def step_name(self):
-        return step_name(self._step)
+        return self._step.step_name()
 
     def phase_complete(self, phase):
         print "state = %s, %s, %s" % (self._state.add_state
@@ -46,7 +45,7 @@ class StepMigrator(object):
             self._state = session.merge(self._state)
 
     def __str__(self):
-        return "%s.%s" % (self._version, step_name(self._step))
+        return "%s.%s" % (self._version, self._step.step_name())
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
@@ -60,9 +59,15 @@ class LiveDB(object):
         print "  Execute: '%s'" % sql
         self._session.execute(sql)
 
+    def sql_file(self, filename):
+        print "  File execution not yet implemented: %s" % filename
+
 class NoopDB(object):
     def sql(self, sql):
         print "  Noop Execute: '%s'" % sql
+
+    def sql_file(self, filename):
+        print "  File execution not yet implemented: %s" % filename
 
 
 class Migrator(object):
@@ -78,7 +83,7 @@ class Migrator(object):
             print "loading steps for migration(%s)" % m
             for s in m.steps():
                 v = m.version()
-                state = self._history.state(v, step_name(s))
+                state = self._history.state(v, s.step_id(), s.step_name())
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase, migration):
@@ -124,6 +129,17 @@ class Migrator(object):
             result = m.rollback(self._database, phase)
             m.store_state(self._session, phase, result)
 
+    def show(self, migration):
+        print "%s migration:" % migration
+        columns = "%-16s %-40s %-8s %-8s %-8s"
+        print columns % ("id", "name", "add", "simdrop", "drop")
+        for m in self._steps:
+            if m.version() != migration:
+                continue
+            print columns % (m.step_id(), m.step_name(), m._state.add_state
+                    , m._state.drop_state, m._state.commit_state)
+
+
     def find_next_phase(self):
         phase = None
         next_version, last_version = self.find_next_last()
@@ -142,7 +158,7 @@ class Migrator(object):
                 break
         return final_next, last
 
-    def show(self, what):
+    def old_show(self, what):
         print "Migrator.show(%s)" % what
         if what == 'next?':
             self.show_next()

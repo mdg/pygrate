@@ -32,6 +32,16 @@ class Step(object):
     def __init__( self ):
         self._failure = False
 
+    @classmethod
+    def step_id(cls):
+        if hasattr(cls, "ID"):
+            return getattr(cls, "ID")
+        return cls.step_name()
+
+    @classmethod
+    def step_name(cls):
+        return cls.__name__
+
     def pre_add_check( self, db ):
         """Validate the DB is in the expected state prior to the add."""
         # p = PreAddCheckPygrationDB(db)

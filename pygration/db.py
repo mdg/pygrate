@@ -4,16 +4,17 @@ from sqlalchemy.orm import mapper, sessionmaker
 
 
 class PygrationState(object):
-    def __init__(self, migration=None, step=None):
+    def __init__(self, migration=None, step_id=None, step_name=None):
         self.migration = migration
-        self.step = step
+        self.step_id = step_id
+        self.step_name = step_name
         self.sequence = None
         self.add_state = None
         self.drop_state = None
         self.commit_state = None
 
     def __repr__(self):
-        return "<PygrationState(%s, %s)>" % (self.migration, self.step)
+        return "<PygrationState(%s, %s)>" % (self.migration, self.step_id)
 
 
 class Table(object):
@@ -26,7 +27,8 @@ class Table(object):
     def define(cls, schema=None):
         cls.pygration_state = sqlalchemy.Table('pygration_state', cls.metadata
                 , Column('migration', String, primary_key=True)
-                , Column('step', String(length=80), primary_key=True)
+                , Column('step_id', String(length=40), primary_key=True)
+                , Column('step_name', String(length=80))
                 , Column('sequence', Integer)
                 , Column('add_state', String(length=16))
                 , Column('drop_state', String(length=16))
