@@ -23,14 +23,14 @@ class StepMigrator(object):
             return True
         state_flag = "%s_state" % phase
         state = getattr(self._state, state_flag)
-        return state == 'pass'
+        return state == 'P'
 
     def migrate(self, db, phase):
         """The step wrapper that joins the db, step, history and phase."""
         step_instance = self._step()
         step_phase = getattr(step_instance, phase)
         result = step_phase(db)
-        return 'pass'
+        return self._store_state(phase, "P")
 
     def rollback(self, db, phase):
         step_instance = self._step()
@@ -38,11 +38,11 @@ class StepMigrator(object):
         step_phase = getattr(step_instance, func)
         result = step_phase(db)
 
-    def store_state(self, session, phase, state):
+    def _store_state(self, phase, state):
         state_flag = "%s_state" % phase
         if hasattr(self._state, state_flag):
             setattr(self._state, state_flag, state)
-            self._state = session.merge(self._state)
+        return self._state
 
     def __str__(self):
         return "%s.%s" % (self._version, self._step.step_name())
@@ -62,6 +62,10 @@ class LiveDB(object):
     def sql_file(self, filename):
         print "  File execution not yet implemented: %s" % filename
 
+    def commit(self, state):
+        merged_state = self._session.merge(state)
+        self._session.commit()
+
 class NoopDB(object):
     def sql(self, sql):
         print "  Noop Execute: '%s'" % sql
@@ -69,12 +73,14 @@ class NoopDB(object):
     def sql_file(self, filename):
         print "  File execution not yet implemented: %s" % filename
 
+    def commit(self, state):
+        pass
+
 
 class Migrator(object):
     """The object that handles the history and available version sets."""
 
-    def __init__(self, session, database, migration_set, history):
-        self._session = session
+    def __init__(self, database, migration_set, history):
         self._database = database
         self._migration_set = migration_set
         self._history = history
@@ -108,9 +114,8 @@ class Migrator(object):
             print "Begin migration:"
             for m in migrate_steps:
                 print "\n%s.%s()" % (str(m), phase)
-                result = m.migrate(self._database, phase)
-                m.store_state(self._session, phase, result)
-                self._session.commit()
+                new_state = m.migrate(self._database, phase)
+                self._database.commit(new_state)
         else:
             print "Nothing left to migrate."
 
