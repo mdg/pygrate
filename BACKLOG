@@ -7,6 +7,8 @@ migrate a phase for all steps
 
 phase commands need to be restricted to a single migration
 
+provide PrefixStep and PostfixStep as part of each migration
+
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
 
