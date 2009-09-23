@@ -15,8 +15,6 @@ make it more tolerant of Step renames
 	The DeletedStep will let it be rolled back by anyone no matter
 	what they've migrated
 
-Ste
-
 pygration_state table should have dates for add, simdrop, drop
 
 error out if the given migration version doesn't exist
