@@ -3,13 +3,13 @@ show next
 show last
 show all
 
+provide PrefixStep and PostfixStep as part of each migration
+
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
 	rather than a persistent ID, turn it into a DeletedStep
 	The DeletedStep will let it be rolled back by anyone no matter
 	what they've migrated
-
-Ste
 
 pygration_state table should have dates for add, simdrop, drop
 
