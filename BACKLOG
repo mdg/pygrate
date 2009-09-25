@@ -3,8 +3,6 @@ show next
 show last
 show all
 
-migrate a phase for all steps
-
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
 	rather than a persistent ID, turn it into a DeletedStep
@@ -26,4 +24,8 @@ log which sql is executed
 	might just need a hash, some DBs (oracle) won't be able to hold
 	everything
 report error if steps in a migration change since it was run
+
+migrate a phase for all steps
+	probably don't want to do this, but rather migrate each phase
+	for all steps.  used for bringing the DB up to date from scratch.
 
