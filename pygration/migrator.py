@@ -30,14 +30,14 @@ class StepMigrator(object):
             return True
         state_flag = "%s_state" % phase
         state = getattr(self._state, state_flag)
-        return state == 'P'
+        return state == STEP_PHASE_PASS
 
     def migrate(self, db, phase):
         """The step wrapper that joins the db, step, history and phase."""
         step_instance = self._step()
         step_phase = getattr(step_instance, phase)
         result = step_phase(db)
-        return self._store_state(phase, "P")
+        return self._store_state(phase, STEP_PHASE_PASS)
 
     def rollback(self, db, phase):
         step_instance = self._step()
