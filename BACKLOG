@@ -1,9 +1,7 @@
 
-show next
-show last
-show all
+error out if the given migration version doesn't exist
 
-provide PrefixStep and PostfixStep as part of each migration
+error out if trying to execute versions or steps out of sequence
 
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
@@ -11,14 +9,11 @@ make it more tolerant of Step renames
 	The DeletedStep will let it be rolled back by anyone no matter
 	what they've migrated
 
-pygration_state table should have dates for add, simdrop, drop
-
-error out if the given migration version doesn't exist
-
 fix rollback so it doesn't break when its already been rolled back
 
-error out if trying to execute versions or steps out of sequence
+provide PrefixStep and PostfixStep as part of each migration
 
+pygration_state table should have dates for add, simdrop, drop
 
 log which sql is executed
 	might just need a hash, some DBs (oracle) won't be able to hold
