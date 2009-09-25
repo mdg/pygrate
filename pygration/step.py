@@ -57,11 +57,11 @@ class Step(object):
         """Add elements to the db"""
         pass
 
-    def drop( self, db ):
-        """Hide elements in the db before dropping them"""
+    def simdrop( self, db ):
+        """Simulate dropping elements before actually dropping them"""
         pass
 
-    def commit_drop( self, db ):
+    def drop( self, db ):
         """Permanently drop elements from the db"""
         pass
 
@@ -69,8 +69,8 @@ class Step(object):
         """Rollback any items that were added to the db"""
         pass
 
-    def rollback_drop( self, db ):
-        """Rollback any items that were hidden in the db"""
+    def rollback_simdrop( self, db ):
+        """Rollback any simulated drops in the db"""
         pass
 
     def failure( self ):

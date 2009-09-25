@@ -10,8 +10,8 @@ class PygrationState(object):
         self.step_name = step_name
         self.sequence = None
         self.add_state = None
+        self.simdrop_state = None
         self.drop_state = None
-        self.commit_state = None
 
     def __repr__(self):
         return "<PygrationState(%s, %s)>" % (self.migration, self.step_id)
@@ -31,8 +31,8 @@ class Table(object):
                 , Column('step_name', String(length=80))
                 , Column('sequence', Integer)
                 , Column('add_state', String(length=16))
+                , Column('simdrop_state', String(length=16))
                 , Column('drop_state', String(length=16))
-                , Column('commit_state', String(length=16))
                 , schema=schema
                 )
 

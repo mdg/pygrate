@@ -17,8 +17,8 @@ class StepMigrator(object):
 
     def phase_complete(self, phase):
         print "state = %s, %s, %s" % (self._state.add_state
-                , self._state.drop_state
-                , self._state.commit_state)
+                , self._state.simdrop_state
+                , self._state.drop_state)
         if (not hasattr(self._step, phase)):
             return True
         state_flag = "%s_state" % phase
@@ -142,7 +142,7 @@ class Migrator(object):
             if m.version() != migration:
                 continue
             print columns % (m.step_id(), m.step_name(), m._state.add_state
-                    , m._state.drop_state, m._state.commit_state)
+                    , m._state.simdrop_state, m._state.drop_state)
 
 
     def find_next_phase(self):
