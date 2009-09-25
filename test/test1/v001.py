@@ -1,34 +1,16 @@
-import pygrate
+import pygration
 
 
-employee_table = """
-employee:
-    id: integer
-"""
-
-
-class SalaryTable(pygrate.Pygration):
+class SalaryTable(pygration.Step):
     """Creates a salary table."""
 
-    table = pygrate.Table( "employee",
-            [ pygrate.Integer("id")
-            , pygrate.Integer("employee")
-            , pygrate.Integer("year")
-            , pygrate.Integer("salary")
-            ])
-
     def add( self, db ):
-        db.create(table)
+        db.sql("CREATE TABLE salary;")
 
 
-class EmployeeTable(pygrate.Pygration):
+class EmployeeTable(pygration.Step):
     """Creates an employee table."""
 
-    table = pygrate.Table( "employee",
-            [ pygrate.Integer("id")
-            , pygrate.String("name")
-            ])
-
     def add( self, db ):
-        db.create(table)
+        db.sql("CREATE TABLE employee;")
 

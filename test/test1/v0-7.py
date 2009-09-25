@@ -1,20 +1,17 @@
-from pygrate.pygration import Pygration
+import pygration
 
 
-class EmployeeTable(Pygration):
+class EmployeeTable(pygration.Step):
     def add( self, db ):
-        db.execute_sql( \
+        db.sql( \
                 """
-                CREATE TABLE txt
+                CREATE TABLE employee2
                 ( id number
                 , txt_val varchar2(79)
                 );
                 """ )
 
-    def hide( self, db ):
-        db.hide_table( 'txt' )
-
     def drop( self, db ):
-        db.drop_table( 'txt' )
+        db.sql('DROP TABLE old_employee')
 
 

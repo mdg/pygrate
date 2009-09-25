@@ -96,14 +96,14 @@ def run_main():
         migrator_db = pygration.migrator.NoopDB()
     else:
         migrator_db = pygration.migrator.LiveDB(session)
-    migrator = pygration.migrator.Migrator(session, migrator_db
+    migrator = pygration.migrator.Migrator(migrator_db
             , migration_set, history)
 
     if command in ['show']:
         migrator.show(migration)
     elif command in ['add', 'simdrop', 'drop']:
         migrator.migrate(command, migration)
-    elif command in ['rollback_add', 'rollback_drop']:
+    elif command in ['rollback_add', 'rollback_simdrop']:
         migrator.rollback(command[9:], migration)
     else:
         print "Unknown migrator command"
