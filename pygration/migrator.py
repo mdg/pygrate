@@ -23,9 +23,6 @@ class StepMigrator(object):
         return self._step.step_name()
 
     def phase_complete(self, phase):
-        print "state = %s, %s, %s" % (self._state.add_state
-                , self._state.simdrop_state
-                , self._state.drop_state)
         if (not hasattr(self._step, phase)):
             return True
         state_flag = "%s_state" % phase
