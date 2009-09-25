@@ -145,8 +145,17 @@ class Migrator(object):
         for m in self._steps:
             if m.version() != migration:
                 continue
-            print columns % (m.step_id(), m.step_name(), m._state.add_state
-                    , m._state.simdrop_state, m._state.drop_state)
+            add_state = m._state.add_state
+            simdrop_state = m._state.simdrop_state
+            drop_state = m._state.drop_state
+            if not add_state:
+                add_state = '-'
+            if not simdrop_state:
+                simdrop_state = '-'
+            if not drop_state:
+                drop_state = '-'
+            print columns % (m.step_id(), m.step_name(), add_state
+                    , simdrop_state, drop_state)
 
 
     def find_next_phase(self):
