@@ -40,16 +40,29 @@ class StepMigratorTest(unittest.TestCase):
 
 class MigratorTest(unittest.TestCase):
     def setUp(self):
-        self._test1_dir = os.path.join(os.path.dirname(__file__), "test1")
+        test1_dir = os.path.join(os.path.dirname(__file__), "test1")
+        mset = pygration.migration.load(test1_dir)
+        hist = History([])
+        self._db = MockDB("pass")
+        self._test1_migrator = Migrator(self._db, mset, hist)
 
     def test_migrate_add(self):
-        db = MockDB("pass")
-        mset = pygration.migration.load(self._test1_dir)
-        hist = History([])
-        mig = Migrator(db, mset, hist)
-
+        mig = self._test1_migrator
         mig.migrate('drop', 'v0-7')
 
-        self.assertEqual(1, len(db.command))
-        self.assertEqual('DROP TABLE old_employee', db.command[0])
+        self.assertEqual(1, len(self._db.command))
+        self.assertEqual('DROP TABLE old_employee', self._db.command[0])
+
+    def test_migrate_nonexistent_version(self):
+        """Test that migrator handles invalid version number"""
+        mig = self._test1_migrator
+
+        try:
+            mig.migrate('drop', 'v0-8')
+        except:
+            # expected, this is good
+            self.assertEqual(0, len(self._db.command))
+        else:
+            self.fail("invalid version should have thrown an error")
+
 

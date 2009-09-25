@@ -98,30 +98,69 @@ class Migrator(object):
 
     def migrate(self, phase, migration):
         print "Migrate(%s)" % phase
+        pre_incomplete_steps = []
         migrate_steps = []
+        post_complete_steps = []
         complete_steps = []
-        for m in self._steps:
-            #print "\tcheck step(%s)" % m
-            if m.version() != migration:
-                continue
-            if not m.phase_complete(phase):
-                migrate_steps.append(m)
-            else:
-                complete_steps.append(m)
+        valid_migration = False
 
-        if len(complete_steps) > 0:
-            print "These steps are already complete:"
-            for m in complete_steps:
-                print "\t%s.%s()" % (str(m), phase)
+        i = iter(self._steps)
+        try:
+            s = i.next()
+        except StopIteration, si:
+            s = None
 
-        if len(migrate_steps) > 0:
-            print "Begin migration:"
-            for m in migrate_steps:
-                print "\n%s.%s()" % (str(m), phase)
-                new_state = m.migrate(self._database, phase)
-                self._database.commit(new_state)
-        else:
+        while s and s.version() != migration:
+            if not s.phase_complete(phase):
+                pre_incomplete_steps.append(s)
+                raise Exception("Prerequisite step is incomplete: %s"
+                        % s.step_name())
+            try:
+                s = i.next()
+            except StopIteration, si:
+                s = None
+
+        # skips past any steps from this migration that are already complete
+        while s and s.version() == migration and s.phase_complete(phase):
+            valid_migration = True
+            try:
+                s = i.next()
+            except StopIteration, si:
+                s = None
+
+        # get all steps from this migration that aren't yet complete
+        while s and s.version() == migration and not s.phase_complete(phase):
+            valid_migration = True
+            migrate_steps.append(s)
+            try:
+                s = i.next()
+            except StopIteration, si:
+                s = None
+
+        if len(migrate_steps) == 0:
             print "Nothing left to migrate."
+            return
+
+        # check for any remaining steps that are already complete
+        while s:
+            if s.phase_complete(phase):
+                post_complete_steps.append(s)
+                raise Exception("Subsequent steps have already been completed.")
+            try:
+                s = i.next()
+            except StopIteration, si:
+                s = None
+
+        # check if there are no valid migrations
+        if not valid_migration:
+            raise Exception("Invalid migration: %s" % migration)
+
+        # go through the migration steps
+        print "Begin migration:"
+        for m in migrate_steps:
+            print "\n%s.%s()" % (str(m), phase)
+            new_state = m.migrate(self._database, phase)
+            self._database.commit(new_state)
 
     def rollback(self, phase, migration):
         print "Migrate(%s)" % phase
