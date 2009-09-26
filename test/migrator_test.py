@@ -19,7 +19,7 @@ class MockDB(object):
             pass
 
     def commit(self, state):
-        pass
+        self.command.append("commit()")
 
 class MockStep(pygration.Step):
     def add(self, db):
@@ -46,12 +46,13 @@ class MigratorTest(unittest.TestCase):
         self._db = MockDB("pass")
         self._test1_migrator = Migrator(self._db, mset, hist)
 
-    def test_migrate_add(self):
+    def test_migrate_drop(self):
         mig = self._test1_migrator
         mig.migrate('drop', 'v0-7')
 
-        self.assertEqual(1, len(self._db.command))
+        self.assertEqual(2, len(self._db.command))
         self.assertEqual('DROP TABLE old_employee', self._db.command[0])
+        self.assertEqual('commit()', self._db.command[1])
 
     def test_migrate_nonexistent_version(self):
         """Test that migrator handles invalid version number"""
