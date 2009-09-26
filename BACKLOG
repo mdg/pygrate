@@ -1,6 +1,4 @@
 
-error out if the given migration version doesn't exist
-
 error out if trying to execute versions or steps out of sequence
 
 make it more tolerant of Step renames
@@ -19,6 +17,9 @@ log which sql is executed
 	might just need a hash, some DBs (oracle) won't be able to hold
 	everything
 report error if steps in a migration change since it was run
+
+migrate individual steps or groups of steps
+	pygrate add v1.AddTable
 
 migrate a phase for all steps
 	probably don't want to do this, but rather migrate each phase
