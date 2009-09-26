@@ -22,6 +22,12 @@ class StepMigrator(object):
     def step_name(self):
         return self._step.step_name()
 
+    def complete(self):
+        """Check if the entire step is complete"""
+        return self._state.add_state == STEP_PHASE_PASS \
+                and self._state.simdrop_state == STEP_PHASE_PASS \
+                and self._state.drop_state == STEP_PHASE_PASS
+
     def phase_complete(self, phase):
         """Check if the phase is complete for the step"""
         if (not hasattr(self._step, phase)):
@@ -43,7 +49,6 @@ class StepMigrator(object):
         else:
             raise Exception("Unknown phase")
         return complete
-
 
     def migrate(self, db, phase):
         """The step wrapper that joins the db, step, history and phase."""
@@ -134,7 +139,7 @@ class Migrator(object):
         # skip past steps from earlier versions, make sure everything
         # has already been done
         while s and s.version() != migration:
-            if not s.phase_complete(phase):
+            if not s.complete():
                 pre_incomplete_steps.append(s)
                 raise Exception("Prerequisite migration is incomplete: '%s'"
                         % s.version())

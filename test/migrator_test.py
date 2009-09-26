@@ -10,8 +10,11 @@ import pygration.db
 class MockDB(object):
     """Mock for the pygration DB objects."""
     def __init__(self, action):
-        self.command = []
         self._action = action
+        self.reset()
+
+    def reset(self):
+        self.command = list()
 
     def sql(self, cmd):
         self.command.append(cmd)
@@ -102,6 +105,22 @@ class MigratorTest(unittest.TestCase):
                     , str(x))
         else:
             self.fail("migration out of order should have thrown an error")
+
+    def test_add_without_prior_drop(self):
+        """Test what happens if MigB.add is called before MigA.drop"""
+        mig = self._test1_migrator
+
+        mig.migrate('add', 'v0-7')
+        self._db.reset()
+        try:
+            mig.migrate('add', 'v001')
+        except Exception, x:
+            self.assertEqual(0, len(self._db.command))
+            self.assertEqual("Prerequisite migration is incomplete: 'v0-7'"
+                    , str(x))
+        else:
+            self.fail("adding without drop of previous migration " \
+                    "should have failed")
 
     def test_migrate_nonexistent_version(self):
         """Test that migrator handles invalid version number"""
