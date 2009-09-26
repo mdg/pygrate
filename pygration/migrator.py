@@ -119,8 +119,8 @@ class Migrator(object):
         while s and s.version() != migration:
             if not s.phase_complete(phase):
                 pre_incomplete_steps.append(s)
-                raise Exception("Prerequisite step is incomplete: %s"
-                        % s.step_name())
+                raise Exception("Prerequisite migration is incomplete: '%s'"
+                        % s.version())
             try:
                 s = i.next()
             except StopIteration, si:

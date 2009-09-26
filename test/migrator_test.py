@@ -70,6 +70,22 @@ class MigratorTest(unittest.TestCase):
         self.assertEqual('DROP TABLE old_employee', self._db.command[0])
         self.assertEqual('commit()', self._db.command[1])
 
+    def test_migrations_out_of_order(self):
+        """Test for error when migrating out of order
+
+        Migrations should not be complete if running out of order."""
+        mig = self._test1_migrator
+
+        try:
+            mig.migrate('add', 'v001')
+        except Exception, x:
+            # expected, this is good
+            self.assertEqual(0, len(self._db.command))
+            self.assertEqual("Prerequisite migration is incomplete: 'v0-7'"
+                    , str(x))
+        else:
+            self.fail("migration out of order should have thrown an error")
+
     def test_migrate_nonexistent_version(self):
         """Test that migrator handles invalid version number"""
         mig = self._test1_migrator
