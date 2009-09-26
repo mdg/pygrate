@@ -104,7 +104,6 @@ class Migrator(object):
         migrate_steps = list()
         post_complete_steps = list()
         complete_steps = list()
-        valid_migration = False
 
         if not self.has_version(migration):
             raise Exception("Invalid migration version: '%s'" % migration)
@@ -128,7 +127,6 @@ class Migrator(object):
 
         # skips past any steps from this migration that are already complete
         while s and s.version() == migration and s.phase_complete(phase):
-            valid_migration = True
             try:
                 s = i.next()
             except StopIteration, si:
@@ -136,7 +134,6 @@ class Migrator(object):
 
         # get all steps from this migration that aren't yet complete
         while s and s.version() == migration and not s.phase_complete(phase):
-            valid_migration = True
             migrate_steps.append(s)
             try:
                 s = i.next()
@@ -156,10 +153,6 @@ class Migrator(object):
                 s = i.next()
             except StopIteration, si:
                 s = None
-
-        # check if there are no valid migrations
-        if not valid_migration:
-            raise Exception("Invalid migration: %s" % migration)
 
         # go through the migration steps
         print "Begin migration:"
