@@ -75,13 +75,17 @@ class MigratorTest(unittest.TestCase):
                 """, self._db.command[0])
         self.assertEqual('commit()', self._db.command[1])
 
-    def test_migrate_drop(self):
+    def test_migrate_phase_out_of_order(self):
+        """Test if the drop phase is run before the add phase"""
         mig = self._test1_migrator
-        mig.migrate('drop', 'v0-7')
-
-        self.assertEqual(2, len(self._db.command))
-        self.assertEqual('DROP TABLE old_employee', self._db.command[0])
-        self.assertEqual('commit()', self._db.command[1])
+        try:
+            mig.migrate('drop', 'v0-7')
+        except Exception, x:
+            self.assertEqual("Prerequisite step is incomplete: " \
+                    "'v0-7.EmployeeTable'", str(x))
+            self.assertEqual(0, len(self._db.command))
+        else:
+            self.fail("Dropping before adding should have failed.""")
 
     def test_migrations_out_of_order(self):
         """Test for error when migrating out of order

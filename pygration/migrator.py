@@ -30,6 +30,21 @@ class StepMigrator(object):
         state = getattr(self._state, state_flag)
         return state == STEP_PHASE_PASS
 
+    def ready_to_migrate(self, phase):
+        """Check if the preceding phases are complete"""
+        complete = False
+        if phase == 'add':
+            complete = True
+        elif phase == 'simdrop':
+            complete = self._state.add_state == STEP_PHASE_PASS
+        elif phase == 'drop':
+            complete = self._state.add_state == STEP_PHASE_PASS \
+                    and self._state.simdrop_state == STEP_PHASE_PASS
+        else:
+            raise Exception("Unknown phase")
+        return complete
+
+
     def migrate(self, db, phase):
         """The step wrapper that joins the db, step, history and phase."""
         step_instance = self._step()
@@ -130,6 +145,9 @@ class Migrator(object):
 
         # skips past any steps from this migration that are already complete
         while s and s.version() == migration and s.phase_complete(phase):
+            if not s.ready_to_migrate(phase):
+                raise Exception("Prerequisite step is incomplete: '%s.%s'"
+                        % (s.version(), s.step_name()))
             try:
                 s = i.next()
             except StopIteration, si:
@@ -137,6 +155,9 @@ class Migrator(object):
 
         # get all steps from this migration that aren't yet complete
         while s and s.version() == migration and not s.phase_complete(phase):
+            if not s.ready_to_migrate(phase):
+                raise Exception("Prerequisite step is incomplete: '%s.%s'"
+                        % (s.version(), s.step_name()))
             migrate_steps.append(s)
             try:
                 s = i.next()
