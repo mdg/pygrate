@@ -76,10 +76,10 @@ class MigratorTest(unittest.TestCase):
 
         try:
             mig.migrate('drop', 'v0-8')
-        except:
+        except Exception, x:
             # expected, this is good
             self.assertEqual(0, len(self._db.command))
+            self.assertEqual("Invalid migration version: 'v0-8'", str(x))
         else:
             self.fail("invalid version should have thrown an error")
-
 

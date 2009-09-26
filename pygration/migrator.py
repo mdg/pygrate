@@ -106,6 +106,10 @@ class Migrator(object):
         complete_steps = list()
         valid_migration = False
 
+        if not self.has_version(migration):
+            raise Exception("Invalid migration version: '%s'" % migration)
+
+        # start with the first step
         i = iter(self._steps)
         try:
             s = i.next()
@@ -196,6 +200,12 @@ class Migrator(object):
                 drop_state = '-'
             print columns % (m.step_id(), m.step_name(), add_state
                     , simdrop_state, drop_state)
+
+    def has_version(self, migration):
+        for s in self._steps:
+            if s.version() == migration:
+                return True
+        return False
 
 
     def find_next_phase(self):
