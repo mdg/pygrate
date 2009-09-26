@@ -92,14 +92,14 @@ class Migrator(object):
         self._history = history
         self._steps = list()
         for m in self._migration_set.migrations():
-            print "loading steps for migration(%s)" % m
+            # print "loading steps for migration(%s)" % m
             for s in m.steps():
                 v = m.version()
                 state = self._history.state(v, s.step_id(), s.step_name())
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase, migration):
-        print "Migrate(%s)" % phase
+        # print "Migrate(%s)" % phase
         pre_incomplete_steps = list()
         migrate_steps = list()
         post_complete_steps = list()

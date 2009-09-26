@@ -191,7 +191,7 @@ class Loader(object):
             sys.path.insert(0, abspath)
 
     def _load_migration_module(self, module_name):
-        print "load module(%s)" % module_name
+        # print "load module(%s)" % module_name
         self._set_import_path()
         mod_trip = imp.find_module(module_name)
         mod = imp.load_module(module_name, *mod_trip)
