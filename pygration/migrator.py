@@ -23,6 +23,7 @@ class StepMigrator(object):
         return self._step.step_name()
 
     def phase_complete(self, phase):
+        """Check if the phase is complete for the step"""
         if (not hasattr(self._step, phase)):
             return True
         state_flag = "%s_state" % phase
@@ -115,6 +116,8 @@ class Migrator(object):
         except StopIteration, si:
             s = None
 
+        # skip past steps from earlier versions, make sure everything
+        # has already been done
         while s and s.version() != migration:
             if not s.phase_complete(phase):
                 pre_incomplete_steps.append(s)
