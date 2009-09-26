@@ -1,6 +1,4 @@
 
-error out if trying to execute versions or steps out of sequence
-
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
 	rather than a persistent ID, turn it into a DeletedStep

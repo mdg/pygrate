@@ -1,3 +1,6 @@
+= v0.x.0 =
+* More error checking to avoid migrations out of order
+
 v0.2.0
 * Changed phases to add, simdrop and drop
 * Add better tests to solidify behavior and error cases
