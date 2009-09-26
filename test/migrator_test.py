@@ -62,6 +62,19 @@ class MigratorTest(unittest.TestCase):
         self._db = MockDB("pass")
         self._test1_migrator = Migrator(self._db, mset, hist)
 
+    def test_migrate_add(self):
+        mig = self._test1_migrator
+        mig.migrate('add', 'v0-7')
+
+        self.assertEqual(2, len(self._db.command))
+        self.assertEqual("""
+                CREATE TABLE employee2
+                ( id number
+                , txt_val varchar2(79)
+                );
+                """, self._db.command[0])
+        self.assertEqual('commit()', self._db.command[1])
+
     def test_migrate_drop(self):
         mig = self._test1_migrator
         mig.migrate('drop', 'v0-7')
