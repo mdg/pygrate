@@ -25,6 +25,9 @@ class MockStep(pygration.Step):
     def add(self, db):
         db.sql("create mock;")
 
+    def rollback_add(self, db):
+        db.sql("drop mock;")
+
 
 class StepMigratorTest(unittest.TestCase):
     def test_normal_add_pass(self):
@@ -36,6 +39,19 @@ class StepMigratorTest(unittest.TestCase):
         result = mig.migrate(db, "add")
 
         self.assertEqual("P", result.add_state)
+
+    def test_normal_rollback_add(self):
+        v = pygration.migration.VersionNumber("v1-5")
+        state = pygration.db.PygrationState(str(v)
+                , MockStep.step_id(), MockStep.step_name())
+        mig = StepMigrator(v, MockStep, state)
+        db = MockDB("pass")
+        result = mig.rollback(db, "add")
+
+        self.assertEqual("RB", mig._state.add_state)
+        self.assertEqual(2, len(db.command))
+        self.assertEqual("drop mock;", db.command[0])
+        self.assertEqual("commit()", db.command[1])
 
 
 class MigratorTest(unittest.TestCase):

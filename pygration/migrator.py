@@ -41,6 +41,8 @@ class StepMigrator(object):
         func = "rollback_%s" % phase
         step_phase = getattr(step_instance, func)
         result = step_phase(db)
+        self._store_state(phase, STEP_PHASE_ROLLBACK)
+        db.commit(self._state)
 
     def _store_state(self, phase, state):
         state_flag = "%s_state" % phase
@@ -174,8 +176,7 @@ class Migrator(object):
 
         for m in rollback_steps:
             print "\n%s.%s()" % (str(m), phase)
-            result = m.rollback(self._database, phase)
-            m.store_state(self._session, phase, result)
+            error = m.rollback(self._database, phase)
 
     def show(self, migration):
         print "%s migration:" % migration
