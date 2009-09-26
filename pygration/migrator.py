@@ -90,7 +90,7 @@ class Migrator(object):
         self._database = database
         self._migration_set = migration_set
         self._history = history
-        self._steps = []
+        self._steps = list()
         for m in self._migration_set.migrations():
             print "loading steps for migration(%s)" % m
             for s in m.steps():
@@ -100,10 +100,10 @@ class Migrator(object):
 
     def migrate(self, phase, migration):
         print "Migrate(%s)" % phase
-        pre_incomplete_steps = []
-        migrate_steps = []
-        post_complete_steps = []
-        complete_steps = []
+        pre_incomplete_steps = list()
+        migrate_steps = list()
+        post_complete_steps = list()
+        complete_steps = list()
         valid_migration = False
 
         i = iter(self._steps)
@@ -166,7 +166,7 @@ class Migrator(object):
 
     def rollback(self, phase, migration):
         print "Migrate(%s)" % phase
-        rollback_steps = []
+        rollback_steps = list()
         for m in self._steps:
             if m.version() != migration:
                 continue
