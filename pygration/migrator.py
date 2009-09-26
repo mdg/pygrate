@@ -191,7 +191,15 @@ class Migrator(object):
             self._database.commit(new_state)
 
     def rollback(self, phase, migration):
-        print "Migrate(%s)" % phase
+        """Rollback a phase of the migration"""
+        print "Rollback(%s, %s)" % (migration, phase)
+
+        # check for bad phases first
+        if phase == 'drop':
+            raise Exception("Drop phase cannot be rolled back")
+        elif phase not in ['add', 'simdrop']:
+            raise Exception("Unknown rollback phase: '%s'" % phase)
+
         rollback_steps = list()
         for m in self._steps:
             if m.version() != migration:
