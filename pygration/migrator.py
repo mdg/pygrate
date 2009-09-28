@@ -28,6 +28,12 @@ class StepMigrator(object):
                 and self._state.simdrop_state == STEP_PHASE_PASS \
                 and self._state.drop_state == STEP_PHASE_PASS
 
+    def partly_complete(self):
+        """Check if any part of the step is complete"""
+        return self._state.add_state == STEP_PHASE_PASS \
+                or self._state.simdrop_state == STEP_PHASE_PASS \
+                or self._state.drop_state == STEP_PHASE_PASS
+
     def phase_complete(self, phase):
         """Check if the phase is complete for the step"""
         if (not hasattr(self._step, phase)):
@@ -201,16 +207,27 @@ class Migrator(object):
             raise Exception("Unknown rollback phase: '%s'" % phase)
 
         rollback_steps = list()
-        for m in self._steps:
-            if m.version() != migration:
-                continue
-            #print "\tcheck step(%s)" % m
-            if m.phase_complete(phase):
-                rollback_steps.insert(0, m)
+        dropped_steps = list()
 
-        for m in rollback_steps:
-            print "\n%s.%s()" % (str(m), phase)
-            error = m.rollback(self._database, phase)
+        for s in self._migration_steps(migration):
+            if s.phase_complete("drop"):
+                if len(rollback_steps) > 0:
+                    raise Exception("Cannot rollback past dropped phases")
+                dropped_steps.insert(0, s)
+            elif s.phase_complete(phase):
+                rollback_steps.insert(0, s)
+
+        if len(dropped_steps) > 0 and len(rollback_steps) == 0:
+            raise Exception("Cannot rollback past dropped phases")
+
+        for s in self._post_migration_steps(migration):
+            if s.partly_complete():
+                raise Exception("Cannot rollback because later versions " \
+                        "are already migrated.")
+
+        for s in rollback_steps:
+            print "\n%s.%s()" % (str(s), phase)
+            error = s.rollback(self._database, phase)
 
     def show(self, migration):
         print "%s migration:" % migration
@@ -281,4 +298,31 @@ class Migrator(object):
         print "Last Migration:"
         next, last = self.find_next_last()
         print "\t%s" % last
+
+    def _pre_migration_steps(self, migration):
+        """Return all steps prior to a given migration"""
+        for s in self._steps:
+            if s.version() != migration:
+                yield s
+            else:
+                break
+
+    def _migration_steps(self, migration):
+        """Return all steps in a given migration"""
+        found_migration = False
+        for s in self._steps:
+            if s.version() == migration:
+                yield s
+                found_migration = True
+            elif found_migration:
+                break
+
+    def _post_migration_steps(self, migration):
+        """Return all steps after a given migration"""
+        passed_migration = False
+        for s in self._steps:
+            if s.version() == migration:
+                passed_migration = True
+            elif passed_migration:
+                yield s
 

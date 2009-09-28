@@ -106,6 +106,23 @@ class MigratorTest(unittest.TestCase):
         else:
             self.fail("migration out of order should have thrown an error")
 
+    def test_rollback_after_drop(self):
+        """Test for error when rolling back simdrop after drop"""
+        mig = self._test1_migrator
+
+        mig.migrate('add', 'v0-7')
+        mig.migrate('simdrop', 'v0-7')
+        mig.migrate('drop', 'v0-7')
+        self._db.reset()
+        try:
+            mig.rollback('simdrop', 'v0-7')
+        except Exception, x:
+            # expected, this is good
+            self.assertEqual("Cannot rollback past dropped phases", str(x))
+            self.assertEqual(0, len(self._db.command))
+        else:
+            self.fail("migration out of order should have thrown an error")
+
     def test_rollback_drop_fails(self):
         """Test for error when trying to rollback drop"""
         mig = self._test1_migrator
