@@ -23,3 +23,8 @@ migrate a phase for all steps
 	probably don't want to do this, but rather migrate each phase
 	for all steps.  used for bringing the DB up to date from scratch.
 
+explicitly set dependencies between steps within a migration
+	this lets things be stored in a more organization order
+	rather than always having to be put at the end which may not be
+	the clearest option
+
