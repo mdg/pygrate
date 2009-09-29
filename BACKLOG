@@ -28,6 +28,12 @@ interface to repair the pygration_state table
 	maybe call a step run, or rollback & delete a state row that is
 	invalid for some reason now
 
+add templates for sql and sql files
+	make it plugable to support different template engines
+	default to mako, other candidates include django & jsontemplate
+	put template data section into yaml config that is accessible from
+	the template
+
 explicitly set dependencies between steps within a migration
 	this lets things be stored in a more organization order
 	rather than always having to be put at the end which may not be
