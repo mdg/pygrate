@@ -1,4 +1,4 @@
-
+import re
 
 STEP_PHASE_PASS = "P"
 STEP_PHASE_FAIL = "F"
@@ -83,6 +83,16 @@ class StepMigrator(object):
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
 
+MULTILINE_COMMENT_REGEX = re.compile(r'/\*.*?\*/', re.DOTALL)
+SINGLE_LINE_COMMENT_REGEX = re.compile(r'--.*$', re.MULTILINE)
+def statements_in_lines(lines):
+    statements = ''.join(lines)
+    statements = MULTILINE_COMMENT_REGEX.sub('', statements)
+    statements = SINGLE_LINE_COMMENT_REGEX.sub('', statements)
+    statements = statements.split(';')
+    for statement in statements:
+        if statement != '' and not statement.isspace():
+            yield statement
 
 class LiveDB(object):
     def __init__(self, session):
@@ -93,7 +103,9 @@ class LiveDB(object):
         self._session.execute(sql)
 
     def sql_file(self, filename):
-        print "  File execution not yet implemented: %s" % filename
+        with open(filename) as file:
+            for statement in statements_in_lines(file.readlines()):
+                self.sql(statement)
 
     def commit(self, state):
         merged_state = self._session.merge(state)
@@ -104,7 +116,9 @@ class NoopDB(object):
         print "  Noop Execute: '%s'" % sql
 
     def sql_file(self, filename):
-        print "  File execution not yet implemented: %s" % filename
+        with open(filename) as file:
+            for statement in statements_in_lines(file.readlines()):
+                self.sql(statement)
 
     def commit(self, state):
         pass
