@@ -43,8 +43,9 @@ def select(conf_files, env):
     if len(conf_files) == 1 and env is None:
         return conf_files[0]
     for c in conf_files:
-        if c.find(env) == 0:
-            pass
+        name, sep, extension = c.rpartition('.')
+        if name == env and extension == 'yaml':
+            return c
     return None
 
 
