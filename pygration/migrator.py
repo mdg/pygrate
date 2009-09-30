@@ -93,7 +93,7 @@ class LiveDB(object):
         self._session.execute(sql)
 
     def sql_file(self, filename):
-        print "  File execution not yet implemented: %s" % filename
+        raise NotImplementedError("db.sql_file() not yet implemented")
 
     def commit(self, state):
         merged_state = self._session.merge(state)
