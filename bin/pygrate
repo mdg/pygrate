@@ -83,7 +83,15 @@ def run_main():
         print "Config Options = %s" % conf
 
     # Open SQLAlchemy DB Engine
-    session = pygration.db.open(conf.connection, conf.schema)
+    session = pygration.db.open(conf.drivername,
+                                conf.schema,
+                                conf.username,
+                                conf.password,
+                                conf.host,
+                                conf.port,
+                                conf.database,
+                                conf.query
+                               )
 
     # MigrationSet #
     migration_set = pygration.migration.load(path)

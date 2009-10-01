@@ -37,12 +37,21 @@ class Table(object):
                 )
 
 
-def open(connection, schema=None):
+def open(drivername, schema, username=None, password=None, host=None, port=None, database=None, query=None):
     """Open the DB through a SQLAlchemy engine.
  
     Returns an open session.
     """
-    Table.engine = sqlalchemy.create_engine(connection)
+
+    url = sqlalchemy.engine.url.URL(drivername = drivername,
+                                    username = username,
+                                    password = password,
+                                    host = host,
+                                    port = port,
+                                    database = database,
+                                    query = query)
+
+    Table.engine = sqlalchemy.create_engine(url)
     Table.metadata.bind = Table.engine
 
     Session = sessionmaker()
