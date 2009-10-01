@@ -94,9 +94,17 @@ def statements_in_lines(lines):
         if statement != '' and not statement.isspace():
             yield statement
 
+class NoBinarySpecifiedError(Exception):
+    pass
+
 class LiveDB(object):
-    def __init__(self, session):
+    def __init__(self, session, load_file=None):
+        '''
+        session: a sqlalchemy session
+        load_file: a function which will execute a sql file on the database, given the filename
+        '''
         self._session = session
+        self._load_file = load_file
 
     def sql(self, sql):
         print "  Execute: '%s'" % sql
@@ -107,6 +115,12 @@ class LiveDB(object):
             for statement in statements_in_lines(file.readlines()):
                 self.sql(statement)
 
+    def shell(self, filename):
+        if self._load_file is None:
+            raise NoBinarySpecifiedError()
+        print "  Loading file: '%s'" % filename
+        self._load_file(filename)
+
     def commit(self, state):
         merged_state = self._session.merge(state)
         self._session.commit()
@@ -116,9 +130,10 @@ class NoopDB(object):
         print "  Noop Execute: '%s'" % sql
 
     def sql_file(self, filename):
-        with open(filename) as file:
-            for statement in statements_in_lines(file.readlines()):
-                self.sql(statement)
+        print "  Noop Loading file: '%s'" % filename
+
+    def shell(self, filename):
+        print "  Noop shell: '%s'" % filename
 
     def commit(self, state):
         pass
@@ -339,4 +354,3 @@ class Migrator(object):
                 passed_migration = True
             elif passed_migration:
                 yield s
-
