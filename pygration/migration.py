@@ -1,8 +1,37 @@
 import os
 import os.path
 import imp
-import step
 import sys
+
+
+
+class Step(object):
+    """Static class for defining migration steps"""
+    steps = []
+
+    @staticmethod
+    def step_class(cls):
+        print "step: %s.%s" % (cls.__module__, cls.__name__)
+        cls.version = cls.__module__
+        cls.step_name = cls.__name__
+        cls.step_id = cls.step_name
+        Step.steps.append(cls())
+        return cls
+
+    @staticmethod
+    def step_instance(step):
+        print "step: %s.%s" % (step.__class__.__module__
+                , step.__class__.__name__)
+        step.version = step.__class__.__module__
+        step.step_name = step.__class__.__name__
+        step.step_id = step.step_name
+        Step.steps.append(step)
+
+    @staticmethod
+    def extract_steps():
+        extraction = Step.steps
+        Step.steps = []
+        return extraction
 
 
 class VersionNumber:
@@ -196,12 +225,12 @@ class Loader(object):
         mod_trip = imp.find_module(module_name)
         mod = imp.load_module(module_name, *mod_trip)
         self._modules.append(mod)
-        steps = step.StepType.extract_steps()
+        steps = Step.extract_steps()
         for s in steps:
-            print "\t%s" % (s.__name__)
+            print "\t%s" % (s.step_name)
         m = Migration(module_name, steps)
         self._migrations.append(m)
-        print "remaining steps:\n\t", step.StepType.steps
+        print "remaining steps:\n\t", Step.steps
 
 
 def load(path):
