@@ -1,7 +1,8 @@
 import pygration
 
 
-class CreateSalaryTable(pygration.Step):
+@pygration.step_class
+class CreateSalaryTable(object):
     def add(self, db):
         db.sql( """
                 CREATE TABLE salary
