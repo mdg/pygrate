@@ -83,7 +83,18 @@ def run_main():
         print "Config Options = %s" % conf
 
     # Open SQLAlchemy DB Engine
-    session = pygration.db.open(conf.connection, conf.schema)
+    session = pygration.db.open(conf.drivername,
+                                conf.schema,
+                                conf.username,
+                                conf.password,
+                                conf.host,
+                                conf.port,
+                                conf.database,
+                                conf.query
+                               )
+
+    # Create the file loader
+    file_loader = pygration.db.FileLoader(conf.binary, conf.binary_args, conf.opts) 
 
     # MigrationSet #
     migration_set = pygration.migration.load(path)
@@ -95,7 +106,7 @@ def run_main():
     if opts.noop:
         migrator_db = pygration.migrator.NoopDB()
     else:
-        migrator_db = pygration.migrator.LiveDB(session)
+        migrator_db = pygration.migrator.LiveDB(session, file_loader)
     migrator = pygration.migrator.Migrator(migrator_db
             , migration_set, history)
 

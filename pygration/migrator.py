@@ -1,4 +1,4 @@
-
+import re
 
 STEP_PHASE_PASS = "P"
 STEP_PHASE_FAIL = "F"
@@ -83,17 +83,43 @@ class StepMigrator(object):
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
 
+MULTILINE_COMMENT_REGEX = re.compile(r'/\*.*?\*/', re.DOTALL)
+SINGLE_LINE_COMMENT_REGEX = re.compile(r'--.*$', re.MULTILINE)
+def statements_in_lines(lines):
+    statements = ''.join(lines)
+    statements = MULTILINE_COMMENT_REGEX.sub('', statements)
+    statements = SINGLE_LINE_COMMENT_REGEX.sub('', statements)
+    statements = statements.split(';')
+    for statement in statements:
+        if statement != '' and not statement.isspace():
+            yield statement
+
+class NoBinarySpecifiedError(Exception):
+    pass
 
 class LiveDB(object):
-    def __init__(self, session):
+    def __init__(self, session, load_file=None):
+        '''
+        session: a sqlalchemy session
+        load_file: a function which will execute a sql file on the database, given the filename
+        '''
         self._session = session
+        self._load_file = load_file
 
     def sql(self, sql):
         print "  Execute: '%s'" % sql
         self._session.execute(sql)
 
     def sql_file(self, filename):
-        raise NotImplementedError("db.sql_file() not yet implemented")
+        with open(filename) as file:
+            for statement in statements_in_lines(file.readlines()):
+                self.sql(statement)
+
+    def shell(self, filename):
+        if self._load_file is None:
+            raise NoBinarySpecifiedError()
+        print "  Loading file: '%s'" % filename
+        self._load_file(filename)
 
     def commit(self, state):
         merged_state = self._session.merge(state)
@@ -104,7 +130,10 @@ class NoopDB(object):
         print "  Noop Execute: '%s'" % sql
 
     def sql_file(self, filename):
-        print "  File execution not yet implemented: %s" % filename
+        print "  Noop Loading file: '%s'" % filename
+
+    def shell(self, filename):
+        print "  Noop shell: '%s'" % filename
 
     def commit(self, state):
         pass
@@ -325,4 +354,3 @@ class Migrator(object):
                 passed_migration = True
             elif passed_migration:
                 yield s
-

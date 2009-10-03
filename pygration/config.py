@@ -8,25 +8,13 @@ class Config:
     Parses yaml content into config options."""
 
     def __init__(self):
-        self.schema = None
-        self.connection = None
-        self.username = None
-        self.password = None
         self.opts = {}
 
     def load(self, conf_file):
         self.opts = yaml.load(conf_file)
-        if self.opts:
-            self._set_option('connection')
-            self._set_option('schema')
-            self._set_option('username')
-            self._set_option('password')
-        else:
-            self.opts = {}
 
-    def _set_option(self, option):
-        if self.opts and option in self.opts:
-            setattr(self, option, self.opts[option])
+    def __getattr__(self, name):
+        return self.opts.get(name, None)
 
     def __str__(self):
         return str(self.opts)

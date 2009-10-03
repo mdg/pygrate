@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import mapper, sessionmaker
-
+import subprocess
 
 class PygrationState(object):
     def __init__(self, migration=None, step_id=None, step_name=None):
@@ -36,13 +36,32 @@ class Table(object):
                 , schema=schema
                 )
 
+class FileLoader(object):
+    def __init__(self, binary, args, formatting_dict):
+        self._binary = binary
+        self._args = [arg.format(filename="{filename}", **formatting_dict) for arg in args]
+    
+    def __call__(self, filename):
+        args = [arg.format(filename=filename) for arg in self._args]
+        print self._binary, args
+        subprocess.check_call([self._binary] + args)
 
-def open(connection, schema=None):
+
+def open(drivername, schema, username=None, password=None, host=None, port=None, database=None, query=None):
     """Open the DB through a SQLAlchemy engine.
  
     Returns an open session.
     """
-    Table.engine = sqlalchemy.create_engine(connection)
+
+    url = sqlalchemy.engine.url.URL(drivername = drivername,
+                                    username = username,
+                                    password = password,
+                                    host = host,
+                                    port = port,
+                                    database = database,
+                                    query = query)
+
+    Table.engine = sqlalchemy.create_engine(url)
     Table.metadata.bind = Table.engine
 
     Session = sessionmaker()
