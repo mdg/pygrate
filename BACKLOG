@@ -9,9 +9,9 @@ fix rollback so it doesn't break when its already been rolled back
 
 provide PrefixStep and PostfixStep as part of each migration
 
-pygration_state table should have dates for add, simdrop, drop
+pygration_state table should have timestamps for add, simdrop, drop
 
-log which sql is executed
+store which sql is executed in pygration_state
 	might just need a hash, some DBs (oracle) won't be able to hold
 	everything
 report error if steps in a migration change since it was run
