@@ -16,6 +16,9 @@ store which sql is executed in pygration_state
 	everything
 report error if steps in a migration change since it was run
 
+write outcomes to a log file
+	log should be configurable
+
 migrate individual steps or groups of steps
 	pygrate add v1.AddTable
 
