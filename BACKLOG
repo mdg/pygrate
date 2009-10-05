@@ -25,6 +25,7 @@ migrate individual steps or groups of steps
 migrate a phase for all steps
 	probably don't want to do this, but rather migrate each phase
 	for all steps.  used for bringing the DB up to date from scratch.
+	pygrate ff (fast-forward)
 
 interface to repair the pygration_state table
 	will need to alter the pygration_state table w/o running migrations
