@@ -23,7 +23,8 @@ class Step(object):
         print "step: %s.%s" % (step.__class__.__module__
                 , step.__class__.__name__)
         step.version = step.__class__.__module__
-        step.step_name = step.__class__.__name__
+        if getattr(step, 'step_name', None) is None:
+            step.step_name = step.__class__.__name__
         step.step_id = step.step_name
         Step.steps.append(step)
 
