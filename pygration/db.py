@@ -26,9 +26,9 @@ class Table(object):
     @classmethod
     def define(cls, schema=None):
         cls.pygration_state = sqlalchemy.Table('pygration_state', cls.metadata
-                , Column('migration', String(length=40), primary_key=True)
-                , Column('step_id', String(length=40), primary_key=True)
-                , Column('step_name', String(length=80))
+                , Column('migration', String(length=160), primary_key=True)
+                , Column('step_id', String(length=160), primary_key=True)
+                , Column('step_name', String(length=160))
                 , Column('sequence', Integer)
                 , Column('add_state', String(length=16))
                 , Column('simdrop_state', String(length=16))
