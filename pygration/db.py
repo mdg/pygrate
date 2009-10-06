@@ -47,19 +47,24 @@ class FileLoader(object):
         subprocess.check_call([self._binary] + args)
 
 
-def open(drivername, schema, username=None, password=None, host=None, port=None, database=None, query=None):
+def open(url=None, drivername=None, schema=None, username=None,
+         password=None, host=None, port=None, database=None, query=None):
     """Open the DB through a SQLAlchemy engine.
  
     Returns an open session.
     """
+    
+    if url is None and drivername is None:
+        raise Exception("Either a url or a driver name is required to open a db connection")
 
-    url = sqlalchemy.engine.url.URL(drivername = drivername,
-                                    username = username,
-                                    password = password,
-                                    host = host,
-                                    port = port,
-                                    database = database,
-                                    query = query)
+    if url is None:
+        url = sqlalchemy.engine.url.URL(drivername = drivername,
+                                        username = username,
+                                        password = password,
+                                        host = host,
+                                        port = port,
+                                        database = database,
+                                        query = query)
 
     Table.engine = sqlalchemy.create_engine(url)
     Table.metadata.bind = Table.engine

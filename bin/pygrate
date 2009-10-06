@@ -83,7 +83,8 @@ def run_main():
         print "Config Options = %s" % conf
 
     # Open SQLAlchemy DB Engine
-    session = pygration.db.open(conf.drivername,
+    session = pygration.db.open(conf.connection,
+                                conf.drivername,
                                 conf.schema,
                                 conf.username,
                                 conf.password,
