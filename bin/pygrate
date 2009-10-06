@@ -27,6 +27,7 @@ Commands:
     drop              Run the contraction phase, drop from the DB
     rollback_add      Rollback the add phase of the migration
     rollback_simdrop  Rollback the simdrop phase of the migration
+    ff                Runs all the phases over each step in the migration
 
 Migration:
     The filename (without extension) of the migration you want to run"""
@@ -57,7 +58,7 @@ def run_main():
         exit(1)
 
     cmds = ['show', 'add', 'simdrop', 'drop'
-            , 'rollback_add', 'rollback_simdrop']
+            , 'rollback_add', 'rollback_simdrop', 'ff']
     if command not in cmds:
         parser.error("Unknown command '%s'" % command)
         exit(1)
@@ -120,6 +121,9 @@ def run_main():
         migrator.migrate(command, migration)
     elif command in ['rollback_add', 'rollback_simdrop']:
         migrator.rollback(command[9:], migration)
+    elif command in ['ff']:
+        for phase in ['add', 'simdrop', 'drop']:
+            migrator.migrate(phase, migration)
     else:
         print "Unknown migrator command"
 
