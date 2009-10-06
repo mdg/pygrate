@@ -1,7 +1,8 @@
 import pygration
 
 
-class AccountTable(pygration.Step):
+@pygration.step_class
+class AccountTable(object):
     """Creates an account table."""
 
     def add( self, db ):

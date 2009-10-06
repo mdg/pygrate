@@ -5,6 +5,18 @@ from pygration.migration import VersionNumber, Loader
 import pygration
 
 
+@pygration.step_class
+class TestStep(object):
+    ADD_FILE = 'add.sql'
+
+
+class StepTest(unittest.TestCase):
+    def test_class_decorator(self):
+        self.assertEqual("test.migration_test", TestStep.version)
+        self.assertEqual("TestStep", TestStep.step_name)
+        self.assertEqual("TestStep", TestStep.step_id)
+
+
 class VersionComponentCompare(unittest.TestCase):
     """Test results for the component comparison function in Version."""
     def test_numeric_comparison(self):
@@ -131,14 +143,14 @@ class MigrationLoadTest(unittest.TestCase):
 
         v07 = migs[0]
         self.assertEqual(1, len(v07.steps()))
-        self.assertEqual("EmployeeTable", v07.step(0).step_name())
+        self.assertEqual("EmployeeTable", v07.step(0).step_name)
 
         v001 = migs[1]
         self.assertEqual(2, len(v001.steps()))
-        self.assertEqual("SalaryTable", v001.step(0).step_name())
-        self.assertEqual("EmployeeTable", v001.step(1).step_name())
+        self.assertEqual("SalaryTable", v001.step(0).step_name)
+        self.assertEqual("EmployeeTable", v001.step(1).step_name)
 
         v002 = migs[2]
         self.assertEqual(1, len(v002.steps()))
-        self.assertEqual("AccountTable", v002.step(0).step_name())
+        self.assertEqual("AccountTable", v002.step(0).step_name)
 

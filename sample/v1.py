@@ -1,7 +1,8 @@
 import pygration
 
 
-class CreateEmployeeTable(pygration.Step):
+@pygration.step_class
+class CreateEmployeeTable(object):
     ID = "1"
 
     def add(self, db):
@@ -17,7 +18,7 @@ class CreateEmployeeTable(pygration.Step):
         db.sql("DROP TABLE employee;")
 
 
-class CreateJobTable(pygration.Step):
+class CreateJobTable(object):
     ID = "2"
 
     def add(self, db):
@@ -31,4 +32,6 @@ class CreateJobTable(pygration.Step):
 
     def rollback_add(self, db):
         db.sql("DROP TABLE job;")
+
+pygration.step_instance(CreateJobTable())
 

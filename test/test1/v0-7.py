@@ -1,7 +1,8 @@
 import pygration
 
 
-class EmployeeTable(pygration.Step):
+@pygration.step_class
+class EmployeeTable(object):
     def add( self, db ):
         db.sql( \
                 """

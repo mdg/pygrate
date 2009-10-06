@@ -24,7 +24,8 @@ class MockDB(object):
     def commit(self, state):
         self.command.append("commit()")
 
-class MockStep(pygration.Step):
+@pygration.step_class
+class MockStep(object):
     def add(self, db):
         db.sql("create mock;")
 
@@ -36,8 +37,8 @@ class StepMigratorTest(unittest.TestCase):
     def test_normal_add_pass(self):
         v = pygration.migration.VersionNumber("v1-5")
         state = pygration.db.PygrationState(str(v)
-                , MockStep.step_id(), MockStep.step_name())
-        mig = StepMigrator(v, MockStep, state)
+                , MockStep.step_id, MockStep.step_name)
+        mig = StepMigrator(v, MockStep(), state)
         db = MockDB("pass")
         result = mig.migrate(db, "add")
 
@@ -46,8 +47,8 @@ class StepMigratorTest(unittest.TestCase):
     def test_normal_rollback_add(self):
         v = pygration.migration.VersionNumber("v1-5")
         state = pygration.db.PygrationState(str(v)
-                , MockStep.step_id(), MockStep.step_name())
-        mig = StepMigrator(v, MockStep, state)
+                , MockStep.step_id, MockStep.step_name)
+        mig = StepMigrator(v, MockStep(), state)
         db = MockDB("pass")
         result = mig.rollback(db, "add")
 
@@ -55,6 +56,16 @@ class StepMigratorTest(unittest.TestCase):
         self.assertEqual(2, len(db.command))
         self.assertEqual("drop mock;", db.command[0])
         self.assertEqual("commit()", db.command[1])
+
+    def test_phase_complete(self):
+        v = pygration.migration.VersionNumber("v1-5")
+        state = pygration.db.PygrationState(str(v)
+                , MockStep.step_id, MockStep.step_name)
+        mig = StepMigrator(v, MockStep(), state)
+
+        self.assertFalse(mig.phase_complete('add'))
+        self.assertFalse(mig.phase_complete('simdrop'))
+        self.assertFalse(mig.phase_complete('drop'))
 
 
 class MigratorTest(unittest.TestCase):
@@ -118,7 +129,7 @@ class MigratorTest(unittest.TestCase):
             mig.rollback('simdrop', 'v0-7')
         except Exception, x:
             # expected, this is good
-            self.assertEqual("Cannot rollback past dropped phases", str(x))
+            self.assertEqual("Cannot rollback past dropped steps", str(x))
             self.assertEqual(0, len(self._db.command))
         else:
             self.fail("migration out of order should have thrown an error")

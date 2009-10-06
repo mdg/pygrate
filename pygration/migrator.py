@@ -17,10 +17,10 @@ class StepMigrator(object):
         return self._version
 
     def step_id(self):
-        return self._step.step_id()
+        return self._step.step_id
 
     def step_name(self):
-        return self._step.step_name()
+        return self._step.step_name
 
     def complete(self):
         """Check if the entire step is complete"""
@@ -34,10 +34,14 @@ class StepMigrator(object):
                 or self._state.simdrop_state == STEP_PHASE_PASS \
                 or self._state.drop_state == STEP_PHASE_PASS
 
+    def phase_implemented(self, phase):
+        """Check if a phase is implemented for the step"""
+        return hasattr(self._step, phase)
+
     def phase_complete(self, phase):
         """Check if the phase is complete for the step"""
         if (not hasattr(self._step, phase)):
-            return True
+            return False
         state_flag = "%s_state" % phase
         state = getattr(self._state, state_flag)
         return state == STEP_PHASE_PASS
@@ -58,13 +62,15 @@ class StepMigrator(object):
 
     def migrate(self, db, phase):
         """The step wrapper that joins the db, step, history and phase."""
-        step_instance = self._step()
+        step_instance = self._step
+        if not self.phase_implemented(phase):
+            return self._store_state(phase, STEP_PHASE_PASS)
         step_phase = getattr(step_instance, phase)
         result = step_phase(db)
         return self._store_state(phase, STEP_PHASE_PASS)
 
     def rollback(self, db, phase):
-        step_instance = self._step()
+        step_instance = self._step
         func = "rollback_%s" % phase
         step_phase = getattr(step_instance, func)
         result = step_phase(db)
@@ -78,7 +84,7 @@ class StepMigrator(object):
         return self._state
 
     def __str__(self):
-        return "%s.%s" % (self._version, self._step.step_name())
+        return "%s.%s" % (self._version, self._step.step_name)
 
     def __repr__(self):
         return "<StepMigrator(%s, %s)>" % (self._version, self._step)
@@ -151,7 +157,7 @@ class Migrator(object):
             # print "loading steps for migration(%s)" % m
             for s in m.steps():
                 v = m.version()
-                state = self._history.state(v, s.step_id(), s.step_name())
+                state = self._history.state(v, s.step_id, s.step_name)
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase, migration):
@@ -241,13 +247,14 @@ class Migrator(object):
         for s in self._migration_steps(migration):
             if s.phase_complete("drop"):
                 if len(rollback_steps) > 0:
-                    raise Exception("Cannot rollback past dropped phases")
+                    raise Exception("Cannot rollback past dropped step: %s"
+                            , s.step_name())
                 dropped_steps.insert(0, s)
             elif s.phase_complete(phase):
                 rollback_steps.insert(0, s)
 
         if len(dropped_steps) > 0 and len(rollback_steps) == 0:
-            raise Exception("Cannot rollback past dropped phases")
+            raise Exception("Cannot rollback past dropped steps")
 
         for s in self._post_migration_steps(migration):
             if s.partly_complete():
