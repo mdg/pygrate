@@ -37,7 +37,7 @@ class Table(object):
                 )
 
 class FileLoader(object):
-    def __init__(self, binary, args, formatting_dict):
+    def __init__(self, binary, args = [], formatting_dict = {}):
         self._binary = binary
         self._args = [arg.format(filename="{filename}", **formatting_dict) for arg in args]
     
