@@ -95,7 +95,10 @@ def run_main():
                                )
 
     # Create the file loader
-    file_loader = pygration.db.FileLoader(conf.binary, conf.binary_args, conf.opts) 
+    if conf.binary is not None:
+        file_loader = pygration.db.FileLoader(conf.binary, conf.binary_args, conf.opts)
+    else:
+        file_loader = None
 
     # MigrationSet #
     migration_set = pygration.migration.load(path)
