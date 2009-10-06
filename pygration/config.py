@@ -28,13 +28,17 @@ def select(conf_files, env):
 
     Default to the single config file if only 1 and no environment given.
     """
-    if len(conf_files) == 1 and env is None:
-        return conf_files[0]
-    for c in conf_files:
-        name, sep, extension = c.rpartition('.')
-        if name == env and extension == 'yaml':
-            return c
-    return None
+    conf_file_map = {}
+    for conf_file in conf_files:
+        name, sep, extension = conf_file.rpartition('.')
+        if extension == 'yaml':
+            conf_file_map[name] = conf_file
+
+    if len(conf_file_map) == 1 and env is None:
+        name, file = conf_file_map.popitem()
+        return file
+
+    return conf_file_map.get(env, None)
 
 
 def load(conf_filename):
