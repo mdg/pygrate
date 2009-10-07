@@ -285,8 +285,9 @@ class Migrator(object):
                     , simdrop_state, drop_state)
 
     def fastforward(self):
-        for m in self._migration_set:
-            print m
+        for m in self._migration_set.ordered_migrations():
+            for phase in ['add', 'simdrop', 'drop']:
+                self.migrate(phase, m.version())
 
     def has_version(self, migration):
         for s in self._steps:

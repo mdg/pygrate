@@ -166,6 +166,10 @@ class MigrationSet(object):
         for m in self._migrations:
             self._versions.add(m.version())
 
+    def ordered_migrations(self):
+        for m in sorted(self._migrations, key=lambda m: m.version()):
+            yield m
+
 
 class Loader(object):
     """Object for finding available MigrationSets."""
