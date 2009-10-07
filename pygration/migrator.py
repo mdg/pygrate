@@ -284,6 +284,10 @@ class Migrator(object):
             print columns % (m.step_id(), m.step_name(), add_state
                     , simdrop_state, drop_state)
 
+    def fastforward(self):
+        for m in self._migration_set:
+            print m
+
     def has_version(self, migration):
         for s in self._steps:
             if s.version() == migration:
