@@ -38,6 +38,10 @@ add templates for sql and sql files
 	put template data section into yaml config that is accessible from
 	the template
 
+add pre and post checks to each phase to verify correctness
+	check that db is in expected state prior to migrating
+	and that it's in expected state after migrating
+
 explicitly set dependencies between steps within a migration
 	this lets things be stored in a more organization order
 	rather than always having to be put at the end which may not be
