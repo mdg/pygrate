@@ -18,20 +18,20 @@ NOOP_HELP = "show what will be done without actually doing it"
 VERBOSE_HELP = "print extra output to the screen"
 
 USAGE = """
-    pygrate [options] <command> <migration>
+    pygrate [options] <command>
 
 Commands:
-    show              Show the status of a migration
-    add               Run the expansion phase, add to the DB
-    simdrop           Simulate the drop phase (move elements)
-    drop              Run the contraction phase, drop from the DB
-    rollback_add      Rollback the add phase of the migration
-    rollback_simdrop  Rollback the simdrop phase of the migration
-    ff                Runs all the phases over each step in the migration
+    show <migration>              Show the status of a migration
+    add <migration>               Run the expansion phase, add to the DB
+    simdrop <migration>           Simulate the drop phase (move elements)
+    drop <migration>              Run the contraction phase, drop from the DB
+    rollback_add <migration>      Rollback the add phase of the migration
+    rollback_simdrop <migration>  Rollback the simdrop phase of the migration
+    ff                            Runs all the phases over each step in the migration
 
 Migration:
-    The filename (without extension) of the migration you want to run"""
-
+    The filename (without extension) of the migration you want to run
+    """
 
 DEFAULT_PATH = '.'
 
@@ -47,19 +47,30 @@ def run_main():
 
     opts, args = parser.parse_args()
 
-    if len(args) < 2:
-        parser.error("Too few arguments")
-        exit(1)
-    elif len(args) == 2:
-        command = args[0]
-        migration = args[1]
-    else:
-        parser.error("Too many arguments")
+    if len(args) < 1:
+        parser.error("Too few arguments - must specify a command")
         exit(1)
 
-    cmds = ['show', 'add', 'simdrop', 'drop'
-            , 'rollback_add', 'rollback_simdrop', 'ff']
-    if command not in cmds:
+    command = args[0]
+    
+    cmds_req_migration = ['show', 'add', 'simdrop', 'drop'
+            , 'rollback_add', 'rollback_simdrop']
+    cmds_no_migration = ['ff']
+
+    if command in cmds_req_migration:
+        if len(args) < 2:
+            parser.error("Too few arguments - '%s' requires a migration to be specified" % command)
+            exit(1)
+        elif len(args) == 2:
+            migration = args[1]
+        else:
+            parser.error("Too many arguments")
+            exit(1)
+    elif command in cmds_no_migration:
+        if len(args) > 1:
+            parser.error("Too many arguments")
+            exit(1)
+    else:
         parser.error("Unknown command '%s'" % command)
         exit(1)
 
@@ -122,8 +133,7 @@ def run_main():
     elif command in ['rollback_add', 'rollback_simdrop']:
         migrator.rollback(command[9:], migration)
     elif command in ['ff']:
-        for phase in ['add', 'simdrop', 'drop']:
-            migrator.migrate(phase, migration)
+        migrator.fastforward()
     else:
         print "Unknown migrator command"
 
