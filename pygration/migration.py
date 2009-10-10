@@ -152,15 +152,6 @@ class MigrationSet(object):
     def migrations(self):
         return self._migrations
 
-    def migration(self, version):
-        """Get the migration module for a given version."""
-        if version in self._migrations:
-            return version # self._migrations[version]
-        return None
-
-    def steps(self, migration):
-        return []
-
     def _find_versions(self):
         self._versions = set()
         for m in self._migrations:

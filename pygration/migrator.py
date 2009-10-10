@@ -290,51 +290,6 @@ class Migrator(object):
                 return True
         return False
 
-
-    def find_next_phase(self):
-        phase = None
-        next_version, last_version = self.find_next_last()
-        return version, phase
-
-    def find_next_last(self):
-        last = None
-        provisional_next = None
-        final_next = None
-        for v in self._migration_set.versions():
-            provisional_next = v
-            if self._history.committed(v):
-                last = v
-            else:
-                final_next = provisional_next
-                break
-        return final_next, last
-
-    def old_show(self, what):
-        print "Migrator.show(%s)" % what
-        if what == 'next?':
-            self.show_next()
-        elif what == 'last?':
-            self.show_last()
-        elif len(what) == 0:
-            self.show_all()
-        else:
-            raise "Unknown object to show."
-
-    def show_all(self):
-        print "All Migrations:"
-        for m in self._join:
-            print "\t%s" % m
-
-    def show_next(self):
-        print "Next Migration:"
-        next, last = self.find_next_last()
-        print "\t%s" % next
-
-    def show_last(self):
-        print "Last Migration:"
-        next, last = self.find_next_last()
-        print "\t%s" % last
-
     def _pre_migration_steps(self, migration):
         """Return all steps prior to a given migration"""
         for s in self._steps:
