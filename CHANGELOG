@@ -1,5 +1,7 @@
-v0.x.0
+v0.2.1
 * More error checking to avoid migrations out of order
+* Fail on rollback drop b/c it cannot be dropped
+* Updated setup.py for new file structure
 
 v0.2.0
 * Changed phases to add, simdrop and drop
