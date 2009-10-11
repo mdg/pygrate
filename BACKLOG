@@ -5,8 +5,6 @@ make it more tolerant of Step renames
 	The DeletedStep will let it be rolled back by anyone no matter
 	what they've migrated
 
-fix rollback so it doesn't break when its already been rolled back
-
 provide PrefixStep and PostfixStep as part of each migration
 
 pygration_state table should have timestamps for add, simdrop, drop
