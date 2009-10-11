@@ -15,9 +15,11 @@ class MockDB(object):
 
     def reset(self):
         self.command = list()
+        self.sql_command = list()
 
     def sql(self, cmd):
         self.command.append(cmd)
+        self.sql_command.append(cmd)
         if self._action == "pass":
             pass
 
@@ -80,7 +82,7 @@ class MigratorTest(unittest.TestCase):
         mig = self._test1_migrator
         mig.migrate('add', 'v0-7')
 
-        self.assertEqual(2, len(self._db.command))
+        self.assertEqual(2, len(self._db.sql_command))
         self.assertEqual("""
                 CREATE TABLE employee2
                 ( id number
@@ -184,6 +186,5 @@ class MigratorTest(unittest.TestCase):
         """Test fast-forward feature"""
         self._test1_migrator.fastforward()
 
-        noncommits = [c for c in self._db.command if c != "commit()"]
-        self.assertEqual(5, len(noncommits))
+        self.assertEqual(6, len(self._db.sql_command))
 

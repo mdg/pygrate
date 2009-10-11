@@ -15,4 +15,11 @@ class EmployeeTable(object):
     def drop( self, db ):
         db.sql('DROP TABLE old_employee')
 
+@pygration.step_class
+class EmployeeValueIndex(object):
+    def add(self, db):
+        db.sql("CREATE INDEX employee2idx ON employee2.txt_val;")
+
+    def rollback_add(self, db):
+        db.sql("DROP INDEX employee2idx;")
 

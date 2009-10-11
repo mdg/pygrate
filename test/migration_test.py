@@ -142,7 +142,7 @@ class MigrationLoadTest(unittest.TestCase):
         self.assertEqual("v002", migs[2].version())
 
         v07 = migs[0]
-        self.assertEqual(1, len(v07.steps()))
+        self.assertEqual(2, len(v07.steps()))
         self.assertEqual("EmployeeTable", v07.step(0).step_name)
 
         v001 = migs[1]
