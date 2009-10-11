@@ -47,14 +47,3 @@ class RenameUserIDColumn(pygration.Step):
         """Drop the userid column before completely dropping it."""
         db.sql( "alter table user drop column userid;" )
 
-
-== FUTURE ORM DB OPERATIONS ==
-Currently all changes must be done through direct SQL.  Possible ORM functionality added in the future includes:
-* add/drop table
-* raw sql
-* add/drop column
-* add/drop stored procedure
-* add/drop view
-* add/drop index
-* add/drop constraint
-* grant/revoke
