@@ -180,3 +180,10 @@ class MigratorTest(unittest.TestCase):
         else:
             self.fail("invalid version should have thrown an error")
 
+    def test_fastforward(self):
+        """Test fast-forward feature"""
+        self._test1_migrator.fastforward()
+
+        noncommits = [c for c in self._db.command if c != "commit()"]
+        self.assertEqual(5, len(noncommits))
+
