@@ -117,6 +117,21 @@ class VersionNumber:
         return "<VersionNumber(%s)>" % self._string
 
 
+class StepName(object):
+    """Separate a version from a step name"""
+    def __init__(self, name):
+        # separate step_name
+        split_migration = name.split('.', 1)
+        if len(split_migration) == 1:
+            self.version = VersionNumber(name)
+            self.step = None
+        if len(split_migration) == 2:
+            version = VersionNumber(split_migration[0])
+            self.step = split_migration[1]
+        elif len(split_migration) > 2:
+            raise Exception("Migration has too many periods: '%s'" % migration)
+
+
 class Migration(object):
     """A logical set of changes to the database.
 

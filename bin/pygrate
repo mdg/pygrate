@@ -126,10 +126,14 @@ def run_main():
     migrator = pygration.migrator.Migrator(migrator_db
             , migration_set, history)
 
+    # split up the migration name
+    full_step_name = pygration.migration.StepName(migration)
+
     if command in ['show']:
         migrator.show(migration)
     elif command in ['add', 'simdrop', 'drop']:
-        migrator.migrate(command, migration)
+        migrator.migrate(command, str(full_step_name.version)
+                , full_step_name.step)
     elif command in ['rollback_add', 'rollback_simdrop']:
         migrator.rollback(command[9:], migration)
     elif command in ['ff']:

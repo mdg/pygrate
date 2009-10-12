@@ -207,7 +207,7 @@ class Migrator(object):
                 state = self._history.state(v, s.step_id, s.step_name)
                 self._steps.append(StepMigrator(v, s, state))
 
-    def migrate(self, phase, migration):
+    def migrate(self, phase, migration, step_name=None):
         if not self.has_version(migration):
             raise Exception("Invalid migration version: '%s'" % migration)
 
@@ -224,7 +224,7 @@ class Migrator(object):
                     % s.version())
 
         # skips past any steps from this migration that are already complete
-        for s in self._migration_steps(migration):
+        for s in self._migration_steps(migration, step_name):
             if len(migrate_steps) == 0:
                 # Still processing prerequisite steps
                 if s.ready_to_migrate(phase):
@@ -341,11 +341,12 @@ class Migrator(object):
             else:
                 break
 
-    def _migration_steps(self, migration):
+    def _migration_steps(self, migration, step=None):
         """Return all steps in a given migration"""
         found_migration = False
         for s in self._steps:
-            if s.version() == migration:
+            if s.version() == migration \
+                    and (step is None or step == s.step_name()):
                 yield s
                 found_migration = True
             elif found_migration:
@@ -359,3 +360,4 @@ class Migrator(object):
                 passed_migration = True
             elif passed_migration:
                 yield s
+
