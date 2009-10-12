@@ -22,6 +22,9 @@ class StepMigrator(object):
     def step_name(self):
         return self._step.step_name
 
+    def full_name(self):
+        return "%s.%s" % (self.version(), self.step_name())
+
     def complete(self):
         """Check if the entire step is complete"""
         return self._state.add_state == STEP_PHASE_PASS \
@@ -40,8 +43,6 @@ class StepMigrator(object):
 
     def phase_complete(self, phase):
         """Check if the phase is complete for the step"""
-        if (not hasattr(self._step, phase)):
-            return False
         state_flag = "%s_state" % phase
         state = getattr(self._state, state_flag)
         return state == STEP_PHASE_PASS
@@ -50,12 +51,50 @@ class StepMigrator(object):
         """Check if the preceding phases are complete"""
         complete = False
         if phase == 'add':
-            complete = True
+            complete = (not self.phase_complete('add')) \
+                    and (not self.phase_complete('simdrop')) \
+                    and (not self.phase_complete('drop'))
         elif phase == 'simdrop':
-            complete = self._state.add_state == STEP_PHASE_PASS
+            complete = self.phase_complete('add') \
+                    and (not self.phase_complete('simdrop')) \
+                    and (not self.phase_complete('drop'))
         elif phase == 'drop':
-            complete = self._state.add_state == STEP_PHASE_PASS \
-                    and self._state.simdrop_state == STEP_PHASE_PASS
+            complete = self.phase_complete('add') \
+                   and self.phase_complete('simdrop') \
+                    and (not self.phase_complete('drop'))
+        else:
+            raise Exception("Unknown phase")
+        return complete
+
+    def missing_prereqs(self, phase):
+        "Check if the step state is missing prerequisites for a phase"
+        has_prereqs = False
+        if phase == 'add':
+            has_prereqs = True
+        elif phase == 'simdrop':
+            has_prereqs = self.phase_complete('add')
+        elif phase == 'drop':
+            has_prereqs = self.phase_complete('add') \
+                    and self.phase_complete('simdrop')
+        else:
+            raise Exception("Unknown phase in missing_prereqs()")
+        return not has_prereqs
+
+    def complete_through_phase(self, phase):
+        "Check if a phase and its prerequisites are complete"
+        complete = False
+        if phase == 'add':
+            complete = self.phase_complete('add') \
+                    and (not self.phase_complete('simdrop')) \
+                    and (not self.phase_complete('drop'))
+        elif phase == 'simdrop':
+            complete = self.phase_complete('add') \
+                    and self.phase_complete('simdrop') \
+                    and (not self.phase_complete('drop'))
+        elif phase == 'drop':
+            complete = self.phase_complete('add') \
+                    and self.phase_complete('simdrop') \
+                    and self.phase_complete('drop')
         else:
             raise Exception("Unknown phase")
         return complete
@@ -87,7 +126,15 @@ class StepMigrator(object):
         return "%s.%s" % (self._version, self._step.step_name)
 
     def __repr__(self):
-        return "<StepMigrator(%s, %s)>" % (self._version, self._step)
+        add = simdrop = drop = '0'
+        if self.phase_complete('add'):
+            add = '1'
+        if self.phase_complete('simdrop'):
+            simdrop = '1'
+        if self.phase_complete('drop'):
+            drop = '1'
+        return "<StepMigrator(%s, %s, %s%s%s)>" % (self._version, self._step
+                , add, simdrop, drop)
 
 MULTILINE_COMMENT_REGEX = re.compile(r'/\*.*?\*/', re.DOTALL)
 SINGLE_LINE_COMMENT_REGEX = re.compile(r'--.*$', re.MULTILINE)
@@ -161,68 +208,59 @@ class Migrator(object):
                 self._steps.append(StepMigrator(v, s, state))
 
     def migrate(self, phase, migration):
-        # print "Migrate(%s)" % phase
-        pre_incomplete_steps = list()
-        migrate_steps = list()
-        post_complete_steps = list()
-        complete_steps = list()
-
         if not self.has_version(migration):
             raise Exception("Invalid migration version: '%s'" % migration)
 
-        # start with the first step
-        i = iter(self._steps)
-        try:
-            s = i.next()
-        except StopIteration, si:
-            s = None
+        prereqs = list()
+        migrate_steps = list()
+        post_complete_steps = list()
 
-        # skip past steps from earlier versions, make sure everything
-        # has already been done
-        while s and s.version() != migration:
-            if not s.complete():
-                pre_incomplete_steps.append(s)
-                raise Exception("Prerequisite migration is incomplete: '%s'"
-                        % s.version())
-            try:
-                s = i.next()
-            except StopIteration, si:
-                s = None
+        # check that all prerequisite steps are complete
+        for s in self._pre_migration_steps(migration):
+            if s.complete():
+                continue
+            prereqs.append(s)
+            raise Exception("Prerequisite migration is incomplete: '%s'"
+                    % s.version())
 
         # skips past any steps from this migration that are already complete
-        while s and s.version() == migration and s.phase_complete(phase):
-            if not s.ready_to_migrate(phase):
-                raise Exception("Prerequisite step is incomplete: '%s.%s'"
-                        % (s.version(), s.step_name()))
-            try:
-                s = i.next()
-            except StopIteration, si:
-                s = None
+        for s in self._migration_steps(migration):
+            if len(migrate_steps) == 0:
+                # Still processing prerequisite steps
+                if s.ready_to_migrate(phase):
+                    migrate_steps.append(s)
+                elif s.complete_through_phase(phase):
+                    prereqs.append(s)
+                elif s.missing_prereqs(phase):
+                    raise Exception("Prerequisite phase for %s.%s " \
+                            "is incomplete" % (s.full_name(), phase))
+                else:
+                    raise Exception("Step %s is in invalid state" \
+                            , s.full_name())
+            else:
+                # Processing prerequisite steps
+                if s.ready_to_migrate(phase):
+                    migrate_steps.append(s)
+                elif s.complete_through_phase(phase):
+                    post_complete_steps.append(s)
+                    raise Exception("Subsequent steps are already complete")
+                elif s.missing_prereqs(phase):
+                    raise Exception("Prerequisite phase for %s.%s " \
+                            "is incomplete" % (s.full_name(), phase))
+                else:
+                    raise Exception("Step %s is in invalid state" \
+                            , s.full_name())
 
         # get all steps from this migration that aren't yet complete
-        while s and s.version() == migration and not s.phase_complete(phase):
-            if not s.ready_to_migrate(phase):
-                raise Exception("Prerequisite step is incomplete: '%s.%s'"
-                        % (s.version(), s.step_name()))
-            migrate_steps.append(s)
-            try:
-                s = i.next()
-            except StopIteration, si:
-                s = None
+        for s in self._post_migration_steps(migration):
+            if s.partly_complete():
+                post_complete_steps.append(s)
+                raise Exception("Subsequent step is already complete: %s.%s" \
+                        % s.version(), s.step_name())
 
         if len(migrate_steps) == 0:
             print "Nothing left to migrate."
             return
-
-        # check for any remaining steps that are already complete
-        while s:
-            if s.phase_complete(phase):
-                post_complete_steps.append(s)
-                raise Exception("Subsequent steps have already been completed.")
-            try:
-                s = i.next()
-            except StopIteration, si:
-                s = None
 
         # go through the migration steps
         print "Begin migration:"

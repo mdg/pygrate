@@ -34,8 +34,18 @@ class MockStep(object):
     def rollback_add(self, db):
         db.sql("drop mock;")
 
+    def simdrop(self, db):
+        db.sql("create mock;")
+
+    def rollback_simdrop(self, db):
+        db.sql("drop mock;")
+
+    def drop(self, db):
+        db.sql("drop mock;")
+
 
 class StepMigratorTest(unittest.TestCase):
+    """Tests for the StepMigrator class"""
     def test_normal_add_pass(self):
         v = pygration.migration.VersionNumber("v1-5")
         state = pygration.db.PygrationState(str(v)
@@ -59,7 +69,80 @@ class StepMigratorTest(unittest.TestCase):
         self.assertEqual("drop mock;", db.command[0])
         self.assertEqual("commit()", db.command[1])
 
-    def test_phase_complete(self):
+class StepMigratorPhaseCompleteTest(unittest.TestCase):
+    def setUp(self):
+        v = pygration.migration.VersionNumber("v1")
+        self.state = pygration.db.PygrationState(str(v)
+                , MockStep.step_id, MockStep.step_name)
+        self.mig = StepMigrator(v, MockStep(), self.state)
+
+    def test_phase_complete_new(self):
+        self.assertFalse(self.mig.phase_complete('add'))
+        self.assertFalse(self.mig.phase_complete('simdrop'))
+        self.assertFalse(self.mig.phase_complete('drop'))
+
+    def test_phase_complete_added(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        self.assertTrue(self.mig.phase_complete('add'))
+        self.assertFalse(self.mig.phase_complete('simdrop'))
+        self.assertFalse(self.mig.phase_complete('drop'))
+
+    def test_phase_complete_simdropped(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.simdrop_state = pygration.migrator.STEP_PHASE_PASS
+        self.assertTrue(self.mig.phase_complete('add'))
+        self.assertTrue(self.mig.phase_complete('simdrop'))
+        self.assertFalse(self.mig.phase_complete('drop'))
+
+    def test_phase_complete_dropped(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.simdrop_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.drop_state = pygration.migrator.STEP_PHASE_PASS
+        self.assertTrue(self.mig.phase_complete('add'))
+        self.assertTrue(self.mig.phase_complete('simdrop'))
+        self.assertTrue(self.mig.phase_complete('drop'))
+
+
+class StepMigratorReadyToMigrateTest(unittest.TestCase):
+    def setUp(self):
+        v = pygration.migration.VersionNumber("v1")
+        self.state = pygration.db.PygrationState(str(v)
+                , MockStep.step_id, MockStep.step_name)
+        self.mig = StepMigrator(v, MockStep(), self.state)
+
+    def test_ready_to_migrate_new(self):
+        print "mig = %s" % repr(self.mig)
+        self.assertTrue(self.mig.ready_to_migrate('add'))
+        self.assertFalse(self.mig.ready_to_migrate('simdrop'))
+        self.assertFalse(self.mig.ready_to_migrate('drop'))
+
+    def test_ready_to_migrate_added(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        print "mig = %s" % repr(self.mig)
+        self.assertFalse(self.mig.ready_to_migrate('add'))
+        self.assertTrue(self.mig.ready_to_migrate('simdrop'))
+        self.assertFalse(self.mig.ready_to_migrate('drop'))
+
+    def test_ready_to_migrate_simdropped(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.simdrop_state = pygration.migrator.STEP_PHASE_PASS
+        print "mig = %s" % repr(self.mig)
+        self.assertFalse(self.mig.ready_to_migrate('add'))
+        self.assertFalse(self.mig.ready_to_migrate('simdrop'))
+        self.assertTrue(self.mig.ready_to_migrate('drop'))
+
+    def test_ready_to_migrate_dropped(self):
+        self.state.add_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.simdrop_state = pygration.migrator.STEP_PHASE_PASS
+        self.state.drop_state = pygration.migrator.STEP_PHASE_PASS
+        print "mig = %s" % repr(self.mig)
+        self.assertFalse(self.mig.ready_to_migrate('add'))
+        self.assertFalse(self.mig.ready_to_migrate('simdrop'))
+        self.assertFalse(self.mig.ready_to_migrate('drop'))
+
+
+class StepMigratorCompleteThroughPhase(unittest.TestCase):
+    def test_complete_through_phase(self):
         v = pygration.migration.VersionNumber("v1-5")
         state = pygration.db.PygrationState(str(v)
                 , MockStep.step_id, MockStep.step_name)
@@ -97,8 +180,8 @@ class MigratorTest(unittest.TestCase):
         try:
             mig.migrate('drop', 'v0-7')
         except Exception, x:
-            self.assertEqual("Prerequisite step is incomplete: " \
-                    "'v0-7.EmployeeTable'", str(x))
+            self.assertEqual("Prerequisite phase for v0-7.EmployeeTable.drop" \
+                    " is incomplete", str(x))
             self.assertEqual(0, len(self._db.command))
         else:
             self.fail("Dropping before adding should have failed.""")
