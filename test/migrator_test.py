@@ -292,6 +292,17 @@ class MigratorSingleStepTest(unittest.TestCase):
                 );
                 """, self.db.sql_command[0])
 
+    def test_migrate_single_out_of_order(self):
+        "Test for failure when single migrations out of order"
+        try:
+            self.mig.migrate('add', 'v0-7', 'EmployeeValueIndex')
+        except Exception, x:
+            self.assertEqual(0, len(self.db.command))
+            self.assertEqual("Prerequisite step 'v0-7.EmployeeTable' is not " \
+                    "complete through 'add' phase", str(x))
+        else:
+            self.fail("Migrating steps out of order should have failed")
+
     def test_rollback_single_step(self):
         "Test that a single step can be rolled back"
         self.mig.migrate('add', 'v0-7')

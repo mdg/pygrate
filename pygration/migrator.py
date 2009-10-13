@@ -223,6 +223,12 @@ class Migrator(object):
             raise Exception("Prerequisite migration is incomplete: '%s'"
                     % s.version())
 
+        # check that all preceding steps are already complete
+        for s in self._preceding_steps(migration, step_name):
+            if not s.complete_through_phase(phase):
+                raise Exception("Prerequisite step '%s' is not complete "
+                        "through '%s' phase" % (s.full_name(), phase))
+
         # skips past any steps from this migration that are already complete
         for s in self._migration_steps(migration, step_name):
             if len(migrate_steps) == 0:
@@ -337,6 +343,25 @@ class Migrator(object):
         """Return all steps prior to a given migration"""
         for s in self._steps:
             if s.version() != migration:
+                yield s
+            else:
+                break
+
+    def _preceding_steps(self, migration, step):
+        """Get steps from a migration that precede a given step.
+        
+        Nothing is returned when step is null"""
+        found_migration = False
+        if step is None:
+            return
+
+        for s in self._steps:
+            if s.version() != migration:
+                if found_migration:
+                    break
+                continue
+            found_migration = True
+            if s.step_name() != step:
                 yield s
             else:
                 break
