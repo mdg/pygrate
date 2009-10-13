@@ -271,19 +271,27 @@ class MigratorTest(unittest.TestCase):
 
         self.assertEqual(6, len(self._db.sql_command))
 
+
+class MigratorSingleStepTest(unittest.TestCase):
+    def setUp(self):
+        test1_dir = os.path.join(os.path.dirname(__file__), "test1")
+        mset = pygration.migration.load(test1_dir)
+        hist = History([])
+        self.db = MockDB("pass")
+        self.mig = Migrator(self.db, mset, hist)
+
     def test_migrate_single_step(self):
         "Test that an individual step can be run"
-        mig = self._test1_migrator
+        self.mig.migrate('add', 'v0-7', 'EmployeeTable')
 
-        mig.migrate('add', 'v0-7', 'EmployeeTable')
-
-        self.assertEqual(1, len(self._db.sql_command))
+        self.assertEqual(1, len(self.db.sql_command))
         self.assertEqual("""
                 CREATE TABLE employee2
                 ( id number
                 , txt_val varchar2(79)
                 );
-                """, self._db.sql_command[0])
+                """, self.db.sql_command[0])
+
 
 class MigratorSelectionTestCase(unittest.TestCase):
     def setUp(self):
