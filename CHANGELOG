@@ -4,6 +4,7 @@ v0.x.0
 * Register step classes with decorator instead of subclass
 * Allow instances of step classes instead of just classes
 * New fast-forward command (ff)
+* Allow migrating an individual step from the command line
 
 v0.2.1
 * More error checking to avoid migrations out of order

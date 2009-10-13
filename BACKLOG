@@ -17,9 +17,6 @@ report error if steps in a migration change since it was run
 write outcomes to a log file
 	log should be configurable
 
-migrate individual steps or groups of steps
-	pygrate add v1.AddTable
-
 interface to repair the pygration_state table
 	will need to alter the pygration_state table w/o running migrations
 	maybe call a step run, or rollback & delete a state row that is
@@ -34,6 +31,8 @@ add templates for sql and sql files
 add pre and post checks to each phase to verify correctness
 	check that db is in expected state prior to migrating
 	and that it's in expected state after migrating
+
+allow migrating a group of steps from the command line
 
 explicitly set dependencies between steps within a migration
 	this lets things be stored in a more organization order
