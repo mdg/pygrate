@@ -157,9 +157,8 @@ class MigratorTest(unittest.TestCase):
     def setUp(self):
         test1_dir = os.path.join(os.path.dirname(__file__), "test1")
         mset = pygration.migration.load(test1_dir)
-        hist = History([])
         self._db = MockDB("pass")
-        self._test1_migrator = Migrator(self._db, mset, hist)
+        self._test1_migrator = Migrator(self._db, mset, History([]))
 
     def test_migrate_add(self):
         mig = self._test1_migrator
@@ -276,9 +275,8 @@ class MigratorSingleStepTest(unittest.TestCase):
     def setUp(self):
         test1_dir = os.path.join(os.path.dirname(__file__), "test1")
         mset = pygration.migration.load(test1_dir)
-        hist = History([])
         self.db = MockDB("pass")
-        self.mig = Migrator(self.db, mset, hist)
+        self.mig = Migrator(self.db, mset, History([]))
 
     def test_migrate_single_step(self):
         "Test that an individual step can be run"
@@ -330,9 +328,8 @@ class MigratorSelectionTestCase(unittest.TestCase):
     def setUp(self):
         test1_dir = os.path.join(os.path.dirname(__file__), "test1")
         mset = pygration.migration.load(test1_dir)
-        hist = History([])
         self._db = MockDB("pass")
-        self._mig = Migrator(self._db, mset, hist)
+        self._mig = Migrator(self._db, mset, History([]))
 
     def test_migration_steps(self):
         steps = [s for s in self._mig._migration_steps('v001')]
