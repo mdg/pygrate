@@ -312,6 +312,19 @@ class MigratorSingleStepTest(unittest.TestCase):
         self.assertEqual(1, len(self.db.sql_command))
         self.assertEqual('DROP INDEX employee2idx;', self.db.sql_command[0])
 
+    def test_rollback_single_out_of_order(self):
+        "Test for failure when single rollback out of order"
+        self.mig.migrate('add', 'v0-7')
+        self.db.reset()
+        try:
+            self.mig.rollback('add', 'v0-7', 'EmployeeTable')
+        except Exception, x:
+            self.assertEqual(0, len(self.db.command))
+            self.assertEqual("Subsequent step v0-7.EmployeeValueIndex must" \
+                    " be rolled back before step v0-7.EmployeeTable", str(x))
+        else:
+            self.fail("Rollbacking steps out of order should have failed")
+
 
 class MigratorSelectionTestCase(unittest.TestCase):
     def setUp(self):

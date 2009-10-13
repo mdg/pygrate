@@ -288,6 +288,11 @@ class Migrator(object):
         rollback_steps = list()
         dropped_steps = list()
 
+        for s in self._subsequent_steps(migration, step_name):
+            if s.complete_through_phase(phase):
+                raise Exception("Subsequent step %s must be rolled back before"
+                        " step %s.%s" % (s.full_name(), migration, step_name))
+
         for s in self._migration_steps(migration, step_name):
             if s.phase_complete("drop"):
                 if len(rollback_steps) > 0:
@@ -365,6 +370,27 @@ class Migrator(object):
                 yield s
             else:
                 break
+
+    def _subsequent_steps(self, migration, step):
+        """Get steps from a migration that follows a given step
+
+        Nothing is returned if the step name is null"""
+        if step is None:
+            return
+        found_migration = False
+        found_step = False
+        for s in self._steps:
+            if s.version() != migration:
+                if not found_migration:
+                    continue
+                break
+            found_migration = True
+            if s.step_name() != step:
+                if not found_step:
+                    continue
+                yield s
+            else:
+                found_step = True
 
     def _migration_steps(self, migration, step=None):
         """Return all steps in a given migration"""
