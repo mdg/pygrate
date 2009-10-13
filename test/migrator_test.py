@@ -292,6 +292,15 @@ class MigratorSingleStepTest(unittest.TestCase):
                 );
                 """, self.db.sql_command[0])
 
+    def test_rollback_single_step(self):
+        "Test that a single step can be rolled back"
+        self.mig.migrate('add', 'v0-7')
+        self.db.reset()
+        self.mig.rollback('add', 'v0-7', 'EmployeeValueIndex')
+
+        self.assertEqual(1, len(self.db.sql_command))
+        self.assertEqual('DROP INDEX employee2idx;', self.db.sql_command[0])
+
 
 class MigratorSelectionTestCase(unittest.TestCase):
     def setUp(self):

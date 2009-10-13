@@ -269,7 +269,7 @@ class Migrator(object):
             new_state = m.migrate(self._database, phase)
             self._database.commit(new_state)
 
-    def rollback(self, phase, migration):
+    def rollback(self, phase, migration, step_name=None):
         """Rollback a phase of the migration"""
         print "Rollback(%s, %s)" % (migration, phase)
 
@@ -282,7 +282,7 @@ class Migrator(object):
         rollback_steps = list()
         dropped_steps = list()
 
-        for s in self._migration_steps(migration):
+        for s in self._migration_steps(migration, step_name):
             if s.phase_complete("drop"):
                 if len(rollback_steps) > 0:
                     raise Exception("Cannot rollback past dropped step: %s"
