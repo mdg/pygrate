@@ -59,7 +59,8 @@ def run_main():
 
     if command in cmds_req_migration:
         if len(args) < 2:
-            parser.error("Too few arguments - '%s' requires a migration to be specified" % command)
+            parser.error("Too few arguments - '%s' requires a migration" \
+                    " to be specified" % command)
             exit(1)
         elif len(args) == 2:
             migration = args[1]
@@ -108,7 +109,8 @@ def run_main():
 
     # Create the file loader
     if conf.binary is not None:
-        file_loader = pygration.db.FileLoader(conf.binary, conf.binary_args, conf.opts)
+        file_loader = pygration.db.FileLoader(conf.binary, conf.binary_args
+                , conf.opts)
     else:
         file_loader = None
 
