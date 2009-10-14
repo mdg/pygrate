@@ -315,9 +315,9 @@ class Migrator(object):
             error = s.rollback(self._database, phase)
 
     def show(self, migration):
-        print "%s migration:" % migration
-        columns = "%-16s %-40s %-8s %-8s %-8s"
-        print columns % ("id", "name", "add", "simdrop", "drop")
+        print "== %s migration ==" % migration
+        columns = "%-40s %-8s %-8s %-8s"
+        print columns % ("name", "add", "simdrop", "drop")
         for m in self._steps:
             if m.version() != migration:
                 continue
@@ -330,7 +330,7 @@ class Migrator(object):
                 simdrop_state = '-'
             if not drop_state:
                 drop_state = '-'
-            print columns % (m.step_id(), m.step_name(), add_state
+            print columns % (m.step_name(), add_state
                     , simdrop_state, drop_state)
 
     def fastforward(self):
