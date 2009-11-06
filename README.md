@@ -1,8 +1,7 @@
 A DB migration program focused on safety
 and supporting zero down time deployments.
 
-
-== GOALS ==
+= GOALS
 Separate DB changes into the 3 phases of Zero Downtime Deployment:
 * Expansion: add new schema elements
 * Rollout (not pygrate): deploy new application code
@@ -15,7 +14,7 @@ Easily rollback added and "dropped" elements
 Segregate DB changes by "release", to limit how much can be released or rolled back with a single command
 
 
-== USAGE ==
+= USAGE
 pygrate <operation> <release>
 
 <operation> is one of:
@@ -28,7 +27,7 @@ pygrate <operation> <release>
 <release> references a file containing steps to execute
 
 
-== PYGRATIONS ==
+= PYGRATIONS
 each logical database change is implemented in a subclass of the
 Pygration class.  the pygration subclass has a method for each of the
 high level operations listed above.  that method will
