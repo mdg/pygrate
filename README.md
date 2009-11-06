@@ -1,6 +1,21 @@
 A DB migration program focused on safety
 and supporting zero down time deployments.
 
+# Example
+A sample pygration file, v1.py:
+    import pygration
+    
+    @pygration.step_class
+    class HelloTableStep(object):
+        def add(self, db):
+            db.sql("CREATE TABLE hello (who varchar2(40));")
+
+Add a configuration file, conf.d/hello.yaml:
+    connection: "sqlite:///hellodb"
+
+Run it with:
+    pygrate ff
+
 # Goals
 Separate DB changes into the 3 phases of Zero Downtime Deployment:
 * Expansion: add new schema elements
@@ -24,23 +39,4 @@ pygrate <operation> <release>
 * rollback_hide
 
 <release> references a file containing steps to execute
-
-# Pygrations
-each logical database change is implemented in a subclass of the
-Pygration class.  the pygration subclass has a method for each of the
-high level operations listed above.  that method will
-get called by pygrate when it's run.
-
-Sample Pygration:
-class RenameUserIDColumn(pygration.Step):
-    """Rename the userid column to be username."""
-
-    def add(self,db):
-        """Add the username column and copy userid values to it."""
-        db.sql( "alter table user add column text username;" )
-        db.sql( "update user set username=userid;" )
-
-    def drop(self,db):
-        """Drop the userid column before completely dropping it."""
-        db.sql( "alter table user drop column userid;" )
 
