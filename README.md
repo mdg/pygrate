@@ -34,7 +34,7 @@ See all usage options with:
 
 pygrate --help
 
-Run all steps with:
+Run all steps with the fast-forward operation:
     pygrate ff
 
 Run individual phases of a single migration with:
