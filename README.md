@@ -49,3 +49,20 @@ where `<operation>` is one of:
 
 and `<version>` is a file containing steps to execute (without the .py extension).
 
+# Comparison to Rails Migrations
+pygrate is certainly to rails migrations but has 2 main differences:
+
+*   Separating the phases into add, simdrop & drop
+    
+    Support for the expansion, rollout, contract phases of Zero Downtime
+    Deployment is the primary difference between pygrate and Rails Migrations.
+    
+    In pygrate, the add and rollback_add phases are equivalent, respectively,
+    to the up and down functions in Rails Migrations.  You can simulate Rails
+    Migrations with Pygrate by using only add and rollback_add phases.
+*   Separating the steps into releases
+    
+    This makes it easier to keep operations from going across
+    boundaries accidentally.  Specifically, it protects from accidentally
+    rolling back changes that were prior to the current deployment.
+
