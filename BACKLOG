@@ -1,4 +1,10 @@
 
+add --conn command line option, to allow running without conf.d config file
+	also update README to use that instead of the config file
+
+add real verbose mode
+	and remove debug messages
+
 make it more tolerant of Step renames
 	this includes a persistent ID value probably
 	rather than a persistent ID, turn it into a DeletedStep
