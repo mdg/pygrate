@@ -29,14 +29,22 @@ Easily rollback added and "dropped" elements
 Segregate DB changes by "release", to limit how much can be released or rolled back with a single command
 
 # Usage
-pygrate <operation> <release>
+See all usage options with:
 
-<operation> is one of:
+pygrate --help
+
+Run all steps with:
+    pygrate ff
+
+Run individual phases of a single migration with:
+    pygrate <operation> <version>
+where <operation> is one of:
+
 * add
 * hide
 * drop
 * rollback_add
 * rollback_hide
 
-<release> references a file containing steps to execute
+and <version> is a file containing steps to execute (without the .py extension).
 
