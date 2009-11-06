@@ -19,11 +19,11 @@ Run it with:
 # Goals
 Separate DB changes into the 3 phases of Zero Downtime Deployment:
 
-*   Expansion: add new schema elements
+*   Expansion: add new schema elements (add phase)
 *   Rollout (not pygrate): deploy new application code
 *   Cleanup:
-    * move old schema elements to simulate dropping
-    * permanently drop old schema elements
+    * move old schema elements to simulate dropping (simdrop phase)
+    * permanently drop old schema elements (drop phase)
 
 Easily rollback added and "dropped" elements
 
@@ -42,10 +42,10 @@ Run individual phases of a single migration with:
 where `<operation>` is one of:
 
 * add
-* hide
+* simdrop
 * drop
 * rollback_add
-* rollback_hide
+* rollback_simdrop
 
 and `<version>` is a file containing steps to execute (without the .py extension).
 
