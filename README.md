@@ -18,11 +18,12 @@ Run it with:
 
 # Goals
 Separate DB changes into the 3 phases of Zero Downtime Deployment:
-* Expansion: add new schema elements
-* Rollout (not pygrate): deploy new application code
-* Cleanup:
-	* move old schema elements to simulate dropping
-	* permanently drop old schema elements
+
+*   Expansion: add new schema elements
+*   Rollout (not pygrate): deploy new application code
+*   Cleanup:
+    * move old schema elements to simulate dropping
+    * permanently drop old schema elements
 
 Easily rollback added and "dropped" elements
 
