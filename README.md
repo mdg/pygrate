@@ -38,7 +38,7 @@ Run all steps with:
 
 Run individual phases of a single migration with:
     pygrate <operation> <version>
-where <operation> is one of:
+where `<operation>` is one of:
 
 * add
 * hide
@@ -46,5 +46,5 @@ where <operation> is one of:
 * rollback_add
 * rollback_hide
 
-and <version> is a file containing steps to execute (without the .py extension).
+and `<version>` is a file containing steps to execute (without the .py extension).
 
