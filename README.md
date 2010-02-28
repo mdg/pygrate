@@ -22,12 +22,14 @@ Separate DB changes into the 3 phases of Zero Downtime Deployment:
 *   Expansion: add new schema elements (add phase)
 *   Rollout (not pygrate): deploy new application code
 *   Cleanup:
-    * move old schema elements to simulate dropping (simdrop phase)
+    * move, hide or disable old schema elements to simulate dropping
+      (simdrop phase)
     * permanently drop old schema elements (drop phase)
 
 Easily rollback added and "dropped" elements
 
-Segregate DB changes by "release", to limit how much can be released or rolled back with a single command
+Segregate DB changes by "release", to easily limit how much can be rolled
+back with a single command
 
 # Usage
 See all usage options with:
