@@ -11,7 +11,7 @@ class Config:
         self.opts = {}
 
     def load(self, conf_file):
-        self.opts = yaml.load(conf_file)
+        self.opts = yaml.load(conf_file) or {}
 
     def __getattr__(self, name):
         return self.opts.get(name, None)
