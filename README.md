@@ -68,3 +68,7 @@ pygrate is certainly to rails migrations but has 2 main differences:
     boundaries accidentally.  Specifically, it protects from accidentally
     rolling back changes that were prior to the current deployment.
 
+# Dependencies
+
+* SQLAlchemy
+* PyYAML
