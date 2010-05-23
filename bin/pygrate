@@ -88,7 +88,17 @@ def run_main():
     # Config Loading Section #
     config_path = os.path.join(path, 'conf.d')
     conf_files = os.listdir(config_path)
-    config_selection = pygration.config.select(conf_files, opts.env)
+    try:
+        config_selection = pygration.config.select(conf_files, opts.env)
+    except pygration.config.UnknownDBError, e:
+        print "There is no configuration for %s" % opts.env
+        print "Available configurations are: %s" % e.choices
+        exit(1)
+    except pygration.config.UnspecifiedDBError, e:
+        print "You must specify a db when more than one are available."
+        print 'Available dbs are: %s' % e.choices
+        exit(1)
+
     config_selection = os.path.join(config_path, config_selection)
     print "Config File = '%s'" % config_selection
     conf = pygration.config.load(config_selection)

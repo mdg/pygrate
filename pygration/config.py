@@ -1,5 +1,16 @@
 import yaml
-from yaml import Loader, Dumper
+import os.path
+
+
+class UnspecifiedDBError(Exception):
+    '''Error for when the database needs to be specified and isn't'''
+    def __init__(self, choices):
+        self.choices = choices
+
+class UnknownDBError(Exception):
+    '''Error for when the specified database cannot be found'''
+    def __init__(self, choices):
+        self.choices = choices
 
 
 class Config:
@@ -30,15 +41,20 @@ def select(conf_files, env):
     """
     conf_file_map = {}
     for conf_file in conf_files:
-        name, sep, extension = conf_file.rpartition('.')
-        if extension == 'yaml':
+        name, extension = os.path.splitext(conf_file)
+        if extension == '.yaml':
             conf_file_map[name] = conf_file
 
-    if len(conf_file_map) == 1 and env is None:
+    if not env:
+        if len(conf_file_map) > 1:
+            raise UnspecifiedDBError(conf_file_map.keys())
         name, file = conf_file_map.popitem()
         return file
 
-    return conf_file_map.get(env, None)
+    if env not in conf_file_map:
+        raise UnknownDBError(conf_file_map.keys())
+
+    return conf_file_map.get(env)
 
 
 def load(conf_filename):
@@ -46,4 +62,3 @@ def load(conf_filename):
     c = Config()
     c.load(f)
     return c
-
