@@ -15,6 +15,9 @@ class Step(object):
         cls.version = cls.__module__
         cls.step_name = cls.__name__
         cls.step_id = cls.step_name
+        # don't override this if it's already been set
+        if not hasattr(cls, 'deleted_step'):
+            cls.deleted_step = False
         Step.steps.append(cls())
         return cls
 
@@ -26,7 +29,24 @@ class Step(object):
         if getattr(step, 'step_name', None) is None:
             step.step_name = step.__class__.__name__
         step.step_id = step.step_name
+        step.deleted_step = False
         Step.steps.append(step)
+
+    @staticmethod
+    def deleted_step(cls):
+        '''Declare a step class as deleted
+
+        Deleted steps can be rolled back but won't be pushed forward.'''
+        cls.deleted_step = True
+        return Step.step_class(cls)
+
+    @staticmethod
+    def deleted_step_instance(instance):
+        '''Declare a step instance as deleted
+
+        Deleted steps can be rolled back but won't be pushed forward.'''
+        step = Step.step_instance(instance)
+        step.deleted_step = True
 
     @staticmethod
     def extract_steps():
