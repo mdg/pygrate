@@ -55,6 +55,9 @@ class Step(object):
 
 
 class VersionNumber:
+    '''Parses and compares strings as version numbers
+    
+    This is used for knowing the order in which files should be run.'''
     def __init__( self, ver_string ):
         self._parse_version( ver_string )
 
@@ -109,6 +112,7 @@ class VersionNumber:
         return self._array[index]
 
     def _parse_version( self, ver_string ):
+        '''Parse a string into the object members'''
         self._is_pygration = False
         self._string = ""
         self._array = []
@@ -249,6 +253,7 @@ class Loader(object):
 
 
 def load(path):
+    '''Load modules from a given path'''
     m = Loader(path)
     return m.load()
 

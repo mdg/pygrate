@@ -1,3 +1,5 @@
+'''Future code for manipulating the database with python objects
+rather than SQL'''
 
 
 class Column:

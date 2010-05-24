@@ -27,6 +27,7 @@ class History:
 
 
 def load(session):
+    '''Load the history of all migrations that have been run'''
     create_failed = False
 
     try:

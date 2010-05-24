@@ -8,6 +8,7 @@ STEP_PHASE_NOT_IMPLEMENTED = "NI"
 
 
 class StepMigrator(object):
+    '''Handles migrating of an individual step and storing the state'''
     def __init__(self, version, step, state):
         self._version = version
         self._step = step

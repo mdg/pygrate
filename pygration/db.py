@@ -4,6 +4,7 @@ from sqlalchemy.orm import mapper, sessionmaker
 import subprocess
 
 class PygrationState(object):
+    '''Python object representing the state table'''
     def __init__(self, migration=None, step_id=None, step_name=None):
         self.migration = migration
         self.step_id = step_id
@@ -37,6 +38,7 @@ class Table(object):
                 )
 
 class FileLoader(object):
+    '''Object for running SQL from a file on the file system'''
     def __init__(self, binary, args = [], formatting_dict = {}):
         self._binary = binary
         self._args = [arg.format(filename="{filename}", **formatting_dict) for arg in args]
