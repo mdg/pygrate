@@ -6,12 +6,12 @@ import sys
 
 
 class Step(object):
-    """Static class for defining migration steps"""
+    """Static class for holding info about defined migration steps"""
     steps = []
 
     @staticmethod
     def step_class(cls):
-        print "step: %s.%s" % (cls.__module__, cls.__name__)
+        '''Decorator to declare a class as a migration step'''
         cls.version = cls.__module__
         cls.step_name = cls.__name__
         cls.step_id = cls.step_name
@@ -23,8 +23,7 @@ class Step(object):
 
     @staticmethod
     def step_instance(step):
-        print "step: %s.%s" % (step.__class__.__module__
-                , step.__class__.__name__)
+        '''Static method to declare an instance as a migration step'''
         step.version = step.__class__.__module__
         if getattr(step, 'step_name', None) is None:
             step.step_name = step.__class__.__name__
